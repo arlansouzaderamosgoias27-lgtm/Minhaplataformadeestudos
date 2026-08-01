@@ -17,59 +17,65 @@
 
     <!-- Header / Navbar Superior -->
     <header class="bg-[#0F1A2E] border-b border-slate-800 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 py-3.5 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="bg-blue-600/20 border border-blue-500/30 text-blue-400 p-2.5 rounded-xl">
                     <i class="fa-solid fa-graduation-cap text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base sm:text-lg text-slate-100">Study Coach</h1>
-                    <p class="text-xs text-slate-400">Plataforma de Estudos SaaS</p>
+                    <h1 class="font-bold text-lg text-slate-100">Study Coach &bull; Área do Aluno (Desktop)</h1>
+                    <p class="text-xs text-slate-400">Foco total na sua aprovação</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="abrirModalMateria()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition border border-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-book-bookmark"></i> <span class="hidden sm:inline">Matérias</span>
+            <div class="flex items-center gap-3">
+                <button onclick="abrirModalMateria()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark"></i> Matérias
                 </button>
-                <button onclick="abrirModalTopico()" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
+                <button onclick="abrirModalTopico()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i> Novo Tópico
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Layout Principal com Menu Lateral e Conteúdo -->
-    <div class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- Caixa de Diálogo Interativa / Coach de Cobrança -->
+    <div class="max-w-7xl mx-auto px-6 pt-6 w-full">
+        <div id="coach-box" class="card-saas rounded-2xl p-4 sm:p-5 border-l-4 border-l-blue-500 flex items-start gap-4 shadow-lg">
+            <div class="bg-blue-600/20 text-blue-400 p-3 rounded-xl shrink-xl mt-0.5">
+                <i class="fa-solid fa-robot text-xl"></i>
+            </div>
+            <div class="flex-grow">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">Coach Interativo &bull; Cobrança de Metas</h3>
+                    <span id="coach-status-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 font-semibold">Analisando rotina...</span>
+                </div>
+                <p id="coach-mensagem" class="text-sm text-slate-300 mt-1 leading-relaxed">
+                    Carregando análise do seu desempenho...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Principal Desktop -->
+    <div class="max-w-7xl mx-auto px-6 py-6 w-full flex-grow grid grid-cols-1 md:grid-cols-4 gap-6">
 
         <!-- Menu Lateral SaaS -->
-        <aside class="md:col-span-1 space-y-1 bg-[#0F1A2E] border border-slate-800/80 rounded-2xl p-4 h-fit sticky top-20">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Menu Principal</p>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium bg-blue-600/20 text-blue-400 border border-blue-500/30">
-                <i class="fa-solid fa-house w-5"></i> Início
+        <aside class="md:col-span-1 space-y-1 bg-[#0F1A2E] border border-slate-800/80 rounded-2xl p-4 h-fit sticky top-24">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navegação</p>
+            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                <i class="fa-solid fa-house w-5"></i> Início / Painel
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
+            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
                 <i class="fa-solid fa-bullseye w-5"></i> Metas de Hoje
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-book w-5"></i> Matérias
+            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
+                <i class="fa-solid fa-book w-5"></i> Matérias & Tópicos
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-list-check w-5"></i> Tópicos
+            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
+                <i class="fa-solid fa-rotate w-5"></i> Ciclo de Revisões
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-route w-5"></i> Plano de Estudos
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-calendar-days w-5"></i> Calendário
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-rotate w-5"></i> Revisões
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-gear w-5"></i> Configurações
+            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
+                <i class="fa-solid fa-chart-pie w-5"></i> Estatísticas
             </a>
         </aside>
 
@@ -77,7 +83,7 @@
         <main class="md:col-span-3 space-y-6">
 
             <!-- Cards de Estatísticas / Resumo -->
-            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <section class="grid grid-cols-4 gap-4">
                 <div class="card-saas rounded-2xl p-4 shadow-sm">
                     <p class="text-xs font-medium text-slate-400">Total de Tópicos</p>
                     <h3 id="stat-topicos" class="text-2xl font-bold text-slate-100 mt-1">0</h3>
@@ -99,7 +105,7 @@
             <!-- Barra de Progresso Geral -->
             <section class="card-saas rounded-2xl p-5 shadow-sm">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold text-slate-300">Progresso Geral das Revisões</span>
+                    <span class="text-xs font-semibold text-slate-300">Progresso Geral do Edital</span>
                     <span id="progresso-geral-txt" class="text-xs font-bold text-blue-400">0%</span>
                 </div>
                 <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
@@ -108,22 +114,22 @@
             </section>
 
             <!-- Filtros e Busca -->
-            <section class="flex flex-col sm:flex-row gap-3 items-center justify-between">
-                <div class="w-full sm:w-72 relative">
+            <section class="flex gap-4 items-center justify-between">
+                <div class="w-80 relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-slate-500"></i>
-                    <input type="text" id="filtro-busca" oninput="renderizarTopicos()" placeholder="Buscar tópico..." class="w-full card-saas rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                    <input type="text" id="filtro-busca" oninput="renderizarTopicos()" placeholder="Buscar tópico..." class="w-full card-saas rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
                 </div>
-                <div class="w-full sm:w-64">
-                    <select id="filtro-materia" onchange="renderizarTopicos()" class="w-full card-saas rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                <div class="w-64">
+                    <select id="filtro-materia" onchange="renderizarTopicos()" class="w-full card-saas rounded-xl px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
                         <option value="">Todas as Matérias</option>
                     </select>
                 </div>
             </section>
 
-            <!-- Lista de Tópicos -->
+            <!-- Lista de Tópicos e Metas -->
             <section class="space-y-4">
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-sm font-bold text-slate-300 tracking-wide uppercase">Tópicos e Cronograma de Revisão</h2>
+                    <h2 class="text-sm font-bold text-slate-300 tracking-wide uppercase">Metas e Tópicos por Matéria</h2>
                     <span id="contador-topicos-exibidos" class="text-xs text-slate-500">0 tópico(s)</span>
                 </div>
                 <div id="lista-topicos" class="space-y-3">
@@ -132,16 +138,16 @@
             </section>
 
             <!-- Seção de Backup e Dados -->
-            <section class="card-saas bg-opacity-50 rounded-2xl p-5 flex flex-wrap items-center gap-3">
-                <span class="text-xs font-medium text-slate-400 w-full sm:w-auto">Gerenciamento de Dados:</span>
-                <button onclick="exportarDados()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition border border-slate-700 flex items-center gap-2">
+            <section class="card-saas bg-opacity-50 rounded-2xl p-5 flex items-center gap-4">
+                <span class="text-xs font-medium text-slate-400">Gerenciamento de Dados:</span>
+                <button onclick="exportarDados()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-download"></i> Baixar Backup
                 </button>
-                <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition border border-slate-700 flex items-center gap-2 cursor-pointer">
+                <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-upload"></i> Restaurar
                     <input type="file" id="arquivo-backup" onchange="importarDados(event)" accept=".json" class="hidden">
                 </label>
-                <button onclick="resetarDados()" class="bg-rose-950/40 hover:bg-rose-900/50 text-rose-400 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition border border-rose-900/50 flex items-center gap-2 ml-auto">
+                <button onclick="resetarDados()" class="bg-rose-950/40 hover:bg-rose-900/50 text-rose-400 px-4 py-2 rounded-xl text-sm font-medium transition border border-rose-900/50 flex items-center gap-2 ml-auto">
                     <i class="fa-solid fa-triangle-exclamation"></i> Limpar Tudo
                 </button>
             </section>
@@ -151,7 +157,7 @@
 
     <!-- Footer -->
     <footer class="card-saas border-t border-slate-800 py-4 text-center text-xs text-slate-500 mt-auto">
-        Study Coach &bull; Plataforma de Estudos SaaS &bull; Foco na Aprovação
+        Study Coach Desktop &bull; Foco na Aprovação
     </footer>
 
     <!-- Modal Novo/Editar Tópico -->
@@ -168,11 +174,11 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Nome do Tópico</label>
-                    <input type="text" id="topico-nome" placeholder="Ex: Direitos Fundamentais (Art. 5º)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                    <input type="text" id="topico-nome" placeholder="Ex: Tópico 01 - Lei penal no tempo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Quantidade de Revisões</label>
-                    <input type="number" id="topico-total-revisoes" min="1" max="20" value="7" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                    <input type="number" id="topico-total-revisoes" min="1" max="20" value="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
                 </div>
             </div>
             <div class="flex justify-end gap-3 mt-6">
@@ -199,22 +205,21 @@
         </div>
     </div>
 
-    <!-- Script Principal -->
+    <!-- Script Principal com Inteligência de Cobrança -->
     <script>
         const materiasIniciais = [
+            "Direito Penal",
+            "Português",
             "Direito Constitucional",
             "Direito Administrativo",
-            "Direito Penal",
-            "Direito Processual Penal",
-            "Língua Portuguesa",
-            "Raciocínio Lógico e Matemático",
-            "Legislação Específica",
-            "Redação Discursiva"
+            "Raciocínio Lógico"
         ];
 
         const topicosIniciais = [
-            { id: 1, materia: "Direito Constitucional", nome: "Direitos e Garantias Fundamentais (Art. 5º)", totalRevisoes: 7, revisoesFeitas: [true, false, false, false, false, false, false] },
-            { id: 2, materia: "Língua Portuguesa", nome: "Crase e Concordância Verbal", totalRevisoes: 7, revisoesFeitas: [false, false, false, false, false, false, false] }
+            { id: 1, materia: "Direito Penal", nome: "Tópico 00 - Princípios", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] },
+            { id: 2, materia: "Direito Penal", nome: "Tópico 01 - Lei penal no tempo", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] },
+            { id: 3, materia: "Português", nome: "Tópico 00 - Ortografia", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] },
+            { id: 4, materia: "Português", nome: "Tópico 01 - Crase", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] }
         ];
 
         let dadosApp = {
@@ -235,6 +240,47 @@
             atualizarSelects();
             renderizarEstatisticas();
             renderizarTopicos();
+            atualizarCoachInterativo();
+        }
+
+        function atualizarCoachInterativo() {
+            const totalTopicos = dadosApp.topicos.length;
+            let totalRevisoesFeitas = 0;
+            let totalRevisoesPossiveis = 0;
+
+            dadosApp.topicos.forEach(t => {
+                totalRevisoesPossiveis += t.totalRevisoes;
+                totalRevisoesFeitas += t.revisoesFeitas.filter(Boolean).length;
+            });
+
+            const pct = totalRevisoesPossiveis > 0 ? (totalRevisoesFeitas / totalRevisoesPossiveis) * 100 : 0;
+            const box = document.getElementById('coach-box');
+            const badge = document.getElementById('coach-status-badge');
+            const msg = document.getElementById('coach-mensagem');
+
+            box.className = "card-saas rounded-2xl p-4 sm:p-5 border-l-4 flex items-start gap-4 shadow-lg transition-all";
+
+            if (pct === 0) {
+                box.classList.add('border-l-rose-500');
+                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-400 font-semibold";
+                badge.innerText = "Atenção Total!";
+                msg.innerHTML = `Ei, você abriu o computador mas ainda <strong>não marcou nenhuma meta hoje</strong>! O edital não vai esperar por você. Cumpra pelo menos os tópicos de Direito Penal ou Português agora mesmo antes de fazer outra coisa!`;
+            } else if (pct < 40) {
+                box.classList.add('border-l-amber-500');
+                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-400 font-semibold";
+                badge.innerText = "Ritmo Abaixo do Ideal";
+                msg.innerHTML = `Você começou, mas o ritmo está lento. Já concluiu ${totalRevisoesFeitas} revisões. Não pare agora! Vá para a mesa de estudos no PC e feche os tópicos pendentes.`;
+            } else if (pct < 80) {
+                box.classList.add('border-l-blue-500');
+                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 font-semibold";
+                badge.innerText = "Bom Progresso";
+                msg.innerHTML = `Excelente consistência! Você está avançando bem nas matérias. Mantenha o foco no computador e finalize as revisões que faltam para garantir sua vaga.`;
+            } else {
+                box.classList.add('border-l-emerald-500');
+                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 font-semibold";
+                badge.innerText = "Metas Cumpridas!";
+                msg.innerHTML = `Sensacional! Seu rendimento está impecável. Meta cumprida com sucesso. Descanse a mente, pois amanhã tem mais conteúdo te esperando aqui no PC!`;
+            }
         }
 
         function atualizarSelects() {
@@ -319,28 +365,28 @@
                 let pct = Math.round((concluidas / topico.totalRevisoes) * 100);
 
                 let div = document.createElement('div');
-                div.className = "card-saas rounded-2xl p-4 sm:p-5 shadow-sm transition hover:border-slate-700";
+                div.className = "card-saas rounded-2xl p-5 shadow-sm transition hover:border-slate-700";
                 
                 let htmlRevisoes = '';
                 for(let i=0; i<topico.totalRevisoes; i++) {
                     let checked = topico.revisoesFeitas[i] ? 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-600/30' : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700';
                     htmlRevisoes += `
-                        <button onclick="alternarRevisao(${topico.id}, ${i})" class="w-9 h-9 rounded-lg font-bold text-xs flex items-center justify-center border transition ${checked}" title="Revisão R${i+1}">
+                        <button onclick="alternarRevisao(${topico.id}, ${i})" class="w-10 h-10 rounded-xl font-bold text-xs flex items-center justify-center border transition ${checked}" title="Marcar revisão R${i+1}">
                             R${i+1}
                         </button>
                     `;
                 }
 
                 div.innerHTML = `
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-3">
+                    <div class="flex justify-between items-center gap-4 mb-3">
                         <div>
                             <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-950/80 text-blue-400 border border-blue-900/50">${topico.materia}</span>
-                            <h3 class="text-sm sm:text-base font-bold text-slate-100 mt-2">${topico.nome}</h3>
+                            <h3 class="text-base font-bold text-slate-100 mt-2">${topico.nome}</h3>
                         </div>
-                        <div class="flex items-center gap-2 self-end md:self-auto">
+                        <div class="flex items-center gap-3">
                             <span class="text-xs font-semibold text-slate-400">${concluidas}/${topico.totalRevisoes} (${pct}%)</span>
-                            <button onclick="abrirModalTopico(${topico.id})" class="text-slate-400 hover:text-blue-400 p-1.5 transition" title="Editar"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button onclick="excluirTopico(${topico.id})" class="text-slate-400 hover:text-rose-400 p-1.5 transition" title="Excluir"><i class="fa-solid fa-trash text-xs"></i></button>
+                            <button onclick="abrirModalTopico(${topico.id})" class="text-slate-400 hover:text-blue-400 p-2 transition" title="Editar"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="excluirTopico(${topico.id})" class="text-slate-400 hover:text-rose-400 p-2 transition" title="Excluir"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
                     </div>
                     <div class="w-full bg-slate-950 rounded-full h-2 mb-4 overflow-hidden border border-slate-800">
@@ -369,7 +415,7 @@
             
             document.getElementById('topico-id').value = "";
             document.getElementById('topico-nome').value = "";
-            document.getElementById('topico-total-revisoes').value = "7";
+            document.getElementById('topico-total-revisoes').value = "5";
 
             if (id !== null) {
                 titulo.innerText = "Editar Tópico";
@@ -397,7 +443,7 @@
             const totalRevisoes = parseInt(document.getElementById('topico-total-revisoes').value);
 
             if (!nome) {
-                alert('Por favor, informe o nome do tópico.');
+                alert('Informe o nome do tópico.');
                 return;
             }
             if (!materia) {
@@ -431,7 +477,7 @@
         }
 
         function excluirTopico(id) {
-            if (confirm('Deseja realmente excluir este tópico?')) {
+            if (confirm('Deseja excluir este tópico?')) {
                 dadosApp.topicos = dadosApp.topicos.filter(t => t.id !== id);
                 salvarStorage();
                 renderizarTudo();
@@ -467,7 +513,7 @@
             if (!nome) return;
 
             if (dadosApp.materias.includes(nome)) {
-                alert('Esta matéria já está cadastrada.');
+                alert('Matéria já cadastrada.');
                 return;
             }
 
@@ -479,7 +525,7 @@
         }
 
         function excluirMateria(nome) {
-            if (confirm(`Excluir a matéria "${nome}"? Os tópicos associados a ela ficarão sem matéria correspondente até serem editados.`)) {
+            if (confirm(`Excluir a matéria "${nome}"?`)) {
                 dadosApp.materias = dadosApp.materias.filter(m => m !== nome);
                 salvarStorage();
                 renderizarListaMateriasModal();
@@ -509,19 +555,19 @@
                         dadosApp = parsed;
                         salvarStorage();
                         renderizarTudo();
-                        alert('Backup restaurado com sucesso!');
+                        alert('Backup restaurado!');
                     } else {
-                        alert('Arquivo de backup inválido.');
+                        alert('Arquivo inválido.');
                     }
                 } catch (err) {
-                    alert('Erro ao ler o arquivo JSON.');
+                    alert('Erro ao ler JSON.');
                 }
             };
             reader.readAsText(file);
         }
 
         function resetarDados() {
-            if (confirm('ATENÇÃO: Deseja apagar todos os dados e restaurar o padrão? Todo o seu progresso será perdido.')) {
+            if (confirm('Deseja resetar para o padrão inicial?')) {
                 localStorage.removeItem('study_materias');
                 localStorage.removeItem('study_topicos');
                 dadosApp = {
@@ -529,7 +575,6 @@
                     topicos: [...topicosIniciais]
                 };
                 renderizarTudo();
-                alert('Sistema resetado para o padrão.');
             }
         }
     </script>
