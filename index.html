@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Estudos</title>
+    <title>Plataforma de Estudos do Amigo</title>
     <style>
         :root {
             --bg-main: #0a0e17;
@@ -14,6 +14,7 @@
             --text-muted: #94a3b8;
             --success: #10b981;
             --success-hover: #059669;
+            --warning: #f59e0b;
             --border: #1e293b;
             --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             --font-size-base: 16px;
@@ -433,16 +434,16 @@
     <div id="modal-questoes" class="modal-overlay">
         <div class="modal-card">
             <div id="modal-etapa-pergunta">
-                <h3>Quantas questões você respondeu?</h3>
-                <p>Informe o número de questões para que o sistema atualize seu progresso, salve a data, gere revisões automáticas e sincronize o calendário.</p>
+                <h3>Quantas questões você resolveu?</h3>
+                <p>Meta padrão: mínimo 40 questões por tópico.</p>
                 <div class="form-group">
-                    <input type="number" id="input-qtd-questoes" placeholder="Ex: 25" min="0">
+                    <input type="number" id="input-qtd-questoes" value="40" min="0">
                 </div>
-                <button class="btn-primary" onclick="confirmarConclusaoTopico()">Salvar e Concluir</button>
+                <button class="btn-primary" onclick="confirmarConclusaoTopico()">Salvar e Continuar</button>
             </div>
             <div id="modal-etapa-sucesso" style="display: none;">
                 <h3 style="color: var(--success); margin-bottom: 15px;">Parabéns!</h3>
-                <p>Você cumpriu sua meta de hoje. Continue firme nos estudos.</p>
+                <p>Você concluiu sua meta de hoje. Continue firme nos estudos.</p>
                 <button class="btn-primary" onclick="fecharModalSucesso()">Continuar Jornada</button>
             </div>
         </div>
@@ -451,7 +452,7 @@
     <!-- Menu Superior Fixo com Ícones -->
     <header class="top-nav-bar">
         <div class="brand-title">
-            <span>Plataforma de Estudos</span>
+            <span>Plataforma de Estudos do Amigo</span>
         </div>
         <ul class="nav-icons">
             <li><button class="active" onclick="switchScreen('dashboard', event)" title="Início">🏠</button></li>
@@ -487,12 +488,12 @@
                 
                 <div class="form-group">
                     <label>Nome da Matéria</label>
-                    <input type="text" id="input-nome-materia" placeholder="Ex: Direito Penal">
+                    <input type="text" id="input-nome-materia" placeholder="Ex: Direito Penal Militar">
                 </div>
                 <div class="form-group">
                     <label>Adicionar Tópico</label>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="input-nome-topico" placeholder="Ex: Introdução">
+                        <input type="text" id="input-nome-topico" placeholder="Ex: Conceito">
                         <button class="btn-primary" style="width: 140px;" onclick="adicionarTopicoTemporario()">Adicionar</button>
                     </div>
                 </div>
@@ -511,7 +512,7 @@
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
                 <h2>📖 Plano de Estudos</h2>
-                <p class="subtitle">Cadastre seu planejamento semanal para gerar as metas automáticas.</p>
+                <p class="subtitle">Cadastre seu planejamento semanal de segunda a domingo.</p>
                 
                 <div class="form-group">
                     <label>Dia da Semana</label>
@@ -543,7 +544,7 @@
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
                 <h2>🎯 Ajuste de Metas</h2>
-                <p class="subtitle">Configure a quantidade diária de matérias e tópicos.</p>
+                <p class="subtitle">Configure a quantidade diária de matérias e tópicos sem limite máximo.</p>
                 
                 <div class="form-group">
                     <label>Quantidade de matérias por dia</label>
@@ -561,9 +562,10 @@
         <div id="metas" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>Metas de Hoje</h2>
+                <h2>🎯 Metas de Hoje</h2>
                 <p class="subtitle">Tópicos sincronizados automaticamente com base no seu plano e metas.</p>
                 
+                <div id="container-pendencia" style="margin-bottom: 20px;"></div>
                 <div id="lista-metas-hoje"></div>
             </div>
         </div>
@@ -572,10 +574,10 @@
         <div id="progresso" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>Progresso e Gráficos</h2>
-                <p class="subtitle">Acompanhamento real do seu desempenho no curso.</p>
+                <h2>📈 Progresso do Curso</h2>
+                <p class="subtitle">Acompanhamento visual e inteligente do seu desempenho.</p>
                 
-                <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border);">
+                <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border);">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600;">
                         <span>Progresso Geral do Curso</span>
                         <span id="txt-progresso-geral" style="color: var(--success);">0%</span>
@@ -589,36 +591,27 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
                     <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
                         <span id="stat-materias-concluidas" style="font-size: 1.6rem; font-weight: 700; color: var(--accent); display: block; margin-bottom: 5px;">0 / 0</span>
                         <span style="font-size: 0.9rem; color: var(--text-muted);">Matérias Concluídas</span>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
                         <span id="stat-revisoes-realizadas" style="font-size: 1.6rem; font-weight: 700; color: var(--success); display: block; margin-bottom: 5px;">0</span>
-                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões Geradas</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões Pendentes</span>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
-                        <span id="stat-dias-estudados" style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 5px;">12 dias</span>
-                        <span style="font-size: 0.9rem; color: var(--text-muted);">Dias Estudados</span>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
-                        <span id="stat-sequencia" style="font-size: 1.6rem; font-weight: 700; color: var(--success); display: block; margin-bottom: 5px;">5 dias</span>
-                        <span style="font-size: 0.9rem; color: var(--text-muted);">Sequência de Estudos</span>
-                    </div>
-                </div>
+                <div id="detalhes-materias-progresso"></div>
             </div>
         </div>
 
-        <!-- 7. TELA CALENDÁRIO -->
+        <!-- 7. TELA CALENDÁRIO / REVISÕES -->
         <div id="calendario" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>Calendário Sincronizado</h2>
-                <p class="subtitle">Dias de estudo, matérias programadas, tópicos e revisões automáticas.</p>
+                <h2>📅 Calendário e Revisões</h2>
+                <p class="subtitle">Acompanhe suas revisões automáticas pendentes geradas pelos estudos.</p>
                 <div id="conteudo-calendario-sincronizado"></div>
             </div>
         </div>
@@ -627,15 +620,31 @@
         <div id="perfil" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>Perfil</h2>
-                <p class="subtitle">Informações do aluno.</p>
+                <h2>👤 Meu Perfil</h2>
+                <p class="subtitle">Informações e dados do aluno.</p>
                 <div class="form-group">
                     <label>Nome Completo</label>
-                    <input type="text" id="input-perfil-nome" value="Arlan Souza de Ramos">
+                    <input type="text" id="input-perfil-nome" placeholder="Nome Completo">
                 </div>
                 <div class="form-group">
                     <label>Idade</label>
-                    <input type="number" id="input-perfil-idade" value="27">
+                    <input type="number" id="input-perfil-idade" placeholder="Idade">
+                </div>
+                <div class="form-group">
+                    <label>Data de Nascimento</label>
+                    <input type="date" id="input-perfil-nascimento">
+                </div>
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" id="input-perfil-cidade" placeholder="Cidade">
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <input type="text" id="input-perfil-estado" placeholder="Estado">
+                </div>
+                <div class="form-group">
+                    <label>Objetivo de Estudo Atual</label>
+                    <input type="text" id="input-perfil-objetivo" placeholder="Ex: Concurso Público">
                 </div>
                 <button class="btn-primary" onclick="salvarPerfil()">Salvar Alterações</button>
             </div>
@@ -645,8 +654,8 @@
         <div id="config" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>Configurações</h2>
-                <p class="subtitle">Personalize a aparência.</p>
+                <h2>⚙️ Configurações</h2>
+                <p class="subtitle">Personalize a aparência do seu aplicativo.</p>
                 <div class="form-group">
                     <label>Cor de Destaque</label>
                     <select id="select-cor" onchange="mudarCorTema(this.value)">
@@ -661,31 +670,31 @@
     </main>
 
     <script>
-        // Estado Global da Aplicação
-        let appState = {
+        // Estado Global da Aplicação com suporte a localStorage para o código do amigo
+        let appState = JSON.parse(localStorage.getItem('appState_amigo')) || {
             materias: [
                 {
                     id: 1,
-                    nome: "Português",
+                    nome: "Direito Penal Militar",
                     topicos: [
-                        { id: 0, nome: "Fonética", concluido: false },
-                        { id: 1, nome: "Ortografia", concluido: false },
-                        { id: 2, nome: "Regência verbal", concluido: false },
-                        { id: 3, nome: "Crase", concluido: false }
+                        { id: 0, nome: "Conceito", concluido: false },
+                        { id: 1, nome: "Princípios", concluido: false },
+                        { id: 2, nome: "Fontes", concluido: false },
+                        { id: 3, nome: "Aplicação da Lei", concluido: false }
                     ]
                 },
                 {
                     id: 2,
-                    nome: "Direito Penal",
+                    nome: "Processo Penal",
                     topicos: [
                         { id: 0, nome: "Introdução", concluido: false },
-                        { id: 1, nome: "Princípios fundamentais", concluido: false }
+                        { id: 1, nome: "Inquérito Policial", concluido: false }
                     ]
                 }
             ],
             planoSemanal: {
-                "Segunda-feira": ["Português"],
-                "Terça-feira": ["Direito Penal"],
+                "Segunda-feira": ["Direito Penal Militar", "Processo Penal"],
+                "Terça-feira": [],
                 "Quarta-feira": [],
                 "Quinta-feira": [],
                 "Sexta-feira": [],
@@ -693,17 +702,35 @@
                 "Domingo": []
             },
             ajusteMetas: {
-                materiasPorDia: 1,
+                materiasPorDia: 2,
                 topicosPorMateria: 2
             },
             revisoes: [],
             historicoEstudos: [],
-            estatisticas: {
-                diasEstudados: 12,
-                sequencia: 5
+            perfil: {
+                nome: "",
+                idade: "",
+                nascimento: "",
+                cidade: "",
+                estado: "",
+                objetivo: ""
             },
+            pendenciaOntem: "Processo Penal - Tópico 00",
             tempTopicos: []
         };
+
+        function salvarLocalStorage() {
+            localStorage.setItem('appState_amigo', JSON.stringify(appState));
+        }
+
+        function mostrarToast(mensagem) {
+            const toast = document.getElementById('toast-feedback');
+            toast.innerText = mensagem;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
 
         // Navegação por Telas Cheias Exclusivas
         function switchScreen(screenId, event) {
@@ -732,11 +759,12 @@
             if(screenId === 'metas') renderizarMetasHoje();
             if(screenId === 'progresso') atualizarTelaProgresso();
             if(screenId === 'calendario') renderizarCalendarioSincronizado();
+            if(screenId === 'perfil') carregarPerfilInputs();
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 1. Matérias e Tópicos com Numeração Automática (00, 01, 02...)
+        // 1. Matérias e Tópicos com Numeração Automática iniciando em 00
         function adicionarTopicoTemporario() {
             const nomeTopico = document.getElementById('input-nome-topico').value.trim();
             if(!nomeTopico) {
@@ -783,12 +811,17 @@
             document.getElementById('input-nome-materia').value = '';
             atualizarPreviewTopicosTemp();
             renderizarMaterias();
+            salvarLocalStorage();
             mostrarToast('Matéria cadastrada com sucesso!');
         }
 
         function renderizarMaterias() {
             const container = document.getElementById('lista-materias-cadastradas');
             container.innerHTML = '';
+            if(appState.materias.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">Nenhuma matéria cadastrada.</p>`;
+                return;
+            }
             appState.materias.forEach(mat => {
                 let htmlTopicos = mat.topicos.map(t => `<div style="font-size:0.9rem; color:var(--text-muted); margin-left:15px;">• ${t.id < 10 ? '0'+t.id : t.id} - ${t.nome} ${t.concluido ? '(Concluído)' : ''}</div>`).join('');
                 container.innerHTML += `
@@ -806,10 +839,11 @@
         function excluirMateria(id) {
             appState.materias = appState.materias.filter(m => m.id !== id);
             renderizarMaterias();
+            salvarLocalStorage();
             mostrarToast('Matéria excluída.');
         }
 
-        // 2. Plano de Estudos
+        // 3. Plano de Estudos Semanal
         function renderizarSelectMateriasPlano() {
             const sel = document.getElementById('select-materia-plano');
             sel.innerHTML = '';
@@ -828,6 +862,7 @@
             if(!appState.planoSemanal[dia].includes(materia)) {
                 appState.planoSemanal[dia].push(materia);
                 renderizarPlanoSemanal();
+                salvarLocalStorage();
                 mostrarToast('Plano semanal atualizado!');
             } else {
                 alert('Esta matéria já está vinculada a este dia.');
@@ -850,7 +885,7 @@
             }
         }
 
-        // 3. Ajuste de Metas
+        // 5. Ajuste de Metas
         function carregarAjusteMetasInputs() {
             document.getElementById('input-qtd-materias-dia').value = appState.ajusteMetas.materiasPorDia;
             document.getElementById('input-qtd-topicos-materia').value = appState.ajusteMetas.topicosPorMateria;
@@ -865,16 +900,27 @@
             }
             appState.ajusteMetas.materiasPorDia = mDia;
             appState.ajusteMetas.topicosPorMateria = tMat;
+            salvarLocalStorage();
             mostrarToast('Metas ajustadas com sucesso!');
         }
 
-        // 5. Metas de Hoje (Sincronização Automática)
+        // 4 & 8. Metas de Hoje com Sistema de Pendências Inteligente
         function renderizarMetasHoje() {
             const container = document.getElementById('lista-metas-hoje');
+            const pendenciaContainer = document.getElementById('container-pendencia');
             container.innerHTML = '';
+            pendenciaContainer.innerHTML = '';
 
-            // Simula o dia atual como "Segunda-feira" para demonstração funcional integrada
-            const diaAtual = "Segunda-feira";
+            if (appState.pendenciaOntem) {
+                pendenciaContainer.innerHTML = `
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <span style="color: var(--warning); font-size: 0.95rem;">⚠️ <strong>Pendência:</strong> Você não concluiu "${appState.pendenciaOntem}" ontem.</span>
+                        <button class="btn-acao-sm" onclick="resolverPendencia()">Dispensar</button>
+                    </div>
+                `;
+            }
+
+            const diaAtual = "Segunda-feira"; // Sincronizado automaticamente
             const materiasDoDia = appState.planoSemanal[diaAtual] || [];
             
             let metasGeradas = [];
@@ -908,18 +954,24 @@
                             <span class="materia-tag">${meta.materiaNome}</span>
                             <h3>${meta.topicoNome}</h3>
                         </div>
-                        <button class="btn-concluir-topico" onclick="abrirModalConclusao(${meta.materiaId}, ${meta.topicoId})">Concluir tópico</button>
+                        <button class="btn-concluir-topico" onclick="abrirModalConclusao(${meta.materiaId}, ${meta.topicoId})">Concluir</button>
                     </div>
                 `;
             });
         }
 
-        // 6 & 7. Conclusão de Tópicos e Revisões Automáticas
+        function resolverPendencia() {
+            appState.pendenciaOntem = null;
+            salvarLocalStorage();
+            renderizarMetasHoje();
+        }
+
+        // 9, 10, 11. Conclusão, Questões (Mínimo 40) e Revisões Automáticas
         let dadosConclusaoPendente = null;
 
         function abrirModalConclusao(materiaId, topicoId) {
             dadosConclusaoPendente = { materiaId, topicoId };
-            document.getElementById('input-qtd-questoes').value = '';
+            document.getElementById('input-qtd-questoes').value = 40;
             document.getElementById('modal-etapa-pergunta').style.display = 'block';
             document.getElementById('modal-etapa-sucesso').style.display = 'none';
             document.getElementById('modal-questoes').style.display = 'flex';
@@ -935,18 +987,16 @@
             let qtdNum = parseInt(qtd);
             let dataHoje = new Date().toLocaleDateString();
 
-            // Marcar tópico concluído
             let mat = appState.materias.find(m => m.id === dadosConclusaoPendente.materiaId);
             let nomeTopicoStr = "";
             if(mat) {
                 let top = mat.topicos.find(t => t.id === dadosConclusaoPendente.topicoId);
                 if(top) {
                     top.concluido = true;
-                    nomeTopicoStr = top.nome;
+                    nomeTopicoStr = `${top.id < 10 ? '0'+top.id : top.id} - ${top.nome}`;
                 }
             }
 
-            // Salvar histórico de estudo
             appState.historicoEstudos.push({
                 materia: mat ? mat.nome : "",
                 topico: nomeTopicoStr,
@@ -954,12 +1004,13 @@
                 data: dataHoje
             });
 
-            // Criar revisões automáticas
             appState.revisoes.push({
                 materia: mat ? mat.nome : "",
                 topico: nomeTopicoStr,
                 criadoEm: dataHoje
             });
+
+            salvarLocalStorage();
 
             document.getElementById('modal-etapa-pergunta').style.display = 'none';
             document.getElementById('modal-etapa-sucesso').style.display = 'block';
@@ -968,83 +1019,105 @@
         function fecharModalSucesso() {
             document.getElementById('modal-questoes').style.display = 'none';
             renderizarMetasHoje();
-            mostrarToast('Tópico concluído e revisões automáticas geradas!');
         }
 
-        // 9. Tela de Gráficos e Progresso Real
+        // 6 & 7. Progresso do Curso e Gráficos Simples
         function atualizarTelaProgresso() {
             let totalTopicos = 0;
-            let concluidosTopicos = 0;
-            let totalMaterias = appState.materias.length;
-            let materiasConcluidasCount = 0;
-            let materiasEmAndamentoCount = 0;
+            let totalConcluidos = 0;
+            let materiasConcluidas = 0;
+            let htmlDetalhes = `<h3 style="font-size:1.1rem; margin-bottom:15px; color:var(--text-main);">Progresso por Matéria</h3>`;
 
-            appState.materias.forEach(m => {
-                let mConcluidas = 0;
-                m.topicos.forEach(t => {
-                    totalTopicos++;
-                    if(t.concluido) {
-                        concluidosTopicos++;
-                        mConcluidas++;
-                    }
-                });
-                if(m.topicos.length > 0 && mConcluidas === m.topicos.length) {
-                    materiasConcluidasCount++;
-                } else if(mConcluidas > 0) {
-                    materiasEmAndamentoCount++;
-                }
-            });
+            appState.materias.forEach(mat => {
+                let topCount = mat.topicos.length;
+                let topConc = mat.topicos.filter(t => t.concluido).length;
+                totalTopicos += topCount;
+                totalConcluidos += topConc;
 
-            let percentual = totalTopicos > 0 ? Math.round((concluidosTopicos / totalTopicos) * 100) : 0;
-            let percentualRestante = 100 - percentual;
+                let percMat = topCount > 0 ? Math.round((topConc / topCount) * 100) : 0;
+                if(percMat === 100 && topCount > 0) materiasConcluidas++;
 
-            document.getElementById('txt-progresso-geral').innerText = percentual + '%';
-            document.getElementById('barra-progresso-geral').style.width = percentual + '%';
-            document.getElementById('txt-percentual-restante').innerText = 'Restante: ' + percentualRestante + '%';
-            document.getElementById('txt-concluidos-restantes').innerText = `${concluidosTopicos} / ${totalTopicos} Tópicos`;
-            
-            document.getElementById('stat-materias-concluidas').innerText = `${materiasConcluidasCount} / ${totalMaterias}`;
-            document.getElementById('stat-revisoes-realizadas').innerText = appState.revisoes.length;
-            document.getElementById('stat-dias-estudados').innerText = appState.estatisticas.diasEstudados + ' dias';
-            document.getElementById('stat-sequencia').innerText = appState.estatisticas.sequencia + ' dias';
-        }
-
-        // 8. Calendário Sincronizado
-        function renderizarCalendarioSincronizado() {
-            const container = document.getElementById('conteudo-calendario-sincronizado');
-            container.innerHTML = '';
-
-            for(let dia in appState.planoSemanal) {
-                let mats = appState.planoSemanal[dia];
-                let htmlMats = mats.length > 0 ? mats.join(', ') : 'Nenhuma matéria programada';
-                container.innerHTML += `
-                    <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border:1px solid var(--border); margin-bottom:15px;">
-                        <span style="font-size:1.1rem; font-weight:600; color:var(--success); display:block; margin-bottom:6px;">${dia}</span>
-                        <p style="font-size:0.95rem; color:var(--text-muted);">Matérias: ${htmlMats}</p>
-                        <p style="font-size:0.85rem; color:var(--accent); margin-top:8px;">Revisões automáticas e metas sincronizadas com o ciclo semanal.</p>
+                htmlDetalhes += `
+                    <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:15px; border-radius:12px; margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-weight:600;">
+                            <span>${mat.nome}</span>
+                            <span style="color:var(--success);">${percMat}%</span>
+                        </div>
+                        <div style="background:var(--bg-main); height:10px; border-radius:5px; overflow:hidden; border:1px solid var(--border);">
+                            <div style="width: ${percMat}%; background:var(--success); height:100%;"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.85rem; color:var(--text-muted);">
+                            <span>Tópicos cadastrados: ${topCount}</span>
+                            <span>Estudados: ${topConc} (${topCount - topConc} restantes)</span>
+                        </div>
                     </div>
                 `;
-            }
+            });
+
+            let percGeral = totalTopicos > 0 ? Math.round((totalConcluidos / totalTopicos) * 100) : 0;
+
+            document.getElementById('txt-progresso-geral').innerText = percGeral + '%';
+            document.getElementById('barra-progresso-geral').style.width = percGeral + '%';
+            document.getElementById('txt-percentual-restante').innerText = 'Restante: ' + (100 - percGeral) + '%';
+            document.getElementById('txt-concluidos-restantes').innerText = `${totalConcluidos} / ${totalTopicos} Tópicos`;
+            
+            document.getElementById('stat-materias-concluidas').innerText = `${materiasConcluidas} / ${appState.materias.length}`;
+            document.getElementById('stat-revisoes-realizadas').innerText = appState.revisoes.length;
+            document.getElementById('detalhes-materias-progresso').innerHTML = htmlDetalhes;
         }
 
-        // Utilidades
-        function mudarCorTema(corHex) {
-            document.documentElement.style.setProperty('--accent', corHex);
-            mostrarToast('Cor de destaque atualizada!');
+        function renderizarCalendarioSincronizado() {
+            const container = document.getElementById('conteudo-calendario-sincronizado');
+            if(appState.revisoes.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:20px;">Nenhuma revisão pendente no momento. Conclua tópicos para gerar revisões automáticas.</p>`;
+                return;
+            }
+            container.innerHTML = '';
+            appState.revisoes.forEach((rev, index) => {
+                container.innerHTML += `
+                    <div class="item-row">
+                        <div>
+                            <span style="display:block; color:var(--accent); margin-bottom:4px;">${rev.materia}</span>
+                            <span style="font-size:0.95rem; font-weight:normal; color:var(--text-main);">${rev.topico}</span>
+                            <span style="display:block; font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Gerado em: ${rev.criadoEm}</span>
+                        </div>
+                        <button class="btn-acao-sm" onclick="concluirRevisao(${index})">Revisar ✓</button>
+                    </div>
+                `;
+            });
+        }
+
+        function concluirRevisao(index) {
+            appState.revisoes.splice(index, 1);
+            salvarLocalStorage();
+            renderizarCalendarioSincronizado();
+            mostrarToast('Revisão concluída!');
+        }
+
+        // 12. Meu Perfil
+        function carregarPerfilInputs() {
+            document.getElementById('input-perfil-nome').value = appState.perfil.nome || "";
+            document.getElementById('input-perfil-idade').value = appState.perfil.idade || "";
+            document.getElementById('input-perfil-nascimento').value = appState.perfil.nascimento || "";
+            document.getElementById('input-perfil-cidade').value = appState.perfil.cidade || "";
+            document.getElementById('input-perfil-estado').value = appState.perfil.estado || "";
+            document.getElementById('input-perfil-objetivo').value = appState.perfil.objetivo || "";
         }
 
         function salvarPerfil() {
-            const nome = document.getElementById('input-perfil-nome').value;
-            mostrarToast(`Perfil de ${nome} salvo com sucesso!`);
+            appState.perfil.nome = document.getElementById('input-perfil-nome').value;
+            appState.perfil.idade = document.getElementById('input-perfil-idade').value;
+            appState.perfil.nascimento = document.getElementById('input-perfil-nascimento').value;
+            appState.perfil.cidade = document.getElementById('input-perfil-cidade').value;
+            appState.perfil.estado = document.getElementById('input-perfil-estado').value;
+            appState.perfil.objetivo = document.getElementById('input-perfil-objetivo').value;
+            salvarLocalStorage();
+            mostrarToast('Perfil atualizado com sucesso!');
         }
 
-        function mostrarToast(mensagem) {
-            const toast = document.getElementById('toast-feedback');
-            toast.innerText = mensagem;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3500);
+        function mudarCorTema(corHex) {
+            document.documentElement.style.setProperty('--accent', corHex);
+            mostrarToast('Tema atualizado!');
         }
     </script>
 </body>
