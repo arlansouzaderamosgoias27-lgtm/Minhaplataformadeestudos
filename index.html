@@ -3,16 +3,517 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudos PMGO & PMDF</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Sistema de Estudos PMGO/PMDF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-6">
-    <div class="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-xl text-center border border-slate-700">
-        <h1 class="text-2xl font-bold mb-3">🚀 Plataforma PMGO & PMDF</h1>
-        <p class="text-slate-400 text-sm mb-6">O sistema de estudos está pronto.</p>
-        <a href="Sistema_Estudos_PMGO_PMDF.html" class="inline-block w-full bg-blue-600 hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl transition shadow-lg">
-            Entrar no Sistema
-        </a>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Sistema de Estudos <span class="text-blue-500">PMGO/PMDF</span></h1>
+                    <p class="text-xs text-slate-400">Controle de Tópicos, Ciclos e Revisões Espaçadas</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <button onclick="abrirModalTopico()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Novo Tópico
+                </button>
+                <button onclick="abrirModalMateria()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-book"></i> Matérias
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-8">
+
+        <!-- Painel Geral -->
+        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+            <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-blue-500"></i> Painel Geral
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-4 text-center">
+                    <div id="stat-topicos" class="text-3xl font-extrabold text-blue-400">0</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Tópicos</div>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-4 text-center">
+                    <div id="stat-concluidos" class="text-3xl font-extrabold text-emerald-400">0</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Concluídos</div>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-4 text-center">
+                    <div id="stat-revisoes" class="text-3xl font-extrabold text-amber-400">0</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Revisões Feitas</div>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-4 text-center">
+                    <div id="stat-materias" class="text-3xl font-extrabold text-purple-400">0</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Matérias</div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-slate-400">Progresso geral de revisões</span>
+                    <span id="progresso-geral-txt" class="font-bold text-blue-400">0%</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden border border-slate-700">
+                    <div id="barra-progresso-geral" class="bg-gradient-to-r from-blue-600 to-emerald-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtros e Busca -->
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="relative w-full md:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="filtro-busca" oninput="renderizarTudo()" placeholder="Pesquisar tópico ou matéria..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition">
+            </div>
+            <div class="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                <select id="filtro-materia" onchange="renderizarTudo()" class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                    <option value="">Todas as Matérias</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tópicos de Estudo -->
+        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-blue-500"></i> Tópicos de Estudo
+                </h2>
+                <span id="contador-topicos-exibidos" class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">0 tópicos</span>
+            </div>
+            <div id="lista-topicos" class="space-y-4">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Backup e Exportação -->
+        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+            <h2 class="text-lg font-bold text-slate-200 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-database text-blue-500"></i> Exportar e Backup
+            </h2>
+            <p class="text-xs text-slate-400 mb-4">Tudo funciona direto no seu navegador. Faça backup regularmente para não perder seus dados.</p>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="exportarDados()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Baixar Backup (JSON)
+                </button>
+                <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-upload"></i> Restaurar Backup
+                    <input type="file" id="arquivo-backup" onchange="importarDados(event)" accept=".json" class="hidden">
+                </label>
+                <button onclick="resetarDados()" class="bg-rose-950/40 hover:bg-rose-900/50 text-rose-400 px-4 py-2.5 rounded-xl text-sm font-medium transition border border-rose-900/50 flex items-center gap-2 ml-auto">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Limpar Tudo
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-4 text-center text-xs text-slate-500 mt-auto">
+        Sistema de Estudos PMGO/PMDF &bull; Foco na Aprovação
+    </footer>
+
+    <!-- Modal Novo/Editar Tópico -->
+    <div id="modal-topico" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+            <h3 id="modal-topico-titulo" class="text-lg font-bold text-slate-100 mb-4">Novo Tópico de Estudo</h3>
+            <input type="hidden" id="topico-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Matéria</label>
+                    <select id="topico-materia" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Nome do Tópico</label>
+                    <input type="text" id="topico-nome" placeholder="Ex: Direitos Fundamentais (Art. 5º)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Quantidade de Revisões (R1 até R...)</label>
+                    <input type="number" id="topico-total-revisoes" min="1" max="20" value="7" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="fecharModalTopico()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition">Cancelar</button>
+                <button onclick="salvarTopico()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-blue-600/20">Salvar</button>
+            </div>
+        </div>
     </div>
+
+    <!-- Modal Gerenciar Matérias -->
+    <div id="modal-materia" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <h3 class="text-lg font-bold text-slate-100 mb-4">Gerenciar Matérias</h3>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="nova-materia-nome" placeholder="Nome da nova matéria..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                <button onclick="adicionarMateria()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shrink-0">Adicionar</button>
+            </div>
+            <div id="lista-materias-modal" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <!-- Preenchido via JS -->
+            </div>
+            <div class="flex justify-end mt-6">
+                <button onclick="fecharModalMateria()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Principal -->
+    <script>
+        // Dados Iniciais Padrão (PMGO / PMDF)
+        const materiasIniciais = [
+            "Direito Constitucional",
+            "Direito Administrativo",
+            "Direito Penal",
+            "Direito Processual Penal",
+            "Língua Portuguesa",
+            "Raciocínio Lógico e Matemático",
+            "Legislação PMGO / PMDF",
+            "Redação Discursiva"
+        ];
+
+        const topicosIniciais = [
+            { id: 1, materia: "Direito Constitucional", nome: "Direitos e Garantias Fundamentais (Art. 5º)", totalRevisoes: 7, revisoesFeitas: [true, false, false, false, false, false, false] },
+            { id: 2, materia: "Língua Portuguesa", nome: "Crase e Concordância Verbal", totalRevisoes: 7, revisoesFeitas: [false, false, false, false, false, false, false] }
+        ];
+
+        // Estado do Aplicativo
+        let dadosApp = {
+            materias: JSON.parse(localStorage.getItem('pm_materias')) || materiasIniciais,
+            topicos: JSON.parse(localStorage.getItem('pm_topicos')) || topicosIniciais
+        };
+
+        function salvarStorage() {
+            localStorage.setItem('pm_materias', JSON.stringify(dadosApp.materias));
+            localStorage.setItem('pm_topicos', JSON.stringify(dadosApp.topicos));
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarTudo();
+        });
+
+        function renderizarTudo() {
+            atualizarSelects();
+            renderizarEstatisticas();
+            renderizarTopicos();
+        }
+
+        function atualizarSelects() {
+            const selectFiltro = document.getElementById('filtro-materia');
+            const selectModal = document.getElementById('topico-materia');
+            
+            const valorAtualFiltro = selectFiltro.value;
+            const valorAtualModal = selectModal.value;
+
+            selectFiltro.innerHTML = '<option value="">Todas as Matérias</option>';
+            selectModal.innerHTML = '';
+
+            dadosApp.materias.forEach(mat => {
+                selectFiltro.innerHTML += `<option value="${mat}">${mat}</option>`;
+                selectModal.innerHTML += `<option value="${mat}">${mat}</option>`;
+            });
+
+            selectFiltro.value = valorAtualFiltro;
+            if (valorAtualModal) selectModal.value = valorAtualModal;
+        }
+
+        function renderizarEstatisticas() {
+            const totalTopicos = dadosApp.topicos.length;
+            let totalConcluidos = 0;
+            let totalRevisoesFeitas = 0;
+            let totalRevisoesPossiveis = 0;
+
+            dadosApp.topicos.forEach(t => {
+                totalRevisoesPossiveis += t.totalRevisoes;
+                let concluidasTopico = t.revisoesFeitas.filter(Boolean).length;
+                totalRevisoesFeitas += concluidasTopico;
+                if (concluidasTopico === t.totalRevisoes) {
+                    totalConcluidos++;
+                }
+            });
+
+            const progressoGeral = totalRevisoesPossiveis > 0 ? Math.round((totalRevisoesFeitas / totalRevisoesPossiveis) * 100) : 0;
+
+            document.getElementById('stat-topicos').innerText = totalTopicos;
+            document.getElementById('stat-concluidos').innerText = totalConcluidos;
+            document.getElementById('stat-revisoes').innerText = totalRevisoesFeitas;
+            document.getElementById('stat-materias').innerText = dadosApp.materias.length;
+
+            document.getElementById('progresso-geral-txt').innerText = `${progressoGeral}%`;
+            document.getElementById('barra-progresso-geral.style')
+            document.getElementById('barra-progresso-geral').style.width = `${progressoGeral}%`;
+        }
+
+        function renderizarTopicos() {
+            const lista = document.getElementById('lista-topicos');
+            const termoBusca = document.getElementById('filtro-busca').value.toLowerCase();
+            const materiaFiltro = document.getElementById('filtro-materia').value;
+
+            const topicosFiltrados = dadosApp.topicos.filter(t => {
+                const matchBusca = t.nome.toLowerCase().includes(termoBusca) || t.materia.toLowerCase().includes(termoBusca);
+                const matchMateria = materiaFiltro === "" || t.materia === materiaFiltro;
+                return matchBusca && matchMateria;
+            });
+
+            document.getElementById('contador-topicos-exibidos').innerText = `${topicosFiltrados.length} tópico(s)`;
+
+            if (topicosFiltrados.length === 0) {
+                lista.innerHTML = `
+                    <div class="text-center py-12 text-slate-500 bg-slate-900/30 border border-slate-800/60 rounded-xl">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-600"></i>
+                        <p class="text-sm">Nenhum tópico encontrado.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            lista.innerHTML = '';
+            topicosFiltrados.forEach(topico => {
+                // Garante array de revisões compatível com o total
+                if (!topico.revisoesFeitas || topico.revisoesFeitas.length !== topico.totalRevisoes) {
+                    let novoArr = [];
+                    for(let i=0; i<topico.totalRevisoes; i++) {
+                        novoArr.push(topico.revisoesFeitas ? !!topico.revisoesFeitas[i] : false);
+                    }
+                    topico.revisoesFeitas = novoArr;
+                }
+
+                let concluidas = topico.revisoesFeitas.filter(Boolean).length;
+                let pct = Math.round((concluidas / topico.totalRevisoes) * 100);
+
+                let div = document.createElement('div');
+                div.className = "bg-slate-800/70 border border-slate-700/60 rounded-xl p-5 shadow-md transition hover:border-slate-600";
+                
+                let htmlRevisoes = '';
+                for(let i=0; i<topico.totalRevisoes; i++) {
+                    let checked = topico.revisoesFeitas[i] ? 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-600/30' : 'bg-slate-900 border-slate-700 text-slate-500 hover:border-slate-600';
+                    htmlRevisoes += `
+                        <button onclick="alternarRevisao(${topico.id}, ${i})" class="w-9 h-9 rounded-lg font-bold text-xs flex items-center justify-center border transition ${checked}" title="Revisão R${i+1}">
+                            R${i+1}
+                        </button>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-3">
+                        <div>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-950/80 text-blue-400 border border-blue-900/50">${topico.materia}</span>
+                            <h3 class="text-base font-bold text-slate-100 mt-2">${topico.nome}</h3>
+                        </div>
+                        <div class="flex items-center gap-2 self-end md:self-auto">
+                            <span class="text-xs font-semibold text-slate-400">${concluidas}/${topico.totalRevisoes} (${pct}%)</span>
+                            <button onclick="abrirModalTopico(${topico.id})" class="text-slate-400 hover:text-blue-400 p-1.5 transition" title="Editar"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="excluirTopico(${topico.id})" class="text-slate-400 hover:text-rose-400 p-1.5 transition" title="Excluir"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-900 rounded-full h-2 mb-4 overflow-hidden border border-slate-700/50">
+                        <div class="bg-blue-500 h-full transition-all duration-300" style="width: ${pct}%"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${htmlRevisoes}
+                    </div>
+                `;
+                lista.appendChild(div);
+            });
+        }
+
+        function alternarRevisao(id, index) {
+            const topico = dadosApp.topicos.find(t => t.id === id);
+            if (topico) {
+                topico.revisoesFeitas[index] = !topico.revisoesFeitas[index];
+                salvarStorage();
+                renderizarTudo();
+            }
+        }
+
+        // Modais de Tópico
+        function abrirModalTopico(id = null) {
+            const modal = document.getElementById('modal-topico');
+            const titulo = document.getElementById('modal-topico-titulo');
+            
+            document.getElementById('topico-id').value = "";
+            document.getElementById('topico-nome').value = "";
+            document.getElementById('topico-total-revisoes').value = "7";
+
+            if (id !== null) {
+                titulo.innerText = "Editar Tópico";
+                const topico = dadosApp.topicos.find(t => t.id === id);
+                if (topico) {
+                    document.getElementById('topico-id').value = topico.id;
+                    document.getElementById('topico-materia').value = topico.materia;
+                    document.getElementById('topico-nome').value = topico.nome;
+                    document.getElementById('topico-total-revisoes').value = topico.totalRevisoes;
+                }
+            } else {
+                titulo.innerText = "Novo Tópico de Estudo";
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function fecharModalTopico() {
+            document.getElementById('modal-topico').classList.add('hidden');
+        }
+
+        function salvarTopico() {
+            const id = document.getElementById('topico-id').value;
+            const materia = document.getElementById('topico-materia').value;
+            const nome = document.getElementById('topico-nome').value.trim();
+            const totalRevisoes = parseInt(document.getElementById('topico-total-revisoes').value);
+
+            if (!nome) {
+                alert('Por favor, informe o nome do tópico.');
+                return;
+            }
+            if (!materia) {
+                alert('Selecione uma matéria.');
+                return;
+            }
+
+            if (id === "") {
+                // Criar novo
+                let novoId = dadosApp.topicos.length > 0 ? Math.max(...dadosApp.topicos.map(t => t.id)) + 1 : 1;
+                let revisoesFeitas = new Array(totalRevisoes).fill(false);
+                dadosApp.topicos.push({ id: novoId, materia, nome, totalRevisoes, revisoesFeitas });
+            } else {
+                // Editar existente
+                let topico = dadosApp.topicos.find(t => t.id == id);
+                if (topico) {
+                    topico.materia = materia;
+                    topico.nome = nome;
+                    if (topico.totalRevisoes !== totalRevisoes) {
+                        topico.totalRevisoes = totalRevisoes;
+                        let novoArr = [];
+                        for(let i=0; i<totalRevisoes; i++) {
+                            novoArr.push(topico.revisoesFeitas[i] || false);
+                        }
+                        topico.revisoesFeitas = novoArr;
+                    }
+                }
+            }
+
+            salvarStorage();
+            fecharModalTopico();
+            renderizarTudo();
+        }
+
+        function excluirTopico(id) {
+            if (confirm('Deseja realmente excluir este tópico?')) {
+                dadosApp.topicos = dadosApp.topicos.filter(t => t.id !== id);
+                salvarStorage();
+                renderizarTudo();
+            }
+        }
+
+        // Modais de Matéria
+        function abrirModalMateria() {
+            renderizarListaMateriasModal();
+            document.getElementById('modal-materia').classList.remove('hidden');
+        }
+
+        function fecharModalMateria() {
+            document.getElementById('modal-materia').classList.add('hidden');
+        }
+
+        function renderizarListaMateriasModal() {
+            const container = document.getElementById('lista-materias-modal');
+            container.innerHTML = '';
+            dadosApp.materias.forEach(mat => {
+                let div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-slate-950 px-3 py-2 rounded-xl border border-slate-800 text-sm";
+                div.innerHTML = `
+                    <span class="text-slate-200 font-medium">${mat}</span>
+                    <button onclick="excluirMateria('${mat}')" class="text-slate-400 hover:text-rose-400 transition p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function adicionarMateria() {
+            const input = document.getElementById('nova-materia-nome');
+            const nome = input.value.trim();
+            if (!nome) return;
+
+            if (dadosApp.materias.includes(nome)) {
+                alert('Esta matéria já está cadastrada.');
+                return;
+            }
+
+            dadosApp.materias.push(nome);
+            input.value = "";
+            salvarStorage();
+            renderizarListaMateriasModal();
+            atualizarSelects();
+        }
+
+        function excluirMateria(nome) {
+            if (confirm(`Excluir a matéria "${nome}"? Os tópicos associados a ela ficarão sem matéria correspondente até serem editados.`)) {
+                dadosApp.materias = dadosApp.materias.filter(m => m !== nome);
+                salvarStorage();
+                renderizarListaMateriasModal();
+                renderizarTudo();
+            }
+        }
+
+        // Backup e Restauração
+        function exportarDados() {
+            const dadosStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosApp, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dadosStr);
+            downloadAnchor.setAttribute("download", `backup_estudos_pm_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importarDados(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.materias && parsed.topicos) {
+                        dadosApp = parsed;
+                        salvarStorage();
+                        renderizarTudo();
+                        alert('Backup restaurado com sucesso!');
+                    } else {
+                        alert('Arquivo de backup inválido.');
+                    }
+                } catch (err) {
+                    alert('Erro ao ler o arquivo JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetarDados() {
+            if (confirm('ATENÇÃO: Deseja apagar todos os dados e restaurar o padrão? Todo o seu progresso será perdido.')) {
+                localStorage.removeItem('pm_materias');
+                localStorage.removeItem('pm_topicos');
+                dadosApp = {
+                    materias: [...materiasIniciais],
+                    topicos: [...topicosIniciais]
+                };
+                renderizarTudo();
+                alert('Sistema resetado para o padrão.');
+            }
+        }
+    </script>
 </body>
 </html>
