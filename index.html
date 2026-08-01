@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Estudos - Arlan Souza de Ramos</title>
+    <title>Plataforma de Estudos</title>
     <style>
         :root {
             --bg-main: #0a0e17;
-            --bg-panel: #131b2e;
-            --bg-card: #1c263f;
+            --bg-card: #131b2e;
             --accent: #3b82f6;
             --accent-hover: #2563eb;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --success: #10b981;
             --success-hover: #059669;
-            --danger: #ef4444;
-            --border: #2a3858;
+            --border: #1e293b;
             --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-size-base: 16px;
         }
 
         * {
@@ -34,12 +33,14 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            font-size: var(--font-size-base);
         }
 
+        /* Menu Superior Discreto e Fixo */
         header.top-nav-bar {
-            background-color: var(--bg-panel);
+            background-color: var(--bg-card);
             border-bottom: 1px solid var(--border);
-            padding: 15px 20px;
+            padding: 15px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -52,49 +53,53 @@
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            letter-spacing: 0.5px;
         }
 
         .nav-icons {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             list-style: none;
         }
 
         .nav-icons button {
-            background: var(--bg-card);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
             color: var(--text-muted);
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
 
         .nav-icons button:hover, .nav-icons button.active {
             background-color: var(--accent);
             color: white;
             border-color: var(--accent);
+            transform: translateY(-1px);
         }
 
+        /* Estrutura de Telas Cheias Exclusivas */
         main {
             flex: 1;
-            padding: 20px;
-            max-width: 900px;
             width: 100%;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .screen {
             display: none;
-            animation: fadeIn 0.25s ease;
+            width: 100%;
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .screen.active {
@@ -102,169 +107,194 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Botão de Voltar Padronizado */
         .btn-voltar {
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text-muted);
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 30px;
             transition: all 0.2s;
         }
 
         .btn-voltar:hover {
             background: var(--bg-card);
             color: var(--text-main);
+            border-color: var(--text-muted);
         }
 
-        .card {
-            background-color: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-        }
-
-        .card h3 {
-            margin-bottom: 15px;
-            color: var(--text-main);
-            font-size: 1.15rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .hero-banner {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-            border: 1px solid #3b82f6;
-            border-radius: 16px;
-            padding: 30px 20px;
+        /* Tela Inicial Minimalista de Foco */
+        .hero-initial {
             text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
         }
 
-        .rocket-icon {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
+        .rocket-minimal {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
             display: inline-block;
-            animation: floatRocket 3s ease-in-out infinite;
+            animation: floatRocket 3.5s ease-in-out infinite;
         }
 
         @keyframes floatRocket {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            50% { transform: translateY(-8px); }
         }
 
-        .hero-banner h2 {
-            font-size: 1.6rem;
+        .hero-initial h1 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
             color: #fff;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
         }
 
-        .hero-banner p {
-            color: #93c5fd;
-            font-size: 1rem;
-            margin-bottom: 25px;
-            line-height: 1.4;
+        .hero-initial p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 45px;
+            line-height: 1.5;
         }
 
-        .btn-large {
+        .btn-iniciar-estudos {
             background-color: var(--success);
             color: white;
             border: none;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 18px 40px;
+            border-radius: 14px;
+            font-size: 1.15rem;
+            font-weight: 700;
             cursor: pointer;
-            width: 100%;
-            max-width: 320px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3);
+            letter-spacing: 0.5px;
         }
 
-        .btn-large:hover {
+        .btn-iniciar-estudos:hover {
             background-color: var(--success-hover);
             transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
         }
 
-        .coach-alert {
-            background-color: rgba(239, 68, 68, 0.1);
-            border-left: 4px solid var(--danger);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-top: 1px solid rgba(239, 68, 68, 0.2);
-            border-right: 1px solid rgba(239, 68, 68, 0.2);
-            border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+        /* Cards Limpos e Espaçados */
+        .card-clean {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
         }
 
-        .coach-alert p {
-            font-size: 0.9rem;
-            color: #fca5a5;
-            line-height: 1.4;
+        .card-clean h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 10px;
+            color: var(--text-main);
         }
 
-        #toast-feedback {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+        .card-clean p.subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        /* Metas de Hoje com Letras Grandes e Espaçadas */
+        .meta-card-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .meta-info span.materia-tag {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .meta-info h3 {
+            font-size: 1.35rem;
+            color: var(--text-main);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .btn-concluir-topico {
             background-color: var(--success);
             color: white;
-            padding: 12px 20px;
+            border: none;
+            padding: 14px 24px;
             border-radius: 10px;
+            font-size: 1rem;
             font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            display: none;
-            z-index: 2000;
+            cursor: pointer;
+            transition: all 0.2s;
             text-align: center;
-            width: 90%;
-            max-width: 400px;
         }
 
+        .btn-concluir-topico:hover {
+            background-color: var(--success-hover);
+        }
+
+        /* Formulários e Configurações Exclusivas */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 22px;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 12px;
-            background: var(--bg-card);
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             color: white;
             font-size: 1rem;
+            transition: border-color 0.2s;
         }
 
-        button.btn {
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        button.btn-primary {
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
@@ -272,194 +302,253 @@
             transition: background 0.2s;
         }
 
-        button.btn:hover {
+        button.btn-primary:hover {
             background-color: var(--accent-hover);
         }
 
-        .meta-item-large {
-            background: var(--bg-card);
+        /* Modais / Alertas de Conclusão Customizados */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 8, 15, 0.85);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
             padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            border-radius: 20px;
+            padding: 35px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: scaleUp 0.3s ease;
         }
 
-        .meta-info strong {
-            font-size: 1.25rem;
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
             color: var(--text-main);
-            display: block;
-            margin-bottom: 4px;
         }
 
-        .meta-info p {
-            font-size: 1rem;
+        .modal-card p {
             color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
         }
 
-        .btn-concluir {
+        /* Toast Discreto */
+        #toast-feedback {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             background-color: var(--success);
             color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 14px 24px;
+            border-radius: 12px;
             font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.2s;
-        }
-
-        .btn-concluir:hover {
-            background-color: var(--success-hover);
-        }
-
-        .topic-list {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .topic-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
             font-size: 0.95rem;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: none;
+            z-index: 4000;
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
         }
 
         @media(min-width: 640px) {
-            main {
-                padding: 30px;
-            }
-            .meta-item-large {
+            .meta-card-item {
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
             }
-            .btn-concluir {
+            .btn-concluir-topico {
                 width: auto;
-                padding: 10px 20px;
+                padding: 12px 24px;
+            }
+            main {
+                padding: 50px 30px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div id="toast-feedback">Tópico concluído com sucesso!</div>
+    <!-- Toast de Feedback Discreto -->
+    <div id="toast-feedback">Salvo com sucesso!</div>
 
+    <!-- Modal de Questões e Mensagem Motivacional -->
+    <div id="modal-questoes" class="modal-overlay">
+        <div class="modal-card">
+            <div id="modal-etapa-pergunta">
+                <h3>Quantas questões você respondeu?</h3>
+                <p>Informe o número de questões para que o sistema atualize seu progresso, monte as revisões automáticas e sincronize o calendário.</p>
+                <div class="form-group">
+                    <input type="number" id="input-qtd-questoes" placeholder="Ex: 25" min="0">
+                </div>
+                <button class="btn-primary" onclick="confirmarConclusaoTopico()">Salvar e Concluir</button>
+            </div>
+            <div id="modal-etapa-sucesso" style="display: none;">
+                <h3 style="color: var(--success); margin-bottom: 15px;">🎉 Parabéns!</h3>
+                <p>Mais uma meta concluída.<br><br>Você está um passo mais próximo da aprovação.<br><br><strong>Continue com foco, disciplina e execução.</strong></p>
+                <button class="btn-primary" onclick="fecharModalSucesso()">Continuar Jornada</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Superior Fixo com Ícones -->
     <header class="top-nav-bar">
         <div class="brand-title">
-            <span>⚡ StudyMaster</span>
+            <span>Plataforma de Estudos</span>
         </div>
         <ul class="nav-icons">
             <li><button class="active" onclick="switchScreen('dashboard', event)" title="Início">🏠</button></li>
             <li><button onclick="switchScreen('metas', event)" title="Metas de Hoje">🎯</button></li>
-            <li><button onclick="switchScreen('progresso', event)" title="Progresso e Revisões">📈</button></li>
-            <li><button onclick="switchScreen('calendario', event)" title="Calendário & Escala">📅</button></li>
+            <li><button onclick="switchScreen('progresso', event)" title="Progresso">📈</button></li>
+            <li><button onclick="switchScreen('calendario', event)" title="Calendário">📅</button></li>
             <li><button onclick="switchScreen('perfil', event)" title="Perfil">👤</button></li>
             <li><button onclick="switchScreen('config', event)" title="Configurações">⚙️</button></li>
         </ul>
     </header>
 
+    <!-- Conteúdo Principal / Telas Exclusivas -->
     <main>
-        <!-- TELA 1: DASHBOARD / HOME -->
+        <!-- 1. TELA INICIAL -->
         <div id="dashboard" class="screen active">
-            <div class="hero-banner">
-                <div class="rocket-icon">🚀</div>
-                <h2>Foco, Disciplina e Execução</h2>
+            <div class="hero-initial">
+                <div class="rocket-minimal">🚀</div>
+                <h1>FOCO, DISCIPLINA E EXECUÇÃO</h1>
                 <p>A constância supera o talento. Sua jornada de alta performance sincronizada.</p>
-                <button class="btn-large" onclick="switchScreen('metas')">Iniciar Metas</button>
-            </div>
-
-            <div id="coach-container"></div>
-
-            <div class="card">
-                <h3>👤 Visão Geral do Aluno</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Arlan Souza de Ramos | 27 anos | Goiânia</p>
-                <p style="color: var(--success); font-size: 0.9rem; margin-top: 8px;">● Escala 12x36 Sincronizada</p>
+                <button class="btn-iniciar-estudos" onclick="switchScreen('metas')">INICIAR ESTUDOS</button>
             </div>
         </div>
 
-        <!-- TELA 2: METAS DE HOJE -->
+        <!-- 2. TELA METAS DE HOJE -->
         <div id="metas" class="screen">
-            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar ao Início</button>
-            <div class="card">
-                <h3>🎯 Metas de Hoje</h3>
-                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Tópicos reais do plano sincronizados com o seu calendário.</p>
+            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
+            <div class="card-clean">
+                <h2>Metas de Hoje</h2>
+                <p class="subtitle">Tópicos sincronizados automaticamente pelo seu plano e escala.</p>
                 
-                <div id="today-goals-container">
-                    <div class="meta-item-large">
+                <div id="lista-metas-hoje">
+                    <div class="meta-card-item">
                         <div class="meta-info">
-                            <strong>Direito Penal</strong>
-                            <p>Tópico 00 - Introdução e Princípios Fundamentais</p>
+                            <span class="materia-tag">Direito Penal</span>
+                            <h3>Tópico 00 - Introdução e Princípios Fundamentais</h3>
                         </div>
-                        <button class="btn-concluir" onclick="concluirTopico('Direito Penal', '00 - Introdução')">Concluir Tópico</button>
+                        <button class="btn-concluir-topico" onclick="abrirModalQuestoes('Direito Penal', 'Tópico 00 - Introdução')">Concluir tópico</button>
                     </div>
-                    <div class="meta-item-large">
+                    <div class="meta-card-item">
                         <div class="meta-info">
-                            <strong>Direito Processual Penal</strong>
-                            <p>Tópico 00 - Inquérito Policial</p>
+                            <span class="materia-tag">Direito Processual Penal</span>
+                            <h3>Tópico 00 - Inquérito Policial</h3>
                         </div>
-                        <button class="btn-concluir" onclick="concluirTopico('Direito Processual Penal', '00 - Inquérito')">Concluir Tópico</button>
+                        <button class="btn-concluir-topico" onclick="abrirModalQuestoes('Direito Processual Penal', 'Tópico 00 - Inquérito')">Concluir tópico</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TELA 3: PROGRESSO & REVISÕES -->
+        <!-- 3. TELA PROGRESSO -->
         <div id="progresso" class="screen">
-            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar ao Início</button>
-            <div class="card">
-                <h3>📈 Progresso e Revisões Automáticas</h3>
-                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">O sistema controla as revisões (R1, R2...) automaticamente, mantendo a simplicidade.</p>
-                <div style="background: var(--bg-card); height: 22px; border-radius: 11px; overflow: hidden; border: 1px solid var(--border);">
-                    <div style="width: 45%; background: var(--success); height: 100%;"></div>
+            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
+            <div class="card-clean">
+                <h2>Progresso Geral</h2>
+                <p class="subtitle">Acompanhamento isolado de desempenho e métricas.</p>
+                
+                <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600;">
+                        <span>Percentual Estudado</span>
+                        <span style="color: var(--success);">45%</span>
+                    </div>
+                    <div style="background: var(--bg-main); height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+                        <div style="width: 45%; background: var(--success); height: 100%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">
+                        <span>Restante: 55%</span>
+                        <span>Total: 100%</span>
+                    </div>
                 </div>
-                <p style="font-size: 0.9rem; margin-top: 12px; color: var(--text-muted);">Progresso Total do Curso: <strong style="color: var(--text-main);">45% Concluído</strong></p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--accent); display: block; margin-bottom: 5px;">24</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Tópicos Concluídos</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--success); display: block; margin-bottom: 5px;">72</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões Automáticas</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- TELA 4: CALENDÁRIO & ESCALA -->
+        <!-- 4. TELA CALENDÁRIO -->
         <div id="calendario" class="screen">
-            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar ao Início</button>
-            <div class="card">
-                <h3>📅 Calendário & Escala 12x36</h3>
-                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Acompanhamento automatizado de plantões e dias livres.</p>
-                <div style="background: var(--bg-card); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
-                    <span style="font-size: 1.05rem; font-weight: 600; color: var(--success);">Status de Hoje: Dia de Estudo Focado</span>
+            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
+            <div class="card-clean">
+                <h2>Calendário & Sincronização</h2>
+                <p class="subtitle">Escala 12x36 e plano semanal integrados automaticamente.</p>
+                
+                <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; border: 1px solid var(--border); text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 1.1rem; font-weight: 600; color: var(--success); display: block; margin-bottom: 8px;">Status de Hoje: Dia de Estudo Focado</span>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Escala de trabalho e folga sincronizada com o plano semanal sem necessidade de ajustes manuais.</p>
                 </div>
             </div>
         </div>
 
-        <!-- TELA 5: PERFIL -->
+        <!-- 5. TELA PERFIL -->
         <div id="perfil" class="screen">
-            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar ao Início</button>
-            <div class="card">
-                <h3>👤 Meu Perfil</h3>
+            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
+            <div class="card-clean">
+                <h2>Meu Perfil</h2>
+                <p class="subtitle">Estatísticas e dados pessoais do aluno.</p>
+                
                 <div class="form-group">
                     <label>Nome Completo</label>
-                    <input type="text" id="input-nome" value="Arlan Souza de Ramos">
+                    <input type="text" id="input-perfil-nome" value="Arlan Souza de Ramos">
                 </div>
                 <div class="form-group">
                     <label>Idade</label>
-                    <input type="number" id="input-idade" value="27">
+                    <input type="number" id="input-perfil-idade" value="27">
                 </div>
-                <div class="form-group">
-                    <label>Data de Nascimento</label>
-                    <input type="date" id="input-nascimento" value="1998-11-04">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+                        <span style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 5px;">14 dias</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Sequência de Estudos</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+                        <span style="font-size: 1.6rem; font-weight: 700; color: var(--success); display: block; margin-bottom: 5px;">42 dias</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Total de Dias Estudados</span>
+                    </div>
                 </div>
-                <button class="btn" onclick="atualizarPerfil()">Salvar Alterações</button>
+                <button class="btn-primary" style="margin-top: 25px;" onclick="salvarPerfil()">Salvar Alterações</button>
             </div>
         </div>
 
-        <!-- TELA 6: CONFIGURAÇÕES -->
+        <!-- 6. TELA CONFIGURAÇÕES -->
         <div id="config" class="screen">
-            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar ao Início</button>
-            <div class="card">
-                <h3>⚙️ Configurações e Metas</h3>
+            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
+            <div class="card-clean">
+                <h2>Configurações e Aparência</h2>
+                <p class="subtitle">Personalize cores, fontes e gerencie o plano de estudos.</p>
+                
                 <div class="form-group">
                     <label>Cor de Destaque</label>
                     <select id="select-cor" onchange="mudarCorTema(this.value)">
@@ -477,25 +566,33 @@
                         <option value="'Courier New', Courier, monospace">Monospace</option>
                     </select>
                 </div>
-                <div class="form-group" style="margin-top: 25px;">
-                    <label>Cadastrar Nova Matéria (Iniciando em 00)</label>
-                    <input type="text" id="materia-nome" placeholder="Ex: Direito Constitucional" style="margin-bottom: 10px;">
-                    <input type="text" id="topicos-lista" placeholder="00 - Apresentação, 01 - Direitos Fundamentais" style="margin-bottom: 10px;">
-                    <button class="btn" onclick="salvarMateriaConfig()">Adicionar ao Plano</button>
+                <div class="form-group">
+                    <label>Tamanho da Fonte Base</label>
+                    <select id="select-tamanho-fonte" onchange="mudarTamanhoFonte(this.value)">
+                        <option value="15px">Compacto (15px)</option>
+                        <option value="16px" selected>Padrão (16px)</option>
+                        <option value="17px">Confortável (17px)</option>
+                    </select>
                 </div>
-            </div>
 
-            <div class="card">
-                <h3>📚 Matérias Cadastradas</h3>
-                <ul class="topic-list" id="lista-materias-cadastradas">
-                    <li><strong>Direito Penal</strong> <span>Tópicos: 00, 01, 02</span></li>
-                    <li><strong>Direito Processual Penal</strong> <span>Tópicos: 00, 01, 02</span></li>
-                </ul>
+                <div style="border-top: 1px solid var(--border); margin-top: 30px; padding-top: 25px;">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 15px; color: var(--text-main);">Cadastrar Matérias e Tópicos</h3>
+                    <div class="form-group">
+                        <label>Nome da Matéria</label>
+                        <input type="text" id="materia-nome" placeholder="Ex: Direito Constitucional">
+                    </div>
+                    <div class="form-group">
+                        <label>Tópicos (Sincronização Automática)</label>
+                        <input type="text" id="topicos-lista" placeholder="00 - Apresentação, 01 - Direitos Fundamentais">
+                    </div>
+                    <button class="btn-primary" onclick="salvarMateriaConfig()">Adicionar ao Sistema</button>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
+        // Navegação por Telas Cheias Exclusivas
         function switchScreen(screenId, event) {
             document.querySelectorAll('.screen').forEach(scr => {
                 scr.classList.remove('active');
@@ -518,13 +615,35 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function concluirTopico(materia, topico) {
-            let qtd = prompt(`🎉 Tópico concluído: ${materia} (${topico}).\nQuantas questões você fez?`);
-            if (qtd !== null && qtd.trim() !== "") {
-                mostrarToast(`Tópico concluído! ${qtd} questões salvas e revisões programadas.`);
-            }
+        // Fluxo de Conclusão de Tópicos e Revisões Automáticas
+        let topicoAtualConcluindo = null;
+
+        function abrirModalQuestoes(materia, topico) {
+            topicoAtualConcluindo = { materia, topico };
+            document.getElementById('input-qtd-questoes').value = '';
+            document.getElementById('modal-etapa-pergunta').style.display = 'block';
+            document.getElementById('modal-etapa-sucesso').style.display = 'none';
+            document.getElementById('modal-questoes').style.display = 'flex';
         }
 
+        function confirmarConclusaoTopico() {
+            let qtd = document.getElementById('input-qtd-questoes').value;
+            if (qtd === "" || parseInt(qtd) < 0) {
+                alert('Informe um número válido de questões.');
+                return;
+            }
+
+            // Simula salvamento automático de progresso, revisões automáticas (R1 até R50+), calendário e sequência
+            document.getElementById('modal-etapa-pergunta').style.display = 'none';
+            document.getElementById('modal-etapa-sucesso').style.display = 'block';
+        }
+
+        function fecharModalSucesso() {
+            document.getElementById('modal-questoes').style.display = 'none';
+            mostrarToast('Progresso atualizado e revisões automáticas geradas!');
+        }
+
+        // Feedback Visual Discreto (Toast)
         function mostrarToast(mensagem) {
             const toast = document.getElementById('toast-feedback');
             toast.innerText = mensagem;
@@ -534,11 +653,7 @@
             }, 3500);
         }
 
-        function atualizarPerfil() {
-            const nome = document.getElementById('input-nome').value;
-            mostrarToast(`Perfil de ${nome} atualizado com sucesso!`);
-        }
-
+        // Configurações de Aparência
         function mudarCorTema(corHex) {
             document.documentElement.style.setProperty('--accent', corHex);
             mostrarToast('Cor de destaque atualizada!');
@@ -546,7 +661,17 @@
 
         function mudarFonte(fontFamily) {
             document.documentElement.style.setProperty('--font-family', fontFamily);
-            mostrarToast('Fonte atualizada!');
+            mostrarToast('Família de fonte atualizada!');
+        }
+
+        function mudarTamanhoFonte(tamanho) {
+            document.documentElement.style.setProperty('--font-size-base', tamanho);
+            mostrarToast('Tamanho da fonte atualizado!');
+        }
+
+        function salvarPerfil() {
+            const nome = document.getElementById('input-perfil-nome').value;
+            mostrarToast(`Perfil de ${nome} salvo com sucesso!`);
         }
 
         function salvarMateriaConfig() {
@@ -554,36 +679,12 @@
             const topicos = document.getElementById('topicos-lista').value;
             
             if(nome && topicos) {
-                const lista = document.getElementById('lista-materias-cadastradas');
-                const li = document.createElement('li');
-                li.innerHTML = `<strong>${nome}</strong> <span>Tópicos: ${topicos}</span>`;
-                lista.appendChild(li);
-                
                 document.getElementById('materia-nome').value = '';
                 document.getElementById('topicos-lista').value = '';
-                mostrarToast('Matéria adicionada ao plano!');
+                mostrarToast('Matéria sincronizada ao plano de estudos!');
             } else {
                 alert('Preencha todos os campos corretamente.');
             }
-        }
-
-        window.onload = function() {
-            const coachContainer = document.getElementById('coach-container');
-            let pendenciaAnterior = false; 
-            
-            if(pendenciaAnterior) {
-                coachContainer.innerHTML = `
-                    <div class="coach-alert">
-                        <p>⚠️ <strong>Atenção:</strong> Notamos pendências na sua escala 12x36. O foco é a execução constante.</p>
-                        <button class="btn" style="padding: 8px 16px; font-size: 0.9rem;" onclick="reprogramarMetas()">Reprogramar Metas para Hoje</button>
-                    </div>
-                `;
-            }
-        }
-
-        function reprogramarMetas() {
-            mostrarToast('Metas reprogramadas com sucesso!');
-            document.getElementById('coach-container').innerHTML = '';
         }
     </script>
 </body>
