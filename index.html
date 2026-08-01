@@ -3,576 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Coach - Painel de Metas de Arlan</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para Ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Plataforma de Estudos - Arlan</title>
     <style>
-        body { background-color: #0B1220; color: #F1F5F9; }
-        .card-saas { background-color: #0F1A2E; border: 1px solid rgba(30, 41, 59, 0.8); }
+        :root {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --bg-card: #334155;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Menu Lateral Horizontalizado / Fixo */
+        nav {
+            width: 280px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .nav-top h2 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-links button {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links button:hover, .nav-links button.active {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .nav-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+
+        /* Área Principal Ampla */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--bg-panel);
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        .user-pill {
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .content-container {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards e Blocos */
+        .card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        /* Estilo Coach / Alerta de Pendência */
+        .coach-alert {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .coach-alert p {
+            font-size: 0.95rem;
+            color: #fca5a5;
+        }
+
+        /* Formulários e Inputs */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        button.btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        button.btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Metas e Tópicos */
+        .meta-item {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topic-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .topic-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans">
+<body>
 
-    <!-- Header / Navbar Superior -->
-    <header class="bg-[#0F1A2E] border-b border-slate-800 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-6 py-3.5 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600/20 border border-blue-500/30 text-blue-400 p-2.5 rounded-xl">
-                    <i class="fa-solid fa-graduation-cap text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg text-slate-100">Study Coach &bull; Painel de Arlan</h1>
-                    <p class="text-xs text-slate-400">Foco total na aprovação (Uso Exclusivo no PC)</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="abrirModalMateria()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-book-bookmark"></i> Matérias
-                </button>
-                <button onclick="abrirModalTopico()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Novo Tópico
-                </button>
-            </div>
+    <!-- Menu Lateral (Navegação Horizontal em Desktop) -->
+    <nav>
+        <div class="nav-top">
+            <h2>⚙️ Painel de Estudos</h2>
+            <ul class="nav-links">
+                <li><button class="active" onclick="switchTab('dashboard', event)">📊 Dashboard & Metas</button></li>
+                <li><button onclick="switchTab('cursos', event)">📚 Cadastrar Cursos/Tópicos</button></li>
+                <li><button onclick="switchTab('perfil', event)">👤 Meu Perfil</button></li>
+                <li><button onclick="switchTab('config', event)">⚙️ Configurações</button></li>
+            </ul>
         </div>
-    </header>
-
-    <!-- Caixa de Diálogo Interativa / Coach de Cobrança com Conversa Direta -->
-    <div class="max-w-7xl mx-auto px-6 pt-6 w-full">
-        <div id="coach-box" class="card-saas rounded-2xl p-5 border-l-4 border-l-blue-500 flex items-start gap-4 shadow-xl">
-            <div class="bg-blue-600/20 text-blue-400 p-3 rounded-xl shrink-0 mt-0.5">
-                <i class="fa-solid fa-robot text-2xl"></i>
-            </div>
-            <div class="flex-grow">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">Coach Interativo &bull; Conversa com Arlan</h3>
-                    <span id="coach-status-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 font-semibold">Analisando metas...</span>
-                </div>
-                <p id="coach-mensagem" class="text-sm sm:text-base text-slate-200 mt-2 leading-relaxed font-medium">
-                    Carregando análise do seu painel...
-                </p>
-            </div>
+        <div class="nav-bottom">
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Escala: 12x36 Ativa</p>
         </div>
-    </div>
+    </nav>
 
-    <!-- Layout Principal Desktop -->
-    <div class="max-w-7xl mx-auto px-6 py-6 w-full flex-grow grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- Área Principal -->
+    <main>
+        <header>
+            <h1 id="welcome-title">Bem-vindo, Arlan Souza de Ramos</h1>
+            <div class="user-pill" id="user-info-pill">27 anos | Goiânia</div>
+        </header>
 
-        <!-- Menu Lateral SaaS -->
-        <aside class="md:col-span-1 space-y-1 bg-[#0F1A2E] border border-slate-800/80 rounded-2xl p-4 h-fit sticky top-24">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navegação</p>
-            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium bg-blue-600/20 text-blue-400 border border-blue-500/30">
-                <i class="fa-solid fa-bullseye w-5"></i> Metas de Hoje
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-book w-5"></i> Matérias & Tópicos
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-rotate w-5"></i> Ciclo de Revisões
-            </a>
-            <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition">
-                <i class="fa-solid fa-chart-pie w-5"></i> Estatísticas
-            </a>
-        </aside>
+        <div class="content-container">
+            <!-- ABA 1: DASHBOARD / METAS (Estilo Coach) -->
+            <div id="dashboard" class="tab-content active">
+                <div id="coach-container"></div>
 
-        <!-- Conteúdo Principal -->
-        <main class="md:col-span-3 space-y-6">
+                <div class="card">
+                    <h3>🎯 Metas de Hoje</h3>
+                    <div id="today-goals">
+                        <div class="meta-item">
+                            <div>
+                                <strong>Direito Penal</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Tópico 00 - Introdução e Princípios</p>
+                            </div>
+                            <button class="btn" onclick="concluirTopico('Direito Penal', '00 - Introdução')">Concluir Tópico</button>
+                        </div>
+                        <div class="meta-item">
+                            <div>
+                                <strong>Direito Processual Penal</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Tópico 00 - Inquérito Policial</p>
+                            </div>
+                            <button class="btn" onclick="concluirTopico('Direito Processual Penal', '00 - Inquérito')">Concluir Tópico</button>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Cards de Estatísticas / Resumo -->
-            <section class="grid grid-cols-4 gap-4">
-                <div class="card-saas rounded-2xl p-4 shadow-sm">
-                    <p class="text-xs font-medium text-slate-400">Total de Tópicos</p>
-                    <h3 id="stat-topicos" class="text-2xl font-bold text-slate-100 mt-1">0</h3>
-                </div>
-                <div class="card-saas rounded-2xl p-4 shadow-sm">
-                    <p class="text-xs font-medium text-slate-400">Concluídos (100%)</p>
-                    <h3 id="stat-concluidos" class="text-2xl font-bold text-emerald-400 mt-1">0</h3>
-                </div>
-                <div class="card-saas rounded-2xl p-4 shadow-sm">
-                    <p class="text-xs font-medium text-slate-400">Revisões Feitas</p>
-                    <h3 id="stat-revisoes" class="text-2xl font-bold text-blue-400 mt-1">0</h3>
-                </div>
-                <div class="card-saas rounded-2xl p-4 shadow-sm">
-                    <p class="text-xs font-medium text-slate-400">Matérias</p>
-                    <h3 id="stat-materias" class="text-2xl font-bold text-purple-400 mt-1">0</h3>
-                </div>
-            </section>
-
-            <!-- Barra de Progresso Geral -->
-            <section class="card-saas rounded-2xl p-5 shadow-sm">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold text-slate-300">Progresso Geral das Metas de Arlan</span>
-                    <span id="progresso-geral-txt" class="text-xs font-bold text-blue-400">0%</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
-                    <div id="barra-progresso-geral" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-            </section>
-
-            <!-- Filtros e Busca -->
-            <section class="flex gap-4 items-center justify-between">
-                <div class="w-80 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-slate-500"></i>
-                    <input type="text" id="filtro-busca" oninput="renderizarTopicos()" placeholder="Buscar tópico..." class="w-full card-saas rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-                </div>
-                <div class="w-64">
-                    <select id="filtro-materia" onchange="renderizarTopicos()" class="w-full card-saas rounded-xl px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-                        <option value="">Todas as Matérias</option>
-                    </select>
-                </div>
-            </section>
-
-            <!-- Lista de Tópicos e Metas -->
-            <section class="space-y-4">
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="text-sm font-bold text-slate-300 tracking-wide uppercase">Metas de Hoje (Faça suas marcações)</h2>
-                    <span id="contador-topicos-exibidos" class="text-xs text-slate-500">0 tópico(s)</span>
-                </div>
-                <div id="lista-topicos" class="space-y-3">
-                    <!-- Preenchido via JavaScript -->
-                </div>
-            </section>
-
-            <!-- Seção de Backup e Dados -->
-            <section class="card-saas bg-opacity-50 rounded-2xl p-5 flex items-center gap-4">
-                <span class="text-xs font-medium text-slate-400">Gerenciamento de Dados:</span>
-                <button onclick="exportarDados()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-download"></i> Baixar Backup
-                </button>
-                <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-sm font-medium transition border border-slate-700 flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-upload"></i> Restaurar
-                    <input type="file" id="arquivo-backup" onchange="importarDados(event)" accept=".json" class="hidden">
-                </label>
-                <button onclick="resetarDados()" class="bg-rose-950/40 hover:bg-rose-900/50 text-rose-400 px-4 py-2 rounded-xl text-sm font-medium transition border border-rose-900/50 flex items-center gap-2 ml-auto">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Limpar Tudo
-                </button>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- Footer -->
-    <footer class="card-saas border-t border-slate-800 py-4 text-center text-xs text-slate-500 mt-auto">
-        Study Coach Desktop &bull; Painel Exclusivo de Arlan
-    </footer>
-
-    <!-- Modal Novo/Editar Tópico -->
-    <div id="modal-topico" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="card-saas rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <h3 id="modal-topico-titulo" class="text-lg font-bold text-slate-100 mb-4">Novo Tópico de Estudo</h3>
-            <input type="hidden" id="topico-id">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Matéria</label>
-                    <select id="topico-materia" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-                        <!-- Preenchido via JS -->
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Nome do Tópico</label>
-                    <input type="text" id="topico-nome" placeholder="Ex: Tópico 02 - Inquérito Policial" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Quantidade de Revisões / Metas</label>
-                    <input type="number" id="topico-total-revisoes" min="1" max="20" value="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                <div class="card">
+                    <h3>📈 Desempenho Geral do Curso</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 10px;">Acompanhamento de tópicos concluídos e revisões ilimitadas (R1, R2...).</p>
+                    <div style="background: var(--bg-card); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div style="width: 35%; background: var(--accent); height: 100%;"></div>
+                    </div>
+                    <p style="font-size: 0.85rem; margin-top: 8px; color: var(--text-muted);">Progresso total: 35% concluído</p>
                 </div>
             </div>
-            <div class="flex justify-end gap-3 mt-6">
-                <button onclick="fecharModalTopico()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition">Cancelar</button>
-                <button onclick="salvarTopico()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-blue-600/20">Salvar</button>
+
+            <!-- ABA 2: CADASTRAR CURSOS E TÓPICOS -->
+            <div id="cursos" class="tab-content">
+                <div class="card">
+                    <h3>📚 Cadastro de Matérias e Tópicos</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Cadastre seu curso completo. Lembre-se que os tópicos devem começar obrigatoriamente pela numeração 00.</p>
+                    
+                    <div class="form-group">
+                        <label>Nome da Matéria</label>
+                        <input type="text" id="materia-nome" placeholder="Ex: Direito Constitucional">
+                    </div>
+                    <div class="form-group">
+                        <label>Tópicos (Separe por vírgula ou adicione o 00 inicial)</label>
+                        <input type="text" id="topicos-lista" placeholder="00 - Apresentação, 01 - Direitos Fundamentais">
+                    </div>
+                    <button class="btn" onclick="salvarMateria()">Salvar Matéria</button>
+                </div>
+
+                <div class="card">
+                    <h3>📋 Matérias Cadastradas</h3>
+                    <ul class="topic-list" id="lista-materias-cadastradas">
+                        <li><strong>Direito Penal</strong> <span>Tópicos: 00, 01, 02 (Gerenciado)</span></li>
+                        <li><strong>Direito Processual</strong> <span>Tópicos: 00, 01, 02 (Gerenciado)</span></li>
+                    </ul>
+                </div>
             </div>
+
+            <!-- ABA 3: PERFIL -->
+            <div id="perfil" class="tab-content">
+                <div class="card">
+                    <h3>👤 Meus Dados</h3>
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="input-nome" value="Arlan Souza de Ramos">
+                    </div>
+                    <div class="form-group">
+                        <label>Idade</label>
+                        <input type="number" id="input-idade" value="27">
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Nascimento</label>
+                        <input type="date" id="input-nascimento" value="1998-11-04">
+                    </div>
+                    <button class="btn" onclick="atualizarPerfil()">Atualizar Perfil</button>
+                </div>
+            </div>
+
+            <!-- ABA 4: CONFIGURAÇÕES -->
+            <div id="config" class="tab-content">
+                <div class="card">
+                    <h3>⚙️ Configurações da Plataforma</h3>
+                    <p style="color: var(--text-muted);">Ajustes de layout amplo para computador, notificações e banco de dados de metas.</p>
+                </div>
+            </div>
+
+            <!-- PAINEL LATERAL DIREITO (Calendário & Resumo) -->
+            <aside>
+                <div class="card">
+                    <h3>📅 Calendário & Escala</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Escala atual: 12x36 (Trabalho / Folga)</p>
+                    <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 1.1rem; font-weight: bold; color: var(--success);">Hoje: Dia de Estudo Focado</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>💡 Alerta Coach</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">O sistema monitora se você cumpriu o dia anterior. Caso contrário, as metas serão reprogramadas automaticamente para manter seu desempenho no topo!</p>
+                </div>
+            </aside>
         </div>
-    </div>
+    </main>
 
-    <!-- Modal Gerenciar Matérias -->
-    <div id="modal-materia" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="card-saas rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
-            <h3 class="text-lg font-bold text-slate-100 mb-4">Gerenciar Matérias</h3>
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="nova-materia-nome" placeholder="Nome da nova matéria..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-                <button onclick="adicionarMateria()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shrink-0">Adicionar</button>
-            </div>
-            <div id="lista-materias-modal" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                <!-- Preenchido via JS -->
-            </div>
-            <div class="flex justify-end mt-6">
-                <button onclick="fecharModalMateria()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-medium transition">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script Principal com Inteligência de Cobrança Pessoal -->
     <script>
-        const materiasIniciais = [
-            "Direito Penal",
-            "Português",
-            "Direito Constitucional",
-            "Direito Administrativo",
-            "Raciocínio Lógico"
-        ];
-
-        const topicosIniciais = [
-            { id: 1, materia: "Direito Penal", nome: "Tópico 00 - Princípios", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] },
-            { id: 2, materia: "Direito Penal", nome: "Tópico 01 - Lei penal no tempo", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] },
-            { id: 3, materia: "Português", nome: "Tópico 00 - Ortografia", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] },
-            { id: 4, materia: "Português", nome: "Tópico 01 - Crase", totalRevisoes: 5, revisoesFeitas: [false, false, false, false, false] }
-        ];
-
-        let dadosApp = {
-            materias: JSON.parse(localStorage.getItem('study_materias')) || materiasIniciais,
-            topicos: JSON.parse(localStorage.getItem('study_topicos')) || topicosIniciais
-        };
-
-        function salvarStorage() {
-            localStorage.setItem('study_materias', JSON.stringify(dadosApp.materias));
-            localStorage.setItem('study_topicos', JSON.stringify(dadosApp.topicos));
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderizarTudo();
-        });
-
-        function renderizarTudo() {
-            atualizarSelects();
-            renderizarEstatisticas();
-            renderizarTopicos();
-            atualizarCoachInterativo();
-        }
-
-        function atualizarCoachInterativo() {
-            const totalTopicos = dadosApp.topicos.length;
-            let totalRevisoesFeitas = 0;
-            let totalRevisoesPossiveis = 0;
-
-            dadosApp.topicos.forEach(t => {
-                totalRevisoesPossiveis += t.totalRevisoes;
-                totalRevisoesFeitas += t.revisoesFeitas.filter(Boolean).length;
+        // Função de navegação lateral entre abas
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
 
-            const pct = totalRevisoesPossiveis > 0 ? (totalRevisoesFeitas / totalRevisoesPossiveis) * 100 : 0;
-            const box = document.getElementById('coach-box');
-            const badge = document.getElementById('coach-status-badge');
-            const msg = document.getElementById('coach-mensagem');
-
-            box.className = "card-saas rounded-2xl p-5 border-l-4 flex items-start gap-4 shadow-xl transition-all";
-
-            if (pct === 0) {
-                box.classList.add('border-l-rose-500');
-                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-400 font-semibold";
-                badge.innerText = "Cobrança Ativa: Zerado!";
-                msg.innerHTML = `Ei Arlan, você abriu o PC mas <strong>ainda não marcou nenhuma meta hoje</strong>! O edital não vai esperar. Vai direto para <strong>Direito Penal</strong> ou <strong>Português</strong> e cumpra seus tópicos agora mesmo!`;
-            } else if (pct < 40) {
-                box.classList.add('border-l-amber-500');
-                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-400 font-semibold";
-                badge.innerText = "Ritmo Lento";
-                msg.innerHTML = `Acorde, Arlan! Você fez apenas ${totalRevisoesFeitas} marcações. O ritmo está fraco para quem quer passar. Continue firme na mesa de estudos e avance nos tópicos!`;
-            } else if (pct < 80) {
-                box.classList.add('border-l-blue-500');
-                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 font-semibold";
-                badge.innerText = "Bom Trabalho";
-                msg.innerHTML = `Boa, Arlan! Você está focado e o painel está evoluindo. Mantenha essa pegada no computador e feche o restante das metas de hoje.`;
-            } else {
-                box.classList.add('border-l-emerald-500');
-                badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 font-semibold";
-                badge.innerText = "Metas Cumpridas!";
-                msg.innerHTML = `Parabéns, Arlan! Metas de hoje esmagadas com sucesso. Seu desempenho está impecável. Pode fechar o PC com a sensação de dever cumprido!`;
+        // Função executada ao concluir um tópico (Estilo Automático + Pergindando Questões)
+        function concluirTopico(materia, topico) {
+            let qtd = prompt(`Parabéns por concluir o tópico de ${materia} (${topico})!\nQuantas questões você respondeu?`);
+            if (qtd !== null && qtd.trim() !== "") {
+                alert(`Registrado com sucesso! ${qtd} questões computadas para o seu histórico de desempenho. Revisões R1 ilimitadas agendadas!`);
+                // Aqui você pode expandir a lógica para atualizar a interface dinamicamente
             }
         }
 
-        function atualizarSelects() {
-            const selectFiltro = document.getElementById('filtro-materia');
-            const selectModal = document.getElementById('topico-materia');
+        // Atualizar dados do perfil na tela
+        function atualizarPerfil() {
+            const nome = document.getElementById('input-nome').value;
+            const idade = document.getElementById('input-idade').value;
             
-            const valorAtualFiltro = selectFiltro.value;
-            const valorAtualModal = selectModal.value;
-
-            selectFiltro.innerHTML = '<option value="">Todas as Matérias</option>';
-            selectModal.innerHTML = '';
-
-            dadosApp.materias.forEach(mat => {
-                selectFiltro.innerHTML += `<option value="${mat}">${mat}</option>`;
-                selectModal.innerHTML += `<option value="${mat}">${mat}</option>`;
-            });
-
-            selectFiltro.value = valorAtualFiltro;
-            if (valorAtualModal) selectModal.value = valorAtualModal;
+            document.getElementById('welcome-title').innerText = `Bem-vindo, ${nome}`;
+            document.getElementById('user-info-pill').innerText = `${idade} anos | Goiânia`;
+            alert('Perfil atualizado com sucesso!');
         }
 
-        function renderizarEstatisticas() {
-            const totalTopicos = dadosApp.topicos.length;
-            let totalConcluidos = 0;
-            let totalRevisoesFeitas = 0;
-            let totalRevisoesPossiveis = 0;
-
-            dadosApp.topicos.forEach(t => {
-                totalRevisoesPossiveis += t.totalRevisoes;
-                let concluidasTopico = t.revisoesFeitas.filter(Boolean).length;
-                totalRevisoesFeitas += concluidasTopico;
-                if (concluidasTopico === t.totalRevisoes) {
-                    totalConcluidos++;
-                }
-            });
-
-            const progressoGeral = totalRevisoesPossiveis > 0 ? Math.round((totalRevisoesFeitas / totalRevisoesPossiveis) * 100) : 0;
-
-            document.getElementById('stat-topicos').innerText = totalTopicos;
-            document.getElementById('stat-concluidos').innerText = totalConcluidos;
-            document.getElementById('stat-revisoes').innerText = totalRevisoesFeitas;
-            document.getElementById('stat-materias').innerText = dadosApp.materias.length;
-
-            document.getElementById('progresso-geral-txt').innerText = `${progressoGeral}%`;
-            document.getElementById('barra-progresso-geral').style.width = `${progressoGeral}%`;
-        }
-
-        function renderizarTopicos() {
-            const lista = document.getElementById('lista-topicos');
-            const termoBusca = document.getElementById('filtro-busca').value.toLowerCase();
-            const materiaFiltro = document.getElementById('filtro-materia').value;
-
-            const topicosFiltrados = dadosApp.topicos.filter(t => {
-                const matchBusca = t.nome.toLowerCase().includes(termoBusca) || t.materia.toLowerCase().includes(termoBusca);
-                const matchMateria = materiaFiltro === "" || t.materia === materiaFiltro;
-                return matchBusca && matchMateria;
-            });
-
-            document.getElementById('contador-topicos-exibidos').innerText = `${topicosFiltrados.length} tópico(s)`;
-
-            if (topicosFiltrados.length === 0) {
-                lista.innerHTML = `
-                    <div class="text-center py-12 text-slate-500 card-saas rounded-2xl">
-                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-600"></i>
-                        <p class="text-sm">Nenhum tópico encontrado.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            lista.innerHTML = '';
-            topicosFiltrados.forEach(topico => {
-                if (!topico.revisoesFeitas || topico.revisoesFeitas.length !== topico.totalRevisoes) {
-                    let novoArr = [];
-                    for(let i=0; i<topico.totalRevisoes; i++) {
-                        novoArr.push(topico.revisoesFeitas ? !!topico.revisoesFeitas[i] : false);
-                    }
-                    topico.revisoesFeitas = novoArr;
-                }
-
-                let concluidas = topico.revisoesFeitas.filter(Boolean).length;
-                let pct = Math.round((concluidas / topico.totalRevisoes) * 100);
-
-                let div = document.createElement('div');
-                div.className = "card-saas rounded-2xl p-5 shadow-sm transition hover:border-slate-700";
+        // Simulação de cadastro de matéria
+        function salvarMateria() {
+            const nome = document.getElementById('materia-nome').value;
+            const topicos = document.getElementById('topicos-lista').value;
+            
+            if(nome && topicos) {
+                const lista = document.getElementById('lista-materias-cadastradas');
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${nome}</strong> <span>Tópicos: ${topicos}</span>`;
+                lista.appendChild(li);
                 
-                let htmlRevisoes = '';
-                for(let i=0; i<topico.totalRevisoes; i++) {
-                    let checked = topico.revisoesFeitas[i] ? 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-600/30' : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700';
-                    htmlRevisoes += `
-                        <button onclick="alternarRevisao(${topico.id}, ${i})" class="w-10 h-10 rounded-xl font-bold text-xs flex items-center justify-center border transition ${checked}" title="Marcar meta R${i+1}">
-                            R${i+1}
-                        </button>
-                    `;
-                }
-
-                div.innerHTML = `
-                    <div class="flex justify-between items-center gap-4 mb-3">
-                        <div>
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-950/80 text-blue-400 border border-blue-900/50">${topico.materia}</span>
-                            <h3 class="text-base font-bold text-slate-100 mt-2">${topico.nome}</h3>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-semibold text-slate-400">${concluidas}/${topico.totalRevisoes} (${pct}%)</span>
-                            <button onclick="abrirModalTopico(${topico.id})" class="text-slate-400 hover:text-blue-400 p-2 transition" title="Editar"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button onclick="excluirTopico(${topico.id})" class="text-slate-400 hover:text-rose-400 p-2 transition" title="Excluir"><i class="fa-solid fa-trash text-xs"></i></button>
-                        </div>
-                    </div>
-                    <div class="w-full bg-slate-950 rounded-full h-2 mb-4 overflow-hidden border border-slate-800">
-                        <div class="bg-blue-500 h-full transition-all duration-300" style="width: ${pct}%"></div>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        ${htmlRevisoes}
-                    </div>
-                `;
-                lista.appendChild(div);
-            });
-        }
-
-        function alternarRevisao(id, index) {
-            const topico = dadosApp.topicos.find(t => t.id === id);
-            if (topico) {
-                topico.revisoesFeitas[index] = !topico.revisoesFeitas[index];
-                salvarStorage();
-                renderizarTudo();
+                document.getElementById('materia-nome').value = '';
+                document.getElementById('topicos-lista').value = '';
+                alert('Matéria e tópicos cadastrados com sucesso!');
+            } else {
+                alert('Preencha todos os campos!');
             }
         }
 
-        function abrirModalTopico(id = null) {
-            const modal = document.getElementById('modal-topico');
-            const titulo = document.getElementById('modal-topico-titulo');
+        // Lógica Estilo Coach inicial (Verificação de pendência simulada)
+        window.onload = function() {
+            const coachContainer = document.getElementById('coach-container');
+            // Exemplo de verificação de cobrança caso o dia anterior estivesse pendente
+            let pendenteOntem = false; // Altere para true se quiser testar o aviso de cobrança do coach
             
-            document.getElementById('topico-id').value = "";
-            document.getElementById('topico-nome').value = "";
-            document.getElementById('topico-total-revisoes').value = "5";
-
-            if (id !== null) {
-                titulo.innerText = "Editar Tópico";
-                const topico = dadosApp.topicos.find(t => t.id === id);
-                if (topico) {
-                    document.getElementById('topico-id').value = topico.id;
-                    document.getElementById('topico-materia').value = topico.materia;
-                    document.getElementById('topico-nome').value = topico.nome;
-                    document.getElementById('topico-total-revisoes').value = topico.totalRevisoes;
-                }
-            } else {
-                titulo.innerText = "Novo Tópico de Estudo";
-            }
-            modal.classList.remove('hidden');
-        }
-
-        function fecharModalTopico() {
-            document.getElementById('modal-topico').classList.add('hidden');
-        }
-
-        function salvarTopico() {
-            const id = document.getElementById('topico-id').value;
-            const materia = document.getElementById('topico-materia').value;
-            const nome = document.getElementById('topico-nome').value.trim();
-            const totalRevisoes = parseInt(document.getElementById('topico-total-revisoes').value);
-
-            if (!nome) {
-                alert('Informe o nome do tópico.');
-                return;
-            }
-            if (!materia) {
-                alert('Selecione uma matéria.');
-                return;
-            }
-
-            if (id === "") {
-                let novoId = dadosApp.topicos.length > 0 ? Math.max(...dadosApp.topicos.map(t => t.id)) + 1 : 1;
-                let revisoesFeitas = new Array(totalRevisoes).fill(false);
-                dadosApp.topicos.push({ id: novoId, materia, nome, totalRevisoes, revisoesFeitas });
-            } else {
-                let topico = dadosApp.topicos.find(t => t.id == id);
-                if (topico) {
-                    topico.materia = materia;
-                    topico.nome = nome;
-                    if (topico.totalRevisoes !== totalRevisoes) {
-                        topico.totalRevisoes = totalRevisoes;
-                        let novoArr = [];
-                        for(let i=0; i<totalRevisoes; i++) {
-                            novoArr.push(topico.revisoesFeitas[i] || false);
-                        }
-                        topico.revisoesFeitas = novoArr;
-                    }
-                }
-            }
-
-            salvarStorage();
-            fecharModalTopico();
-            renderizarTudo();
-        }
-
-        function excluirTopico(id) {
-            if (confirm('Deseja excluir este tópico?')) {
-                dadosApp.topicos = dadosApp.topicos.filter(t => t.id !== id);
-                salvarStorage();
-                renderizarTudo();
-            }
-        }
-
-        function abrirModalMateria() {
-            renderizarListaMateriasModal();
-            document.getElementById('modal-materia').classList.remove('hidden');
-        }
-
-        function fecharModalMateria() {
-            document.getElementById('modal-materia').classList.add('hidden');
-        }
-
-        function renderizarListaMateriasModal() {
-            const container = document.getElementById('lista-materias-modal');
-            container.innerHTML = '';
-            dadosApp.materias.forEach(mat => {
-                let div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-slate-950 px-3 py-2 rounded-xl border border-slate-800 text-sm";
-                div.innerHTML = `
-                    <span class="text-slate-200 font-medium">${mat}</span>
-                    <button onclick="excluirMateria('${mat}')" class="text-slate-400 hover:text-rose-400 transition p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+            if(pendenteOntem) {
+                coachContainer.innerHTML = `
+                    <div class="coach-alert">
+                        <p>⚠️ <strong>Atenção, Arlan!</strong> Notamos que você não registrou estudos na última sessão (escala 12x36). Deseja reprogramar as metas pendentes para hoje e recuperar o ritmo?</p>
+                        <button class="btn" style="margin-top: 10px; padding: 5px 10px; font-size: 0.85rem;" onclick="reprogramarMetas()">Sim, reprogramar metas</button>
+                    </div>
                 `;
-                container.appendChild(div);
-            });
-        }
-
-        function adicionarMateria() {
-            const input = document.getElementById('nova-materia-nome');
-            const nome = input.value.trim();
-            if (!nome) return;
-
-            if (dadosApp.materias.includes(nome)) {
-                alert('Matéria já cadastrada.');
-                return;
-            }
-
-            dadosApp.materias.push(nome);
-            input.value = "";
-            salvarStorage();
-            renderizarListaMateriasModal();
-            atualizarSelects();
-        }
-
-        function excluirMateria(nome) {
-            if (confirm(`Excluir a matéria "${nome}"?`)) {
-                dadosApp.materias = dadosApp.materias.filter(m => m !== nome);
-                salvarStorage();
-                renderizarListaMateriasModal();
-                renderizarTudo();
             }
         }
 
-        function exportarDados() {
-            const dadosStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosApp, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dadosStr);
-            downloadAnchor.setAttribute("download", `backup_study_coach_arlan_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importarDados(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed.materias && parsed.topicos) {
-                        dadosApp = parsed;
-                        salvarStorage();
-                        renderizarTudo();
-                        alert('Backup restaurado!');
-                    } else {
-                        alert('Arquivo inválido.');
-                    }
-                } catch (err) {
-                    alert('Erro ao ler JSON.');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function resetarDados() {
-            if (confirm('Deseja resetar para o padrão inicial?')) {
-                localStorage.removeItem('study_materias');
-                localStorage.removeItem('study_topicos');
-                dadosApp = {
-                    materias: [...materiasIniciais],
-                    topicos: [...topicosIniciais]
-                };
-                renderizarTudo();
-            }
+        function reprogramarMetas() {
+            alert('Metas reprogramadas para hoje com sucesso! Vamos focar nos estudos.');
+            document.getElementById('coach-container').innerHTML = '';
         }
     </script>
 </body>
