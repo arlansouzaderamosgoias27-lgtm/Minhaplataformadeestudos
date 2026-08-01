@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Sistema de Estudos PMGO / PMDF</title>
+<style>
+  :root{
+    --bg:#0f1420;
+    --bg2:#161d2e;
+    --card:#1b2438;
+    --card2:#212c45;
+    --accent:#2f6fed;
+    --accent2:#1ecb8e;
+    --warn:#ff9f43;
+    --danger:#ff5470;
+    --text:#eef2fb;
+    --muted:#93a0bd;
+    --border:#2a3550;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  body{padding-bottom:90px;}
+  h1,h2,h3{margin:0 0 8px 0;}
+  .topbar{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg2),rgba(22,29,46,0.96));backdrop-filter:blur(6px);padding:16px 16px 10px 16px;border-bottom:1px solid var(--border);}
+  .topbar h1{font-size:19px;display:flex;align-items:center;gap:8px;}
+  .topbar .sub{color:var(--muted);font-size:12.5px;margin-top:2px;}
+  .container{padding:16px;max-width:900px;margin:0 auto;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(min-width:640px){.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}}
+  .stat{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border);}
+  .stat .num{font-size:26px;font-weight:800;}
+  .stat .lbl{font-size:11.5px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}
+  .progress-wrap{background:var(--card2);border-radius:20px;height:22px;overflow:hidden;border:1px solid var(--border);margin-top:6px;}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:flex-end;color:#03121a;font-weight:700;font-size:12px;padding-right:8px;transition:width .4s ease;white-space:nowrap;}
+  button{font-family:inherit;cursor:pointer;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:15px;font-weight:600;min-height:48px;}
+  .btn:active{transform:scale(.97);}
+  .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border);}
+  .btn.green{background:var(--accent2);color:#03251a;}
+  .btn.warn{background:var(--warn);color:#2a1700;}
+  .btn.danger{background:var(--danger);color:#2a0510;}
+  .btn.block{width:100%;}
+  .btn.sm{padding:9px 12px;font-size:13px;min-height:38px;border-radius:10px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  input[type=text],input[type=date],select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:15px;margin-top:6px;}
+  label{font-size:13px;color:var(--muted);font-weight:600;}
+  .field{margin-bottom:12px;}
+  .tabs{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px)) 4px;}
+  .tab{flex:1;text-align:center;background:none;border:none;color:var(--muted);padding:8px 2px;font-size:10.5px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .tab.active{color:var(--accent2);background:rgba(46,222,163,0.08);}
+  .tab .ic{font-size:19px;}
+  .page{display:none;}
+  .page.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .topico-card{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .topico-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .topico-nome{font-weight:700;font-size:15.5px;}
+  .topico-materia{display:inline-block;font-size:11px;background:rgba(47,111,237,.18);color:#8fb4ff;padding:3px 9px;border-radius:20px;margin-top:5px;font-weight:600;}
+  .badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:700;white-space:nowrap;}
+  .badge.ok{background:rgba(30,203,142,.18);color:var(--accent2);}
+  .badge.pending{background:rgba(255,159,67,.18);color:var(--warn);}
+  .rev-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px;}
+  @media(min-width:480px){.rev-grid{grid-template-columns:repeat(10,1fr);}}
+  .rev-btn{aspect-ratio:1;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;min-height:38px;}
+  .rev-btn.done{background:var(--accent2);color:#03251a;border-color:var(--accent2);}
+  .topico-actions{display:flex;gap:8px;margin-top:12px;}
+  .empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px;}
+  .materia-chip{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+  .icon-btn{background:none;border:none;color:var(--danger);font-size:18px;padding:4px 8px;}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+  .modal-bg.show{display:flex;}
+  .modal{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px)) 18px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-top:1px solid var(--border);}
+  .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--accent2);color:#03251a;padding:11px 18px;border-radius:30px;font-weight:700;font-size:13.5px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.3);display:none;}
+  .toast.show{display:block;animation:fade .2s ease;}
+  select option{background:var(--bg2);}
+  .filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;}
+  .chip-filter{flex-shrink:0;padding:9px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:600;}
+  .chip-filter.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .divider{height:1px;background:var(--border);margin:16px 0;}
+  .small{font-size:12px;color:var(--muted);}
+  a.dl{text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>🚔 Sistema de Estudos <span style="color:var(--accent2)">PMGO/PMDF</span></h1>
+  <div class="sub" id="dataAtual"></div>
+</div>
+
+<div class="container">
+
+  <!-- PAINEL -->
+  <div class="page active" id="page-painel">
+    <div class="card">
+      <h2>📊 Painel Geral</h2>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="stat"><div class="num" id="stTopicos">0</div><div class="lbl">Tópicos</div></div>
+        <div class="stat"><div class="num" id="stConcluidos">0</div><div class="lbl">Concluídos</div></div>
+        <div class="stat"><div class="num" id="stRevisoes">0</div><div class="lbl">Revisões feitas</div></div>
+        <div class="stat"><div class="num" id="stMaterias">0</div><div class="lbl">Matérias</div></div>
+      </div>
+      <div style="margin-top:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);">
+          <span>Progresso geral de revisões</span><span id="pctTexto">0%</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="barraProgresso" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📚 Progresso por matéria</h3>
+      <div id="progressoMaterias"></div>
+    </div>
+
+    <div class="card">
+      <h3>🔔 Revisões pendentes de hoje / atrasadas</h3>
+      <div id="revisoesPendentesHoje"></div>
+    </div>
+  </div>
+
+  <!-- TOPICOS -->
+  <div class="page" id="page-topicos">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <h2>📚 Tópicos de Estudo</h2>
+        <button class="btn sm" onclick="abrirModalTopico()">+ Novo</button>
+      </div>
+      <div class="filter-row" id="filtroMaterias" style="margin-top:12px;"></div>
+      <div id="listaTopicos"></div>
+    </div>
+  </div>
+
+  <!-- REVISOES -->
+  <div class="page" id="page-revisoes">
+    <div class="card">
+      <h2>🔄 Revisões (R1 a R20)</h2>
+      <p class="small">Toque em uma revisão para marcar/desmarcar. A data do dia é salva automaticamente.</p>
+      <div class="filter-row" id="filtroMateriasRev" style="margin-top:6px;"></div>
+      <div id="listaRevisoes"></div>
+    </div>
+  </div>
+
+  <!-- MATERIAS -->
+  <div class="page" id="page-materias">
+    <div class="card">
+      <h2>📖 Matérias</h2>
+      <div class="field">
+        <label>Nova matéria</label>
+        <div class="row" style="margin-top:6px;">
+          <input type="text" id="novaMateriaInput" placeholder="Ex: Direito Administrativo" style="flex:1;">
+          <button class="btn" onclick="adicionarMateria()">Adicionar</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div id="listaMaterias"></div>
+    </div>
+  </div>
+
+  <!-- EXPORTAR -->
+  <div class="page" id="page-exportar">
+    <div class="card">
+      <h2>📤 Exportar e Backup</h2>
+      <p class="small">Tudo funciona sem internet. Os arquivos vão para a pasta de Downloads do seu celular/PC.</p>
+      <div class="divider"></div>
+      <h3>Relatórios</h3>
+      <div class="row" style="flex-direction:column;">
+        <button class="btn green block" onclick="exportarExcel()">📊 Gerar Excel (.xls)</button>
+        <button class="btn warn block" onclick="exportarPDF()">📄 Gerar PDF do relatório</button>
+      </div>
+      <div class="divider"></div>
+      <h3>Backup dos dados</h3>
+      <p class="small">Faça backup regularmente para não perder seu progresso, principalmente antes de trocar de celular.</p>
+      <div class="row" style="flex-direction:column;">
+        <button class="btn secondary block" onclick="exportarBackup()">💾 Salvar backup (.json)</button>
+        <label class="btn secondary block" style="text-align:center;">
+          📥 Restaurar backup
+          <input type="file" id="inputRestaurar" accept="application/json" style="display:none;" onchange="restaurarBackup(event)">
+        </label>
+      </div>
+      <div class="divider"></div>
+      <button class="btn danger block" onclick="confirmarLimpar()">🗑️ Apagar todos os dados</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-page="painel" onclick="irPara('painel')"><span class="ic">📊</span>Painel</button>
+  <button class="tab" data-page="topicos" onclick="irPara('topicos')"><span class="ic">📚</span>Tópicos</button>
+  <button class="tab" data-page="revisoes" onclick="irPara('revisoes')"><span class="ic">🔄</span>Revisões</button>
+  <button class="tab" data-page="materias" onclick="irPara('materias')"><span class="ic">📖</span>Matérias</button>
+  <button class="tab" data-page="exportar" onclick="irPara('exportar')"><span class="ic">📤</span>Exportar</button>
+</div>
+
+<!-- MODAL TOPICO -->
+<div class="modal-bg" id="modalTopico">
+  <div class="modal">
+    <h3 id="modalTopicoTitulo">Novo tópico</h3>
+    <div class="field">
+      <label>Matéria</label>
+      <select id="topicoMateria"></select>
+    </div>
+    <div class="field">
+      <label>Nome do tópico</label>
+      <input type="text" id="topicoNome" placeholder="Ex: Princípios Constitucionais">
+    </div>
+    <input type="hidden" id="topicoIdEdicao">
+    <div class="row" style="margin-top:10px;">
+      <button class="btn secondary block" onclick="fecharModalTopico()">Cancelar</button>
+      <button class="btn block" onclick="salvarTopico()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   SISTEMA DE ESTUDOS PMGO / PMDF
+   100% offline - localStorage
+========================================================= */
+
+const STORAGE_KEY = "pmgo_pmdf_estudos_v1";
+const TOTAL_REVISOES = 20;
+const MATERIAS_PADRAO = [
+  "Direito Constitucional","Direito Penal","Direito Processual Penal",
+  "Português","Matemática","Informática","Legislação","Atualidades"
+];
+
+let DB = null;
+let filtroMateriaAtual = "Todas";
+let filtroMateriaRevAtual = "Todas";
+
+function novoId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+function estadoPadrao(){
+  return { materias: [...MATERIAS_PADRAO], topicos: [] };
+}
+
+function criarRevisoes(){
+  const arr = [];
+  for(let i=1;i<=TOTAL_REVISOES;i++){ arr.push({ n:i, feita:false, data:null }); }
+  return arr;
+}
+
+function carregar(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ DB = JSON.parse(raw); }
+    else { DB = estadoPadrao(); salvar(); }
+  }catch(e){ DB = estadoPadrao(); salvar(); }
+  if(!DB.materias) DB.materias = [...MATERIAS_PADRAO];
+  if(!DB.topicos) DB.topicos = [];
+}
+
+function salvar(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+}
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+/* ---------- NAVEGACAO ---------- */
+function irPara(pagina){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("page-"+pagina).classList.add("active");
+  document.querySelector('.tab[data-page="'+pagina+'"]').classList.add("active");
+  renderTudo();
+  window.scrollTo(0,0);
+}
+
+/* ---------- DATA ---------- */
+function hojeISO(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function formatarData(iso){
+  if(!iso) return "-";
+  const [y,m,d] = iso.split("-");
+  return d+"/"+m+"/"+y;
+}
+
+/* ---------- RENDER GERAL ---------- */
+function renderTudo(){
+  renderPainel();
+  renderFiltrosMaterias();
+  renderTopicos();
+  renderRevisoes();
+  renderMaterias();
+  atualizarSelectMateria();
+  document.getElementById("dataAtual").textContent = "Hoje: " + formatarData(hojeISO());
+}
+
+/* ---------- PAINEL ---------- */
+function renderPainel(){
+  const totalTopicos = DB.topicos.length;
+  const concluidos = DB.topicos.filter(t=>t.concluido).length;
+  let revFeitas = 0, revTotal = 0;
+  DB.topicos.forEach(t=>{
+    t.revisoes.forEach(r=>{ revTotal++; if(r.feita) revFeitas++; });
+  });
+  const pct = revTotal>0 ? Math.round((revFeitas/revTotal)*100) : 0;
+
+  document.getElementById("stTopicos").textContent = totalTopicos;
+  document.getElementById("stConcluidos").textContent = concluidos;
+  document.getElementById("stRevisoes").textContent = revFeitas;
+  document.getElementById("stMaterias").textContent = DB.materias.length;
+  document.getElementById("pctTexto").textContent = pct+"%";
+  const barra = document.getElementById("barraProgresso");
+  barra.style.width = pct+"%";
+  barra.textContent = pct>8 ? pct+"%" : "";
+
+  // progresso por materia
+  const cont = document.getElementById("progressoMaterias");
+  if(DB.materias.length===0){
+    cont.innerHTML = '<div class="empty">Nenhuma matéria cadastrada</div>';
+  } else {
+    cont.innerHTML = DB.materias.map(m=>{
+      const topicosM = DB.topicos.filter(t=>t.materia===m);
+      let feitas=0, total=0;
+      topicosM.forEach(t=>{ t.revisoes.forEach(r=>{ total++; if(r.feita) feitas++; }); });
+      const p = total>0 ? Math.round((feitas/total)*100) : 0;
+      return `<div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;">
+          <span>${escapeHtml(m)} <span class="small">(${topicosM.length} tópicos)</span></span>
+          <span class="small">${p}%</span>
+        </div>
+        <div class="progress-wrap" style="height:14px;"><div class="progress-bar" style="width:${p}%;"></div></div>
+      </div>`;
+    }).join("");
+  }
+
+  // revisões pendentes / atrasadas -- exibe tópicos com revisões nao feitas, ordenado
+  const pendCont = document.getElementById("revisoesPendentesHoje");
+  const pendentes = [];
+  DB.topicos.forEach(t=>{
+    const proxima = t.revisoes.find(r=>!r.feita);
+    if(proxima){ pendentes.push({topico:t, revisao:proxima}); }
+  });
+  if(pendentes.length===0){
+    pendCont.innerHTML = '<div class="empty">🎉 Nenhuma revisão pendente. Cadastre tópicos para começar!</div>';
+  } else {
+    pendCont.innerHTML = pendentes.slice(0,8).map(p=>{
+      return `<div class="materia-chip">
+        <div>
+          <div style="font-weight:600;font-size:13.5px;">${escapeHtml(p.topico.nome)}</div>
+          <div class="small">${escapeHtml(p.topico.materia)} • próxima: R${p.revisao.n}</div>
+        </div>
+        <button class="btn sm green" onclick="marcarRevisao('${p.topico.id}',${p.revisao.n})">Marcar</button>
+      </div>`;
+    }).join("") + (pendentes.length>8 ? `<div class="small" style="text-align:center;margin-top:6px;">+ ${pendentes.length-8} tópicos com revisões pendentes</div>` : "");
+  }
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+}
+
+/* ---------- FILTROS ---------- */
+function renderFiltrosMaterias(){
+  const opts = ["Todas", ...DB.materias];
+  const build = (containerId, atual, setFn)=>{
+    const c = document.getElementById(containerId);
+    c.innerHTML = opts.map(m=>`<button class="chip-filter ${m===atual?'active':''}" onclick="${setFn}('${m.replace(/'/g,"\\'")}')">${escapeHtml(m)}</button>`).join("");
+  };
+  build("filtroMaterias", filtroMateriaAtual, "setFiltroMateria");
+  build("filtroMateriasRev", filtroMateriaRevAtual, "setFiltroMateriaRev");
+}
+function setFiltroMateria(m){ filtroMateriaAtual = m; renderFiltrosMaterias(); renderTopicos(); }
+function setFiltroMateriaRev(m){ filtroMateriaRevAtual = m; renderFiltrosMaterias(); renderRevisoes(); }
+
+/* ---------- TOPICOS ---------- */
+function renderTopicos(){
+  const cont = document.getElementById("listaTopicos");
+  let lista = DB.topicos;
+  if(filtroMateriaAtual!=="Todas") lista = lista.filter(t=>t.materia===filtroMateriaAtual);
+  if(lista.length===0){
+    cont.innerHTML = '<div class="empty">Nenhum tópico cadastrado ainda.<br>Toque em "+ Novo" para começar.</div>';
+    return;
+  }
+  cont.innerHTML = lista.map(t=>{
+    const feitas = t.revisoes.filter(r=>r.feita).length;
+    return `<div class="topico-card">
+      <div class="topico-head">
+        <div>
+          <div class="topico-nome">${escapeHtml(t.nome)}</div>
+          <span class="topico-materia">${escapeHtml(t.materia)}</span>
+        </div>
+        <span class="badge ${t.concluido?'ok':'pending'}">${t.concluido?'Concluído':'Em andamento'}</span>
+      </div>
+      <div class="small" style="margin-top:8px;">Revisões: ${feitas}/${TOTAL_REVISOES} • Cadastrado em ${formatarData(t.dataCadastro)}</div>
+      <div class="topico-actions">
+        <button class="btn sm secondary" onclick="editarTopico('${t.id}')">✏️ Editar</button>
+        <button class="btn sm ${t.concluido?'warn':'green'}" onclick="toggleConcluido('${t.id}')">${t.concluido?'↩️ Reabrir':'✅ Concluir'}</button>
+        <button class="btn sm danger" onclick="excluirTopico('${t.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function abrirModalTopico(){
+  document.getElementById("modalTopicoTitulo").textContent = "Novo tópico";
+  document.getElementById("topicoNome").value = "";
+  document.getElementById("topicoIdEdicao").value = "";
+  atualizarSelectMateria();
+  document.getElementById("modalTopico").classList.add("show");
+}
+function editarTopico(id){
+  const t = DB.topicos.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById("modalTopicoTitulo").textContent = "Editar tópico";
+  document.getElementById("topicoNome").value = t.nome;
+  document.getElementById("topicoIdEdicao").value = t.id;
+  atualizarSelectMateria();
+  document.getElementById("topicoMateria").value = t.materia;
+  document.getElementById("modalTopico").classList.add("show");
+}
+function fecharModalTopico(){
+  document.getElementById("modalTopico").classList.remove("show");
+}
+function atualizarSelectMateria(){
+  const sel = document.getElementById("topicoMateria");
+  const atual = sel.value;
+  sel.innerHTML = DB.materias.map(m=>`<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join("");
+  if(DB.materias.includes(atual)) sel.value = atual;
+}
+function salvarTopico(){
+  const nome = document.getElementById("topicoNome").value.trim();
+  const materia = document.getElementById("topicoMateria").value;
+  const id = document.getElementById("topicoIdEdicao").value;
+  if(!nome){ toast("Digite o nome do tópico"); return; }
+  if(!materia){ toast("Cadastre uma matéria primeiro"); return; }
+  if(id){
+    const t = DB.topicos.find(x=>x.id===id);
+    t.nome = nome; t.materia = materia;
+    toast("Tópico atualizado");
+  } else {
+    DB.topicos.push({
+      id: novoId(),
+      nome, materia,
+      dataCadastro: hojeISO(),
+      concluido: false,
+      revisoes: criarRevisoes()
+    });
+    toast("Tópico criado com 20 revisões");
+  }
+  salvar();
+  fecharModalTopico();
+  renderTudo();
+}
+function excluirTopico(id){
+  if(!confirm("Excluir este tópico e todas as suas revisões?")) return;
+  DB.topicos = DB.topicos.filter(t=>t.id!==id);
+  salvar(); renderTudo();
+  toast("Tópico excluído");
+}
+function toggleConcluido(id){
+  const t = DB.topicos.find(x=>x.id===id);
+  t.concluido = !t.concluido;
+  salvar(); renderTudo();
+}
+
+/* ---------- REVISOES ---------- */
+function renderRevisoes(){
+  const cont = document.getElementById("listaRevisoes");
+  let lista = DB.topicos;
+  if(filtroMateriaRevAtual!=="Todas") lista = lista.filter(t=>t.materia===filtroMateriaRevAtual);
+  if(lista.length===0){
+    cont.innerHTML = '<div class="empty">Nenhum tópico cadastrado ainda.</div>';
+    return;
+  }
+  cont.innerHTML = lista.map(t=>{
+    const grid = t.revisoes.map(r=>{
+      const label = r.feita ? ("R"+r.n) : ("R"+r.n);
+      const titulo = r.feita ? ("Feita em "+formatarData(r.data)) : "Não feita";
+      return `<button class="rev-btn ${r.feita?'done':''}" title="${titulo}" onclick="marcarRevisao('${t.id}',${r.n})">${label}</button>`;
+    }).join("");
+    const feitas = t.revisoes.filter(r=>r.feita).length;
+    return `<div class="topico-card">
+      <div class="topico-head">
+        <div>
+          <div class="topico-nome">${escapeHtml(t.nome)}</div>
+          <span class="topico-materia">${escapeHtml(t.materia)}</span>
+        </div>
+        <span class="small">${feitas}/${TOTAL_REVISOES}</span>
+      </div>
+      <div class="rev-grid">${grid}</div>
+    </div>`;
+  }).join("");
+}
+function marcarRevisao(topicoId, n){
+  const t = DB.topicos.find(x=>x.id===topicoId);
+  if(!t) return;
+  const r = t.revisoes.find(x=>x.n===n);
+  r.feita = !r.feita;
+  r.data = r.feita ? hojeISO() : null;
+  salvar();
+  renderTudo();
+}
+
+/* ---------- MATERIAS ---------- */
+function renderMaterias(){
+  const cont = document.getElementById("listaMaterias");
+  if(DB.materias.length===0){
+    cont.innerHTML = '<div class="empty">Nenhuma matéria cadastrada</div>';
+    return;
+  }
+  cont.innerHTML = DB.materias.map(m=>{
+    const qtd = DB.topicos.filter(t=>t.materia===m).length;
+    return `<div class="materia-chip">
+      <div><strong>${escapeHtml(m)}</strong><div class="small">${qtd} tópico(s)</div></div>
+      <button class="icon-btn" onclick="removerMateria('${m.replace(/'/g,"\\'")}')">✕</button>
+    </div>`;
+  }).join("");
+}
+function adicionarMateria(){
+  const input = document.getElementById("novaMateriaInput");
+  const nome = input.value.trim();
+  if(!nome){ toast("Digite o nome da matéria"); return; }
+  if(DB.materias.includes(nome)){ toast("Essa matéria já existe"); return; }
+  DB.materias.push(nome);
+  input.value = "";
+  salvar(); renderTudo();
+  toast("Matéria adicionada");
+}
+function removerMateria(nome){
+  const qtd = DB.topicos.filter(t=>t.materia===nome).length;
+  if(qtd>0){
+    if(!confirm(`Existem ${qtd} tópico(s) nesta matéria. Remover a matéria também vai excluir esses tópicos. Continuar?`)) return;
+    DB.topicos = DB.topicos.filter(t=>t.materia!==nome);
+  }
+  DB.materias = DB.materias.filter(m=>m!==nome);
+  salvar(); renderTudo();
+  toast("Matéria removida");
+}
+
+/* ---------- EXPORTAR EXCEL (.xls via tabela HTML, abre no Excel/Numbers/Sheets) ---------- */
+function exportarExcel(){
+  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+  <head><meta charset="UTF-8"></head><body>`;
+
+  // Aba Painel (tabela simples, o formato xls-html só suporta 1 tabela visível de forma simples por sheet real,
+  // mas usamos multiplas tabelas em sequencia com titulos)
+  html += `<h2>Painel de Progresso</h2><table border="1"><tr><th>Indicador</th><th>Valor</th></tr>`;
+  const totalTopicos = DB.topicos.length;
+  const concluidos = DB.topicos.filter(t=>t.concluido).length;
+  let revFeitas=0, revTotal=0;
+  DB.topicos.forEach(t=>t.revisoes.forEach(r=>{revTotal++; if(r.feita) revFeitas++;}));
+  const pct = revTotal>0?Math.round((revFeitas/revTotal)*100):0;
+  html += `<tr><td>Total de tópicos</td><td>${totalTopicos}</td></tr>`;
+  html += `<tr><td>Tópicos concluídos</td><td>${concluidos}</td></tr>`;
+  html += `<tr><td>Revisões feitas</td><td>${revFeitas} de ${revTotal}</td></tr>`;
+  html += `<tr><td>Progresso geral</td><td>${pct}%</td></tr></table><br><br>`;
+
+  html += `<h2>Matérias</h2><table border="1"><tr><th>Matéria</th><th>Qtd. Tópicos</th></tr>`;
+  DB.materias.forEach(m=>{
+    const qtd = DB.topicos.filter(t=>t.materia===m).length;
+    html += `<tr><td>${m}</td><td>${qtd}</td></tr>`;
+  });
+  html += `</table><br><br>`;
+
+  html += `<h2>Tópicos</h2><table border="1"><tr><th>Matéria</th><th>Tópico</th><th>Status</th><th>Data Cadastro</th><th>Revisões Feitas</th></tr>`;
+  DB.topicos.forEach(t=>{
+    const feitas = t.revisoes.filter(r=>r.feita).length;
+    html += `<tr><td>${t.materia}</td><td>${t.nome}</td><td>${t.concluido?'Concluído':'Em andamento'}</td><td>${formatarData(t.dataCadastro)}</td><td>${feitas}/${TOTAL_REVISOES}</td></tr>`;
+  });
+  html += `</table><br><br>`;
+
+  html += `<h2>Revisões detalhadas</h2><table border="1"><tr><th>Matéria</th><th>Tópico</th>`;
+  for(let i=1;i<=TOTAL_REVISOES;i++) html += `<th>R${i}</th>`;
+  html += `</tr>`;
+  DB.topicos.forEach(t=>{
+    html += `<tr><td>${t.materia}</td><td>${t.nome}</td>`;
+    t.revisoes.forEach(r=>{
+      html += `<td>${r.feita ? formatarData(r.data) : '-'}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</table>`;
+
+  html += `</body></html>`;
+
+  baixarArquivo("Relatorio_Estudos_PMGO_PMDF.xls", html, "application/vnd.ms-excel");
+  toast("Excel gerado! Verifique seus downloads");
+}
+
+/* ---------- EXPORTAR PDF (usa a caixa de impressão do navegador -> Salvar como PDF, funciona offline) ---------- */
+function exportarPDF(){
+  const totalTopicos = DB.topicos.length;
+  const concluidos = DB.topicos.filter(t=>t.concluido).length;
+  let revFeitas=0, revTotal=0;
+  DB.topicos.forEach(t=>t.revisoes.forEach(r=>{revTotal++; if(r.feita) revFeitas++;}));
+  const pct = revTotal>0?Math.round((revFeitas/revTotal)*100):0;
+
+  let win = window.open("", "_blank");
+  let html = `<html><head><meta charset="UTF-8"><title>Relatório de Estudos</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;color:#111;padding:30px;}
+    h1{color:#1c3f9c;margin-bottom:2px;}
+    .sub{color:#666;font-size:13px;margin-bottom:20px;}
+    h2{border-bottom:2px solid #1c3f9c;padding-bottom:4px;margin-top:26px;font-size:17px;}
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;}
+    th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;}
+    th{background:#eef2fb;}
+    .stats{display:flex;gap:16px;margin-top:10px;}
+    .stat{border:1px solid #ccc;border-radius:8px;padding:10px 16px;text-align:center;flex:1;}
+    .stat b{font-size:20px;display:block;color:#1c3f9c;}
+    @media print{ .noprint{display:none;} }
+  </style></head><body>
+  <h1>Relatório de Estudos - PMGO / PMDF</h1>
+  <div class="sub">Gerado em ${formatarData(hojeISO())}</div>
+  <div class="stats">
+    <div class="stat"><b>${totalTopicos}</b>Tópicos</div>
+    <div class="stat"><b>${concluidos}</b>Concluídos</div>
+    <div class="stat"><b>${revFeitas}/${revTotal}</b>Revisões</div>
+    <div class="stat"><b>${pct}%</b>Progresso</div>
+  </div>
+  <h2>Tópicos por matéria</h2>
+  <table><tr><th>Matéria</th><th>Tópico</th><th>Status</th><th>Cadastro</th><th>Revisões</th></tr>`;
+  DB.topicos.forEach(t=>{
+    const feitas = t.revisoes.filter(r=>r.feita).length;
+    html += `<tr><td>${t.materia}</td><td>${t.nome}</td><td>${t.concluido?'Concluído':'Em andamento'}</td><td>${formatarData(t.dataCadastro)}</td><td>${feitas}/${TOTAL_REVISOES}</td></tr>`;
+  });
+  html += `</table>
+  <p class="noprint" style="margin-top:24px;color:#666;font-size:13px;">Use o menu de impressão do navegador (ícone de compartilhar/imprimir) e escolha "Salvar em PDF" para baixar este relatório.</p>
+  <script>window.onload = function(){ window.print(); }<\/script>
+  </body></html>`;
+  win.document.write(html);
+  win.document.close();
+  toast("Use 'Salvar como PDF' na tela de impressão");
+}
+
+/* ---------- BACKUP ---------- */
+function exportarBackup(){
+  const json = JSON.stringify(DB, null, 2);
+  baixarArquivo("backup_estudos_pmgo_pmdf.json", json, "application/json");
+  toast("Backup salvo!");
+}
+function restaurarBackup(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data.materias || !data.topicos) throw new Error("formato inválido");
+      DB = data;
+      salvar();
+      renderTudo();
+      toast("Backup restaurado com sucesso!");
+    }catch(err){
+      alert("Arquivo de backup inválido.");
+    }
+  };
+  reader.readAsText(file);
+  ev.target.value = "";
+}
+function confirmarLimpar(){
+  if(confirm("Isso vai apagar TODOS os tópicos, matérias e revisões. Deseja continuar?")){
+    if(confirm("Tem certeza mesmo? Essa ação não pode ser desfeita.")){
+      DB = estadoPadrao();
+      salvar(); renderTudo();
+      toast("Dados apagados");
+    }
+  }
+}
+
+function baixarArquivo(nome, conteudo, tipo){
+  const blob = new Blob([conteudo], {type: tipo});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = nome;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 3000);
+}
+
+/* ---------- INIT ---------- */
+carregar();
+renderTudo();
+</script>
+</body>
+</html>
