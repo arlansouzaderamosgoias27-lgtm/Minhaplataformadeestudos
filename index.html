@@ -1279,24 +1279,38 @@
 
                 if(matCadastrada.topicos.length > 0) {
                     const topicosPendentes = matCadastrada.topicos.filter(t => !t.concluido).slice(0, appData.ajusteMetas.topicosMateria);
-                    topicosPendentes.forEach(top => {
-                        totalTopicosExibidos++;
+                    if(topicosPendentes.length > 0) {
+                        topicosPendentes.forEach(top => {
+                            totalTopicosExibidos++;
+                            html += `
+                                <div class="meta-card-item">
+                                    <div class="meta-info">
+                                        <span class="materia-tag">${matCadastrada.nome}</span>
+                                        <h3>${top.nome}</h3>
+                                    </div>
+                                    <button class="btn-concluir-topico" onclick="abrirModalConclusao('${matCadastrada.nome}', '${top.nome}')">Concluir Tópico</button>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        // Matéria sem tópicos pendentes (todos concluídos)
                         html += `
-                            <div class="meta-card-item">
+                            <div class="meta-card-item" style="opacity: 0.8;">
                                 <div class="meta-info">
                                     <span class="materia-tag">${matCadastrada.nome}</span>
-                                    <h3>${top.nome}</h3>
+                                    <h3 style="color: var(--success); font-size: 1.1rem;">Todos os tópicos desta matéria foram concluídos!</h3>
                                 </div>
-                                <button class="btn-concluir-topico" onclick="abrirModalConclusao('${matCadastrada.nome}', '${top.nome}')">Concluir Tópico</button>
+                                <button class="btn-acao-sm" onclick="switchScreen('materias')">Gerenciar Tópicos</button>
                             </div>
                         `;
-                    });
+                    }
                 } else {
+                    // Matéria sem nenhum tópico cadastrado ainda
                     html += `
-                        <div class="meta-card-item" style="opacity: 0.8;">
+                        <div class="meta-card-item" style="opacity: 0.9;">
                             <div class="meta-info">
                                 <span class="materia-tag">${matCadastrada.nome}</span>
-                                <h3 style="color: var(--text-muted); font-size: 1.1rem; font-style: italic;">Nenhum tópico cadastrado nesta matéria ainda. Adicione tópicos para iniciar.</h3>
+                                <h3 style="color: var(--warning); font-size: 1.1rem;">Nenhum tópico cadastrado ainda. Clique para adicionar tópicos.</h3>
                             </div>
                             <button class="btn-acao-sm" onclick="switchScreen('materias')">Adicionar Tópicos</button>
                         </div>
