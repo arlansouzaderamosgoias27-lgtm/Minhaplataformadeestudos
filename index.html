@@ -538,13 +538,13 @@
             <span>Plataforma de Estudos do Amigo</span>
         </div>
         <ul class="nav-icons">
-            <li><button class="active" onclick="switchScreen('dashboard', event)" title="Início">🏠</button></li>
+            <li><button class="active" onclick="switchScreen('dashboard', event)" title="Dashboard / Início">🏠</button></li>
             <li><button onclick="switchScreen('materias', event)" title="Matérias">📚</button></li>
             <li><button onclick="switchScreen('plano', event)" title="Plano de Estudos">📖</button></li>
             <li><button onclick="switchScreen('ajuste-metas', event)" title="Ajuste de Metas">🎯</button></li>
             <li><button onclick="switchScreen('metas', event)" title="Metas de Hoje">⚡</button></li>
-            <li><button onclick="switchScreen('progresso', event)" title="Progresso e Gráficos">📈</button></li>
-            <li><button onclick="switchScreen('calendario', event)" title="Calendário">📅</button></li>
+            <li><button onclick="switchScreen('progresso', event)" title="Progresso e Estatísticas">📈</button></li>
+            <li><button onclick="switchScreen('calendario', event)" title="Calendário e Revisões">📅</button></li>
             <li><button onclick="switchScreen('perfil', event)" title="Perfil">👤</button></li>
             <li><button onclick="switchScreen('config', event)" title="Configurações">⚙️</button></li>
         </ul>
@@ -552,14 +552,17 @@
 
     <!-- Conteúdo Principal / Telas Exclusivas -->
     <main>
-        <!-- 1. TELA INICIAL -->
+        <!-- 1. TELA INICIAL / DASHBOARD -->
         <div id="dashboard" class="screen active">
             <div class="hero-initial">
                 <div class="rocket-minimal">🚀</div>
                 <h1 id="home-title">FOCO, DISCIPLINA E EXECUÇÃO</h1>
-                <p id="home-subtitle">A constância supera o talento. Sua jornada de alta performance sincronizada.</p>
+                <p id="home-subtitle">A constância supera o talento. Sua jornada de alta performance sincronizada em tempo real.</p>
                 <div id="home-date" style="font-size: 1.1rem; font-weight: bold; color: var(--accent); margin-bottom: 25px;"></div>
-                <button class="btn-iniciar-estudos" onclick="switchScreen('metas')">INICIAR ESTUDOS</button>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-iniciar-estudos" onclick="switchScreen('metas')">INICIAR ESTUDOS</button>
+                    <button class="btn-iniciar-estudos" style="background-color: var(--accent);" onclick="switchScreen('progresso')">VER ESTATÍSTICAS</button>
+                </div>
             </div>
         </div>
 
@@ -674,12 +677,12 @@
             </div>
         </div>
 
-        <!-- 6. TELA PROGRESSO E GRÁFICOS -->
+        <!-- 6. TELA PROGRESSO, ESTATÍSTICAS E DASHBOARD -->
         <div id="progresso" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>📈 Progresso do Curso</h2>
-                <p class="subtitle">Acompanhamento visual e inteligente do seu desempenho.</p>
+                <h2>📈 Progresso do Curso & Estatísticas</h2>
+                <p class="subtitle">Acompanhamento visual e inteligente do seu desempenho sincronizado em tempo real.</p>
                 
                 <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border);">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600;">
@@ -702,7 +705,7 @@
                     </div>
                     <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
                         <span id="stat-revisoes-realizadas" style="font-size: 1.6rem; font-weight: 700; color: var(--success); display: block; margin-bottom: 5px;">0</span>
-                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões Pendentes</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões / Concluídos</span>
                     </div>
                 </div>
 
@@ -846,7 +849,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             carregarDadosLocais();
             atualizarDataAtual();
-            renderizarTodasTelas();
+            sincronizarTudoEmTempoReal();
         });
 
         function carregarDadosLocais() {
@@ -862,7 +865,17 @@
 
         function salvarDadosLocais() {
             localStorage.setItem('plataforma_estudos_amigo_data', JSON.stringify(appData));
-            mostrarToast("Salvo com sucesso!");
+            sincronizarTudoEmTempoReal();
+            mostrarToast("Sincronizado e salvo com sucesso!");
+        }
+
+        function sincronizarTudoEmTempoReal() {
+            renderizarListaMaterias();
+            renderizarPlanoSemanalForm();
+            renderizarMetasHoje();
+            renderizarProgresso();
+            renderizarCalendario();
+            carregarPerfilForm();
         }
 
         function mostrarToast(mensagem) {
@@ -903,7 +916,6 @@
                 renderizarProgresso();
             }
             if(screenId === 'calendario') {
-                // Sincronizar com a data atual do dispositivo ao abrir
                 const hoje = new Date();
                 calendarioAnoAtual = hoje.getFullYear();
                 calendarioMesAtual = hoje.getMonth();
@@ -928,7 +940,6 @@
             });
             input.value = '';
             salvarDadosLocais();
-            renderizarListaMaterias();
         }
 
         function renderizarListaMaterias() {
@@ -979,7 +990,6 @@
             if(confirm('Deseja excluir esta matéria?')) {
                 appData.materias.splice(idx, 1);
                 salvarDadosLocais();
-                renderizarListaMaterias();
             }
         }
 
@@ -1047,6 +1057,7 @@
         // --- PLANO DE ESTUDOS ---
         function renderizarPlanoSemanalForm() {
             const diaSelect = document.getElementById('select-dia-semana');
+            if(!diaSelect) return;
             const dia = diaSelect.value;
             topicosTemporariosPlanoDia = [...(appData.planoSemanal[dia] || [])];
             atualizarPreviewPlanoDia();
@@ -1080,8 +1091,6 @@
             const dia = diaSelect.value;
             appData.planoSemanal[dia] = [...topicosTemporariosPlanoDia];
             salvarDadosLocais();
-            renderizarListaPlanoSemanalGeral();
-            mostrarToast("Plano semanal salvo com sucesso!");
         }
 
         function renderizarListaPlanoSemanalGeral() {
@@ -1144,7 +1153,6 @@
             if(editandoPlanoDia !== null && editandoPlanoIndex !== null) {
                 appData.planoSemanal[editandoPlanoDia][editandoPlanoIndex] = novoNome;
                 salvarDadosLocais();
-                renderizarPlanoSemanalForm();
                 fecharModalEditarPlano();
             }
         }
@@ -1153,7 +1161,6 @@
             if(confirm('Deseja excluir esta matéria do planejamento?')) {
                 appData.planoSemanal[dia].splice(index, 1);
                 salvarDadosLocais();
-                renderizarPlanoSemanalForm();
             }
         }
 
@@ -1248,7 +1255,7 @@
             renderizarMetasHoje();
         }
 
-        // --- PROGRESSO E GRÁFICOS ---
+        // --- PROGRESSO, ESTATÍSTICAS E DASHBOARD ---
         function renderizarProgresso() {
             let totalTopicos = 0;
             let concluidosTopicos = 0;
@@ -1270,12 +1277,18 @@
             const percentual = totalTopicos > 0 ? Math.round((concluidosTopicos / totalTopicos) * 100) : 0;
             const restante = 100 - percentual;
 
-            document.getElementById('txt-progresso-geral').innerText = percentual + '%';
-            document.getElementById('barra-progresso-geral').style.width = percentual + '%';
-            document.getElementById('txt-percentual-restante').innerText = `Restante: ${restante}%`;
-            document.getElementById('txt-concluidos-restantes').innerText = `${concluidosTopicos} / ${totalTopicos} Tópicos`;
+            const txtProgressoGeral = document.getElementById('txt-progresso-geral');
+            const barraProgressoGeral = document.getElementById('barra-progresso-geral');
+            const txtPercentualRestante = document.getElementById('txt-percentual-restante');
+            const txtConcluidosRestantes = document.getElementById('txt-concluidos-restantes');
+            const statMateriasConcluidas = document.getElementById('stat-materias-concluidas');
+            const statRevisoesRealizadas = document.getElementById('stat-revisoes-realizadas');
 
-            document.getElementById('stat-materias-concluidas').innerText = `${materiasConcluidas} / ${appData.materias.length}`;
+            if(txtProgressoGeral) txtProgressoGeral.innerText = percentual + '%';
+            if(barraProgressoGeral) barraProgressoGeral.style.width = percentual + '%';
+            if(txtPercentualRestante) txtPercentualRestante.innerText = `Restante: ${restante}%`;
+            if(txtConcluidosRestantes) txtConcluidosRestantes.innerText = `${concluidosTopicos} / ${totalTopicos} Tópicos`;
+            if(statMateriasConcluidas) statMateriasConcluidas.innerText = `${materiasConcluidas} / ${appData.materias.length}`;
             
             let revisoesCount = 0;
             appData.materias.forEach(m => {
@@ -1283,9 +1296,11 @@
                     if(t.concluido) revisoesCount++;
                 });
             });
-            document.getElementById('stat-revisoes-realizadas').innerText = revisoesCount;
+            if(statRevisoesRealizadas) statRevisoesRealizadas.innerText = revisoesCount;
 
             const detalhesContainer = document.getElementById('detalhes-materias-progresso');
+            if(!detalhesContainer) return;
+
             if(appData.materias.length === 0) {
                 detalhesContainer.innerHTML = `<p style="color: var(--text-muted);">Nenhuma matéria cadastrada.</p>`;
                 return;
@@ -1343,17 +1358,14 @@
 
             let html = '';
 
-            // Dias do mês anterior (preenchimento)
             for (let i = primeiroDiaIndex - 1; i >= 0; i--) {
                 const diaNum = totalDiasMesAnterior - i;
                 html += `<div class="calendar-cell other-month"><span class="calendar-cell-number">${diaNum}</span></div>`;
             }
 
-            // Dias do mês atual
             for (let dia = 1; dia <= totalDiasMes; dia++) {
                 const isToday = (dia === hojeDia && calendarioMesAtual === hojeMes && calendarioAnoAtual === hojeAno);
                 
-                // Formatar data em DD/MM/YYYY para buscar histórico
                 const mesStr = String(calendarioMesAtual + 1).padStart(2, '0');
                 const diaStr = String(dia).padStart(2, '0');
                 const anoStr = calendarioAnoAtual;
@@ -1375,7 +1387,6 @@
                 `;
             }
 
-            // Completar grade com dias do próximo mês
             const totalCelulasPreenchidas = primeiroDiaIndex + totalDiasMes;
             const celulasRestantes = totalCelulasPreenchidas % 7 === 0 ? 0 : 7 - (totalCelulasPreenchidas % 7);
             for (let d = 1; d <= celulasRestantes; d++) {
@@ -1394,7 +1405,6 @@
 
             const estudosDoDia = appData.historicoEstudos.filter(h => h.data === dataFormatada);
             
-            // Tópicos concluídos nessa data
             let topicosConcluidosDia = [];
             let materiasEstudadasSet = new Set();
             let totalQuestoesDia = 0;
@@ -1405,7 +1415,6 @@
                 totalQuestoesDia += est.questoes || 0;
             });
 
-            // Revisões realizadas / pendentes estimadas
             let revisoesPendentesCount = 0;
             appData.materias.forEach(m => {
                 m.topicos.forEach(t => {
@@ -1429,7 +1438,7 @@
                         <span style="color: var(--warning); font-weight: 700; display: block; margin-bottom: 5px;">🔄 Revisões e Desempenho</span>
                         <div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• Revisões Realizadas / Sincronizadas: ${estudosDoDia.length}</div>
                         <div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• Revisões Pendentes Atuais: ${revisoesPendentesCount}</div>
-                        <div style="font-size: 0.9rem; color: #success; margin-top: 4px;">• Questões Resolvidas: ${totalQuestoesDia}</div>
+                        <div style="font-size: 0.9rem; color: var(--success); margin-top: 4px;">• Questões Resolvidas: ${totalQuestoesDia}</div>
                     </div>
 
                     <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
@@ -1459,7 +1468,9 @@
         }
 
         function carregarPerfilForm() {
-            document.getElementById('input-perfil-nome').value = appData.perfil.nome || '';
+            const elNome = document.getElementById('input-perfil-nome');
+            if(!elNome) return;
+            elNome.value = appData.perfil.nome || '';
             document.getElementById('input-perfil-idade').value = appData.perfil.idade || '';
             document.getElementById('input-perfil-nascimento').value = appData.perfil.nascimento || '';
             document.getElementById('input-perfil-cidade').value = appData.perfil.cidade || '';
@@ -1478,22 +1489,6 @@
             appData.config.fonte = fonteFamily;
             document.documentElement.style.setProperty('--font-family', fonteFamily);
             salvarDadosLocais();
-        }
-
-        function renderizarTodasTelas() {
-            if(appData.config.cor) {
-                document.documentElement.style.setProperty('--accent', appData.config.cor);
-                const sel = document.getElementById('select-cor');
-                if(sel) sel.value = appData.config.cor;
-            }
-            if(appData.config.fonte) {
-                document.documentElement.style.setProperty('--font-family', appData.config.fonte);
-                const selF = document.getElementById('select-fonte');
-                if(selF) selF.value = appData.config.fonte;
-            }
-            carregarPerfilForm();
-            renderizarListaMaterias();
-            renderizarListaPlanoSemanalGeral();
         }
     </script>
 </body>
