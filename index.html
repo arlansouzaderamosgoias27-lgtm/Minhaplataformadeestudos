@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Estudos</title>
-    <!-- Font Awesome para garantir ícones profissionais e visíveis em qualquer tela/dispositivo -->
+    <!-- Font Awesome para corrigir e garantir ícones perfeitos no PC e no celular -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
             --success: #10b981;
+            --accent: #f59e0b;
         }
 
         * {
@@ -33,28 +34,33 @@
             min-height: 100vh;
         }
 
-        /* Cabeçalho mantido exatamente com o layout original */
+        /* Menu superior original mantido, sem barra de pesquisa e com ícones corrigidos */
         header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .logo {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: var(--primary);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Menu Superior com ícones corrigidos e visíveis */
         nav {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
             align-items: center;
         }
@@ -66,11 +72,11 @@
             padding: 0.5rem 0.75rem;
             border-radius: 0.375rem;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
         .nav-btn:hover, .nav-btn.active {
@@ -81,28 +87,95 @@
         /* Conteúdo Principal */
         main {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 1. Tela Inicial original ocupando toda a página */
+        .home-fullscreen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            min-height: calc(100vh - 65px);
+        }
+
+        .home-rocket {
+            font-size: 3.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .home-phrase {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .home-date {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .btn-iniciar-estudos {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: #ffffff;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-iniciar-estudos:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Layout padrão para as demais telas internas */
+        .inner-container {
             padding: 2rem;
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Cards e Layout Original */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 0.5rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
         h2 {
@@ -117,24 +190,12 @@
             color: var(--text-main);
         }
 
-        /* Botão Inicial Original */
-        .btn-iniciar {
-            background-color: var(--primary);
-            color: #ffffff;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
+        p {
+            color: var(--text-muted);
+            line-height: 1.5;
         }
 
-        .btn-iniciar:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* Grid de Estatísticas (Tela Progresso e Estatísticas) */
+        /* Melhoria na Tela Progresso e Estatísticas (Mantendo layout original) */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -151,9 +212,10 @@
         }
 
         .stat-card h4 {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
         }
 
         .stat-card .value {
@@ -162,24 +224,21 @@
             color: var(--primary);
         }
 
-        /* Barras de Progresso */
         .progress-bar-container {
             background-color: var(--border-color);
             border-radius: 9999px;
             height: 0.75rem;
             width: 100%;
             overflow: hidden;
-            margin: 0.5rem 0 1rem 0;
+            margin: 0.5rem 0 0.5rem 0;
         }
 
         .progress-bar-fill {
             background-color: var(--success);
             height: 100%;
             width: 0%;
-            transition: width 0.4s ease;
         }
 
-        /* Tabelas de Progresso por Matéria */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -194,32 +253,39 @@
         }
 
         th {
-            background-color: #f9fafb;
+            background-color: rgba(255,255,255,0.02);
             color: var(--text-muted);
             font-weight: 600;
         }
 
-        /* Tela Meu Perfil Simplificada */
+        td {
+            color: var(--text-main);
+        }
+
+        /* Simplificação da Tela Meu Perfil (Apenas os 6 campos solicitados) */
         .profile-form {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 0.4rem;
         }
 
         .form-group label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-muted);
+            text-transform: uppercase;
         }
 
         .form-group input {
-            padding: 0.65rem;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 0.75rem;
             border: 1px solid var(--border-color);
             border-radius: 0.375rem;
             font-size: 1rem;
@@ -233,7 +299,7 @@
             border-radius: 0.375rem;
             cursor: pointer;
             font-weight: 600;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             transition: background-color 0.2s;
         }
 
@@ -241,7 +307,6 @@
             background-color: var(--primary-hover);
         }
 
-        /* Responsividade preservada */
         @media(max-width: 768px) {
             header {
                 flex-direction: column;
@@ -257,9 +322,9 @@
 </head>
 <body>
 
-    <!-- Cabeçalho (Sem barra de pesquisa conforme solicitado) -->
+    <!-- Menu Superior (Sem barra de pesquisa e com ícones corrigidos) -->
     <header>
-        <div class="logo"><i class="fa-solid fa-graduation-cap"></i> Plataforma de Estudos</div>
+        <div class="logo"><i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> Plataforma de Estudos</div>
         <nav>
             <button class="nav-btn active" onclick="switchTab('inicio', this)"><i class="fa-solid fa-house"></i> Tela Inicial</button>
             <button class="nav-btn" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
@@ -273,168 +338,173 @@
         </nav>
     </header>
 
-    <!-- Conteúdo Principal mantendo todo o fluxo original -->
     <main>
-        <!-- 1. Tela Inicial -->
+        <!-- 1. Tela Inicial Original Ocupando Toda a Página -->
         <section id="inicio" class="tab-content active">
-            <h2>Tela Inicial</h2>
-            <div class="card">
-                <h3>Bem-vindo à sua central de estudos</h3>
-                <p>Clique no botão abaixo para dar início às suas atividades diárias e manter o foco nos seus objetivos.</p>
-                <br>
-                <button class="btn-iniciar" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(3)'))">Iniciar Estudos</button>
+            <div class="home-fullscreen">
+                <div class="home-rocket"><i class="fa-solid fa-rocket"></i></div>
+                <div class="home-phrase">Foco, Disciplina e Execução</div>
+                <div class="home-date" id="current-date">Segunda-feira, 3 de agosto de 2026</div>
+                <button class="btn-iniciar-estudos" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(3)'))">
+                    Iniciar Estudos
+                </button>
             </div>
         </section>
 
         <!-- 2. Dashboard -->
         <section id="dashboard" class="tab-content">
-            <h2>Dashboard</h2>
-            <div class="card">
-                <h3>Visão Geral</h3>
-                <p>Acompanhe o resumo das suas atividades e atalhos rápidos para a sua rotina de preparação.</p>
+            <div class="inner-container">
+                <h2>Dashboard</h2>
+                <div class="card">
+                    <h3>Visão Geral</h3>
+                    <p>Acompanhe o resumo das suas atividades e atalhos rápidos para a sua rotina de preparação.</p>
+                </div>
             </div>
         </section>
 
         <!-- 3. Metas de Hoje -->
         <section id="metas-hoje" class="tab-content">
-            <h2>Metas de Hoje</h2>
-            <div class="card">
-                <h3>Tarefas do Dia</h3>
-                <p>Lista de conteúdos, ciclos e questões programadas para cumprir hoje.</p>
+            <div class="inner-container">
+                <h2>Metas de Hoje</h2>
+                <div class="card">
+                    <h3>Tarefas do Dia</h3>
+                    <p>Lista de conteúdos, ciclos e questões programadas para cumprir hoje.</p>
+                </div>
             </div>
         </section>
 
         <!-- 4. Plano de Estudos -->
         <section id="plano" class="tab-content">
-            <h2>Plano de Estudos</h2>
-            <div class="card">
-                <h3>Cronograma Completo</h3>
-                <p>Organização diária, semanal, mensal e anual dos seus estudos salvos e estruturados.</p>
+            <div class="inner-container">
+                <h2>Plano de Estudos</h2>
+                <div class="card">
+                    <h3>Cronograma Completo</h3>
+                    <p>Organização diária, semanal, mensal e anual dos seus estudos salvos e estruturados.</p>
+                </div>
             </div>
         </section>
 
-        <!-- 5. Progresso e Estatísticas (Melhoria solicitada implementada integralmente) -->
+        <!-- 5. Progresso e Estatísticas (Informações adicionadas mantendo o layout original) -->
         <section id="progresso" class="tab-content">
-            <h2>Progresso e Estatísticas</h2>
-            
-            <!-- Resumo Geral -->
-            <div class="card">
-                <h3>Resumo Geral do Curso</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Percentual Geral Concluído</h4>
-                        <div class="value">68%</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Total de Matérias</h4>
-                        <div class="value">10</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Matérias Concluídas</h4>
-                        <div class="value">6</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Total de Tópicos</h4>
-                        <div class="value">150</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Tópicos Concluídos</h4>
-                        <div class="value">102</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Tópicos Restantes</h4>
-                        <div class="value">48</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Questões Respondidas</h4>
-                        <div class="value">1.420</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Revisões Realizadas</h4>
-                        <div class="value">35</div>
+            <div class="inner-container">
+                <h2>Progresso e Estatísticas</h2>
+                
+                <div class="card">
+                    <h3>Resumo Geral do Curso</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Percentual Geral Concluído</h4>
+                            <div class="value">68%</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Total de Matérias</h4>
+                            <div class="value">10</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Matérias Concluídas</h4>
+                            <div class="value">6</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Total de Tópicos</h4>
+                            <div class="value">150</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Tópicos Concluídos</h4>
+                            <div class="value">102</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Tópicos Restantes</h4>
+                            <div class="value">48</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Questões Respondidas</h4>
+                            <div class="value">1.420</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Revisões Realizadas</h4>
+                            <div class="value">35</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Progresso por Matéria -->
-            <div class="card">
-                <h3>Progresso por Matéria</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Matéria</th>
-                            <th>Tópicos (Concluídos / Total)</th>
-                            <th>Restantes</th>
-                            <th>Progresso</th>
-                            <th>Revisões</th>
-                            <th>Último Estudo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Direito Constitucional</strong></td>
-                            <td>18 / 20</td>
-                            <td>2</td>
-                            <td>
-                                90%
-                                <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 90%;"></div></div>
-                            </td>
-                            <td>6</td>
-                            <td>Ontem</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Português</strong></td>
-                            <td>15 / 15</td>
-                            <td>0</td>
-                            <td>
-                                100%
-                                <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 100%;"></div></div>
-                            </td>
-                            <td>8</td>
-                            <td>Hoje</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Informática</strong></td>
-                            <td>8 / 12</td>
-                            <td>4</td>
-                            <td>
-                                66%
-                                <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 66%;"></div></div>
-                            </td>
-                            <td>3</td>
-                            <td>Há 3 dias</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div class="card">
+                    <h3>Progresso por Matéria</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Matéria</th>
+                                <th>Tópicos (Concluídos / Total)</th>
+                                <th>Restantes</th>
+                                <th>Progresso</th>
+                                <th>Revisões</th>
+                                <th>Último Estudo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Direito Constitucional</strong></td>
+                                <td>18 / 20</td>
+                                <td>2</td>
+                                <td>
+                                    90%
+                                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 90%;"></div></div>
+                                </td>
+                                <td>6</td>
+                                <td>Ontem</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Português</strong></td>
+                                <td>15 / 15</td>
+                                <td>0</td>
+                                <td>
+                                    100%
+                                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                                </td>
+                                <td>8</td>
+                                <td>Hoje</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Informática</strong></td>
+                                <td>8 / 12</td>
+                                <td>4</td>
+                                <td>
+                                    66%
+                                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 66%;"></div></div>
+                                </td>
+                                <td>3</td>
+                                <td>Há 3 dias</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Estatísticas Gerais -->
-            <div class="card">
-                <h3>Estatísticas Gerais de Desempenho</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Total de Sessões de Estudo</h4>
-                        <div class="value">45</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Média Diária de Estudos</h4>
-                        <div class="value">3h 15m</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Média de Questões por Sessão</h4>
-                        <div class="value">31</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Sequência de Dias Estudando</h4>
-                        <div class="value">12 dias</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Melhor Dia de Desempenho</h4>
-                        <div class="value">Quarta-feira</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Tempo Total de Estudo (Cronômetro)</h4>
-                        <div class="value">145h 30m</div>
+                <div class="card">
+                    <h3>Estatísticas Gerais de Desempenho</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Total de Sessões de Estudo</h4>
+                            <div class="value">45</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Média Diária de Estudos</h4>
+                            <div class="value">3h 15m</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Média de Questões por Sessão</h4>
+                            <div class="value">31</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Sequência de Dias Estudando</h4>
+                            <div class="value">12 dias</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Melhor Dia de Desempenho</h4>
+                            <div class="value">Quarta-feira</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Tempo Total de Estudo</h4>
+                            <div class="value">145h 30m</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -442,68 +512,76 @@
 
         <!-- 6. Calendário -->
         <section id="calendario" class="tab-content">
-            <h2>Calendário</h2>
-            <div class="card">
-                <h3>Agenda de Prazos e Revisões</h3>
-                <p>Visualize seus compromissos e datas importantes programadas no calendário.</p>
+            <div class="inner-container">
+                <h2>Calendário</h2>
+                <div class="card">
+                    <h3>Agenda de Prazos e Revisões</h3>
+                    <p>Visualize seus compromissos e datas importantes programadas no calendário.</p>
+                </div>
             </div>
         </section>
 
         <!-- 7. Coach -->
         <section id="coach" class="tab-content">
-            <h2>Coach</h2>
-            <div class="card">
-                <h3>Orientação Estratégica</h3>
-                <p>Dicas e direcionamento personalizado para otimizar sua preparação e desempenho.</p>
+            <div class="inner-container">
+                <h2>Coach</h2>
+                <div class="card">
+                    <h3>Orientação Estratégica</h3>
+                    <p>Dicas e direcionamento personalizado para otimizar sua preparação e desempenho.</p>
+                </div>
             </div>
         </section>
 
         <!-- 8. Meu Perfil (Simplificado estritamente com os 6 campos solicitados) -->
         <section id="perfil" class="tab-content">
-            <h2>Meu Perfil</h2>
-            <div class="card">
-                <h3>Informações Cadastrais</h3>
-                <div class="profile-form">
-                    <div class="form-group">
-                        <label for="nome">Nome completo</label>
-                        <input type="text" id="nome" value="Arlan Souza de Ramos">
+            <div class="inner-container">
+                <h2>Meu Perfil</h2>
+                <div class="card">
+                    <h3>Informações Cadastrais</h3>
+                    <div class="profile-form">
+                        <div class="form-group">
+                            <label for="nome">Nome completo</label>
+                            <input type="text" id="nome" value="Arlan Souza de Ramos">
+                        </div>
+                        <div class="form-group">
+                            <label for="idade">Idade</label>
+                            <input type="number" id="idade" value="27">
+                        </div>
+                        <div class="form-group">
+                            <label for="nascimento">Data de nascimento</label>
+                            <input type="date" id="nascimento" value="1998-11-04">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" value="Goiânia">
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <input type="text" id="estado" value="Goiás">
+                        </div>
+                        <div class="form-group">
+                            <label for="concurso">Concurso almejado atual</label>
+                            <input type="text" id="concurso" value="Auditor Fiscal / Tribunais">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="idade">Idade</label>
-                        <input type="number" id="idade" value="27">
-                    </div>
-                    <div class="form-group">
-                        <label for="nascimento">Data de nascimento</label>
-                        <input type="date" id="nascimento" value="1998-11-04">
-                    </div>
-                    <div class="form-group">
-                        <label for="cidade">Cidade</label>
-                        <input type="text" id="cidade" value="Goiânia">
-                    </div>
-                    <div class="form-group">
-                        <label for="estado">Estado</label>
-                        <input type="text" id="estado" value="Goiás">
-                    </div>
-                    <div class="form-group">
-                        <label for="concurso">Concurso almejado atual</label>
-                        <input type="text" id="concurso" value="Auditor Fiscal / Tribunais">
-                    </div>
+                    <button class="btn-save" onclick="alert('Informações salvas com sucesso!')">Salvar Alterações</button>
                 </div>
-                <button class="btn-save" onclick="alert('Informações salvas com sucesso!')">Salvar</button>
             </div>
         </section>
 
         <!-- 9. Configurações -->
         <section id="configuracoes" class="tab-content">
-            <h2>Configurações</h2>
-            <div class="card">
-                <h3>Configurações Gerais</h3>
-                <p>Gerencie preferências do sistema, notificações e ajustes visuais da sua conta.</p>
+            <div class="inner-container">
+                <h2>Configurações</h2>
+                <div class="card">
+                    <h3>Configurações Gerais</h3>
+                    <p>Gerencie preferências do sistema, notificações e ajustes visuais da sua conta.</p>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- JavaScript apenas para navegação padrão das abas (Busca removida permanentemente) -->
+    <!-- Script de navegação e exibição de data atual -->
     <script>
         function switchTab(tabId, element) {
             const contents = document.querySelectorAll('.tab-content');
@@ -513,8 +591,16 @@
             buttons.forEach(btn => btn.classList.remove('active'));
 
             document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
+            if (element) {
+                element.classList.add('active');
+            }
         }
+
+        // Exibir data atual formatada em português na tela inicial
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const today = new Date();
+        const dateString = today.toLocaleDateString('pt-BR', options);
+        document.getElementById('current-date').innerText = dateString.charAt(0).toUpperCase() + dateString.slice(1);
     </script>
 </body>
 </html>
