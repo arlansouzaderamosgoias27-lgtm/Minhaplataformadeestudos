@@ -655,13 +655,13 @@
                 
                 <div class="form-group">
                     <label>Quantidade de matérias por dia</label>
-                    <input type="number" id="input-qtd-materias-dia" value="2" min="1">
+                    <input type="number" id="input-qtd-materias-dia" value="2" min="1" oninput="salvarAjusteMetas()">
                 </div>
                 <div class="form-group">
                     <label>Quantidade de tópicos por matéria</label>
-                    <input type="number" id="input-qtd-topicos-materia" value="2" min="1">
+                    <input type="number" id="input-qtd-topicos-materia" value="2" min="1" oninput="salvarAjusteMetas()">
                 </div>
-                <button class="btn-primary" onclick="salvarAjusteMetas()">Salvar Metas</button>
+                <button class="btn-primary" onclick="salvarAjusteMetas(true)">Salvar Metas</button>
             </div>
         </div>
 
@@ -747,29 +747,29 @@
                 <p class="subtitle">Informações e dados do aluno.</p>
                 <div class="form-group">
                     <label>Nome Completo</label>
-                    <input type="text" id="input-perfil-nome" placeholder="Nome Completo">
+                    <input type="text" id="input-perfil-nome" placeholder="Nome Completo" oninput="salvarPerfil()">
                 </div>
                 <div class="form-group">
                     <label>Idade</label>
-                    <input type="number" id="input-perfil-idade" placeholder="Idade">
+                    <input type="number" id="input-perfil-idade" placeholder="Idade" oninput="salvarPerfil()">
                 </div>
                 <div class="form-group">
                     <label>Data de Nascimento</label>
-                    <input type="date" id="input-perfil-nascimento">
+                    <input type="date" id="input-perfil-nascimento" oninput="salvarPerfil()">
                 </div>
                 <div class="form-group">
                     <label>Cidade</label>
-                    <input type="text" id="input-perfil-cidade" placeholder="Cidade">
+                    <input type="text" id="input-perfil-cidade" placeholder="Cidade" oninput="salvarPerfil()">
                 </div>
                 <div class="form-group">
                     <label>Estado</label>
-                    <input type="text" id="input-perfil-estado" placeholder="Estado">
+                    <input type="text" id="input-perfil-estado" placeholder="Estado" oninput="salvarPerfil()">
                 </div>
                 <div class="form-group">
                     <label>Objetivo de Estudo Atual</label>
-                    <input type="text" id="input-perfil-objetivo" placeholder="Ex: Concurso Público">
+                    <input type="text" id="input-perfil-objetivo" placeholder="Ex: Concurso Público" oninput="salvarPerfil()">
                 </div>
-                <button class="btn-primary" onclick="salvarPerfil()">Salvar Alterações</button>
+                <button class="btn-primary" onclick="salvarPerfil(true)">Salvar Alterações</button>
             </div>
         </div>
 
@@ -863,10 +863,12 @@
             }
         }
 
-        function salvarDadosLocais() {
+        function salvarDadosLocais(mostrarFeedback = true) {
             localStorage.setItem('plataforma_estudos_amigo_data', JSON.stringify(appData));
             sincronizarTudoEmTempoReal();
-            mostrarToast("Sincronizado e salvo com sucesso!");
+            if(mostrarFeedback) {
+                mostrarToast("Sincronizado e salvo com sucesso!");
+            }
         }
 
         function sincronizarTudoEmTempoReal() {
@@ -876,6 +878,24 @@
             renderizarProgresso();
             renderizarCalendario();
             carregarPerfilForm();
+            aplicarConfiguracoesVisuais();
+        }
+
+        function aplicarConfiguracoesVisuais() {
+            if(appData.config.cor) {
+                document.documentElement.style.setProperty('--accent', appData.config.cor);
+                const selectCor = document.getElementById('select-cor');
+                if(selectCor) selectCor.value = appData.config.cor;
+            }
+            if(appData.config.fonte) {
+                document.documentElement.style.setProperty('--font-family', appData.config.fonte);
+                const selectFonte = document.getElementById('select-fonte');
+                if(selectFonte) selectFonte.value = appData.config.fonte;
+            }
+            const inputQtdMat = document.getElementById('input-qtd-materias-dia');
+            const inputQtdTop = document.getElementById('input-qtd-topicos-materia');
+            if(inputQtdMat && document.activeElement !== inputQtdMat) inputQtdMat.value = appData.ajusteMetas.materiasDia;
+            if(inputQtdTop && document.activeElement !== inputQtdTop) inputQtdTop.value = appData.ajusteMetas.topicosMateria;
         }
 
         function mostrarToast(mensagem) {
@@ -904,6 +924,24 @@
             if(event && event.currentTarget) {
                 document.querySelectorAll('.nav-icons button').forEach(b => b.classList.remove('active'));
                 event.currentTarget.classList.add('active');
+            } else {
+                const mapScreenIcon = {
+                    'dashboard': 0,
+                    'materias': 1,
+                    'plano': 2,
+                    'ajuste-metas': 3,
+                    'metas': 4,
+                    'progresso': 5,
+                    'calendario': 6,
+                    'perfil': 7,
+                    'config': 8
+                };
+                const iconButtons = document.querySelectorAll('.nav-icons button');
+                const idx = mapScreenIcon[screenId];
+                if(idx !== undefined && iconButtons[idx]) {
+                    iconButtons.forEach(b => b.classList.remove('active'));
+                    iconButtons[idx].classList.add('active');
+                }
             }
 
             if(screenId === 'materias') {
@@ -934,10 +972,13 @@
                 alert('Digite o nome da matéria.');
                 return;
             }
-            appData.materias.push({
-                nome: nome,
-                topicos: []
-            });
+            const existe = appData.materias.some(m => m.nome.toLowerCase() === nome.toLowerCase());
+            if(!existe) {
+                appData.materias.push({
+                    nome: nome,
+                    topicos: []
+                });
+            }
             input.value = '';
             salvarDadosLocais();
         }
@@ -1072,8 +1113,18 @@
                 return;
             }
             topicosTemporariosPlanoDia.push(nomeMat);
+            
+            const jaExiste = appData.materias.some(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
+            if(!jaExiste) {
+                appData.materias.push({
+                    nome: nomeMat,
+                    topicos: []
+                });
+            }
+
             input.value = '';
             atualizarPreviewPlanoDia();
+            salvarPlanoSemanalCompleto(false);
         }
 
         function atualizarPreviewPlanoDia() {
@@ -1086,11 +1137,23 @@
             container.innerHTML = '<b>Matérias adicionadas:</b> ' + topicosTemporariosPlanoDia.join(', ');
         }
 
-        function salvarPlanoSemanalCompleto() {
+        function salvarPlanoSemanalCompleto(mostrarFeedback = true) {
             const diaSelect = document.getElementById('select-dia-semana');
+            if(!diaSelect) return;
             const dia = diaSelect.value;
             appData.planoSemanal[dia] = [...topicosTemporariosPlanoDia];
-            salvarDadosLocais();
+            
+            topicosTemporariosPlanoDia.forEach(nomeMat => {
+                const jaExiste = appData.materias.some(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
+                if(!jaExiste) {
+                    appData.materias.push({
+                        nome: nomeMat,
+                        topicos: []
+                    });
+                }
+            });
+
+            salvarDadosLocais(mostrarFeedback);
         }
 
         function renderizarListaPlanoSemanalGeral() {
@@ -1152,6 +1215,15 @@
             }
             if(editandoPlanoDia !== null && editandoPlanoIndex !== null) {
                 appData.planoSemanal[editandoPlanoDia][editandoPlanoIndex] = novoNome;
+                
+                const jaExiste = appData.materias.some(m => m.nome.toLowerCase() === novoNome.toLowerCase());
+                if(!jaExiste) {
+                    appData.materias.push({
+                        nome: novoNome,
+                        topicos: []
+                    });
+                }
+
                 salvarDadosLocais();
                 fecharModalEditarPlano();
             }
@@ -1165,12 +1237,12 @@
         }
 
         // --- AJUSTE DE METAS ---
-        function salvarAjusteMetas() {
+        function salvarAjusteMetas(mostrarFeedback = false) {
             const qtdMat = parseInt(document.getElementById('input-qtd-materias-dia').value) || 2;
             const qtdTop = parseInt(document.getElementById('input-qtd-topicos-materia').value) || 2;
             appData.ajusteMetas.materiasDia = qtdMat;
             appData.ajusteMetas.topicosMateria = qtdTop;
-            salvarDadosLocais();
+            salvarDadosLocais(mostrarFeedback);
         }
 
         // --- METAS DE HOJE ---
@@ -1191,12 +1263,24 @@
                 return;
             }
 
+            const maxMateriasDia = appData.ajusteMetas.materiasDia || materiasDoDia.length;
+            const materiasFiltradas = materiasDoDia.slice(0, maxMateriasDia);
+
             let html = '';
-            materiasDoDia.forEach(nomeMat => {
-                const matCadastrada = appData.materias.find(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
-                if(matCadastrada && matCadastrada.topicos.length > 0) {
+            let totalTopicosExibidos = 0;
+
+            materiasFiltradas.forEach(nomeMat => {
+                let matCadastrada = appData.materias.find(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
+                
+                if(!matCadastrada) {
+                    matCadastrada = { nome: nomeMat, topicos: [] };
+                    appData.materias.push(matCadastrada);
+                }
+
+                if(matCadastrada.topicos.length > 0) {
                     const topicosPendentes = matCadastrada.topicos.filter(t => !t.concluido).slice(0, appData.ajusteMetas.topicosMateria);
                     topicosPendentes.forEach(top => {
+                        totalTopicosExibidos++;
                         html += `
                             <div class="meta-card-item">
                                 <div class="meta-info">
@@ -1207,6 +1291,16 @@
                             </div>
                         `;
                     });
+                } else {
+                    html += `
+                        <div class="meta-card-item" style="opacity: 0.8;">
+                            <div class="meta-info">
+                                <span class="materia-tag">${matCadastrada.nome}</span>
+                                <h3 style="color: var(--text-muted); font-size: 1.1rem; font-style: italic;">Nenhum tópico cadastrado nesta matéria ainda. Adicione tópicos para iniciar.</h3>
+                            </div>
+                            <button class="btn-acao-sm" onclick="switchScreen('materias')">Adicionar Tópicos</button>
+                        </div>
+                    `;
                 }
             });
 
@@ -1228,7 +1322,7 @@
             const qtdQ = parseInt(document.getElementById('input-qtd-questoes').value) || 0;
             const hojeDataStr = new Date().toLocaleDateString('pt-BR');
             if(topicoAtualConcluindo) {
-                const mat = appData.materias.find(m => m.nome === topicoAtualConcluindo.materia);
+                const mat = appData.materias.find(m => m.nome.toLowerCase() === topicoAtualConcluindo.materia.toLowerCase());
                 if(mat) {
                     const top = mat.topicos.find(t => t.nome === topicoAtualConcluindo.topico);
                     if(top) {
@@ -1457,25 +1551,35 @@
         }
 
         // --- PERFIL ---
-        function salvarPerfil() {
+        function salvarPerfil(mostrarFeedback = false) {
             appData.perfil.nome = document.getElementById('input-perfil-nome').value;
             appData.perfil.idade = document.getElementById('input-perfil-idade').value;
             appData.perfil.nascimento = document.getElementById('input-perfil-nascimento').value;
             appData.perfil.cidade = document.getElementById('input-perfil-cidade').value;
             appData.perfil.estado = document.getElementById('input-perfil-estado').value;
             appData.perfil.objetivo = document.getElementById('input-perfil-objetivo').value;
-            salvarDadosLocais();
+            salvarDadosLocais(mostrarFeedback);
         }
 
         function carregarPerfilForm() {
             const elNome = document.getElementById('input-perfil-nome');
             if(!elNome) return;
-            elNome.value = appData.perfil.nome || '';
-            document.getElementById('input-perfil-idade').value = appData.perfil.idade || '';
-            document.getElementById('input-perfil-nascimento').value = appData.perfil.nascimento || '';
-            document.getElementById('input-perfil-cidade').value = appData.perfil.cidade || '';
-            document.getElementById('input-perfil-estado').value = appData.perfil.estado || '';
-            document.getElementById('input-perfil-objetivo').value = appData.perfil.objetivo || '';
+            if(document.activeElement !== elNome) elNome.value = appData.perfil.nome || '';
+            
+            const elIdade = document.getElementById('input-perfil-idade');
+            if(elIdade && document.activeElement !== elIdade) elIdade.value = appData.perfil.idade || '';
+            
+            const elNasc = document.getElementById('input-perfil-nascimento');
+            if(elNasc && document.activeElement !== elNasc) elNasc.value = appData.perfil.nascimento || '';
+            
+            const elCidade = document.getElementById('input-perfil-cidade');
+            if(elCidade && document.activeElement !== elCidade) elCidade.value = appData.perfil.cidade || '';
+            
+            const elEstado = document.getElementById('input-perfil-estado');
+            if(elEstado && document.activeElement !== elEstado) elEstado.value = appData.perfil.estado || '';
+            
+            const elObj = document.getElementById('input-perfil-objetivo');
+            if(elObj && document.activeElement !== elObj) elObj.value = appData.perfil.objetivo || '';
         }
 
         // --- CONFIGURAÇÕES ---
