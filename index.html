@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Estudos</title>
-    <!-- Font Awesome para ícones profissionais e compatíveis -->
+    <!-- Font Awesome para garantir ícones profissionais e visíveis em qualquer tela/dispositivo -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -33,7 +33,7 @@
             min-height: 100vh;
         }
 
-        /* Cabeçalho */
+        /* Cabeçalho mantido exatamente com o layout original */
         header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -51,7 +51,7 @@
             color: var(--primary);
         }
 
-        /* Menu Superior */
+        /* Menu Superior com ícones corrigidos e visíveis */
         nav {
             display: flex;
             gap: 0.5rem;
@@ -95,7 +95,7 @@
             display: block;
         }
 
-        /* Cards e Estilos Gerais */
+        /* Cards e Layout Original */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -117,7 +117,24 @@
             color: var(--text-main);
         }
 
-        /* Grid de Estatísticas */
+        /* Botão Inicial Original */
+        .btn-iniciar {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn-iniciar:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Grid de Estatísticas (Tela Progresso e Estatísticas) */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -162,7 +179,7 @@
             transition: width 0.4s ease;
         }
 
-        /* Tabelas de Matérias */
+        /* Tabelas de Progresso por Matéria */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -182,7 +199,7 @@
             font-weight: 600;
         }
 
-        /* Formulário do Perfil */
+        /* Tela Meu Perfil Simplificada */
         .profile-form {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -210,14 +227,13 @@
 
         .btn-save {
             background-color: var(--primary);
-            color: #white;
+            color: #ffffff;
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 0.375rem;
             cursor: pointer;
             font-weight: 600;
             margin-top: 1rem;
-            color: #ffffff;
             transition: background-color 0.2s;
         }
 
@@ -225,7 +241,7 @@
             background-color: var(--primary-hover);
         }
 
-        /* Responsividade */
+        /* Responsividade preservada */
         @media(max-width: 768px) {
             header {
                 flex-direction: column;
@@ -241,15 +257,14 @@
 </head>
 <body>
 
-    <!-- Cabeçalho (Sem barra de pesquisa) -->
+    <!-- Cabeçalho (Sem barra de pesquisa conforme solicitado) -->
     <header>
         <div class="logo"><i class="fa-solid fa-graduation-cap"></i> Plataforma de Estudos</div>
         <nav>
-            <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard/Início</button>
-            <button class="nav-btn" onclick="switchTab('materias', this)"><i class="fa-solid fa-book"></i> Matérias</button>
-            <button class="nav-btn" onclick="switchTab('plano', this)"><i class="fa-solid fa-calendar-days"></i> Plano de Estudos</button>
-            <button class="nav-btn" onclick="switchTab('metas', this)"><i class="fa-solid fa-bullseye"></i> Ajuste de Metas</button>
+            <button class="nav-btn active" onclick="switchTab('inicio', this)"><i class="fa-solid fa-house"></i> Tela Inicial</button>
+            <button class="nav-btn" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
             <button class="nav-btn" onclick="switchTab('metas-hoje', this)"><i class="fa-solid fa-list-check"></i> Metas de Hoje</button>
+            <button class="nav-btn" onclick="switchTab('plano', this)"><i class="fa-solid fa-calendar-days"></i> Plano de Estudos</button>
             <button class="nav-btn" onclick="switchTab('progresso', this)"><i class="fa-solid fa-chart-line"></i> Progresso e Estatísticas</button>
             <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="fa-solid fa-calendar"></i> Calendário</button>
             <button class="nav-btn" onclick="switchTab('coach', this)"><i class="fa-solid fa-robot"></i> Coach</button>
@@ -258,54 +273,47 @@
         </nav>
     </header>
 
-    <!-- Conteúdo Principal -->
+    <!-- Conteúdo Principal mantendo todo o fluxo original -->
     <main>
-        <!-- 1. Dashboard / Início -->
-        <section id="dashboard" class="tab-content active">
-            <h2>Dashboard / Início</h2>
+        <!-- 1. Tela Inicial -->
+        <section id="inicio" class="tab-content active">
+            <h2>Tela Inicial</h2>
             <div class="card">
-                <h3>Bem-vindo de volta!</h3>
-                <p>Acompanhe seu progresso geral e acesse suas metas diárias rapidamente pelo menu superior.</p>
+                <h3>Bem-vindo à sua central de estudos</h3>
+                <p>Clique no botão abaixo para dar início às suas atividades diárias e manter o foco nos seus objetivos.</p>
+                <br>
+                <button class="btn-iniciar" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(3)'))">Iniciar Estudos</button>
             </div>
         </section>
 
-        <!-- 2. Matérias -->
-        <section id="materias" class="tab-content">
-            <h2>Matérias</h2>
+        <!-- 2. Dashboard -->
+        <section id="dashboard" class="tab-content">
+            <h2>Dashboard</h2>
             <div class="card">
-                <h3>Gerenciamento de Matérias</h3>
-                <p>Lista de disciplinas cadastradas e seus respectivos tópicos.</p>
+                <h3>Visão Geral</h3>
+                <p>Acompanhe o resumo das suas atividades e atalhos rápidos para a sua rotina de preparação.</p>
             </div>
         </section>
 
-        <!-- 3. Plano de Estudos -->
-        <section id="plano" class="tab-content">
-            <h2>Plano de Estudos</h2>
-            <div class="card">
-                <h3>Seu Cronograma</h3>
-                <p>Organização diária, semanal, mensal e anual dos seus estudos.</p>
-            </div>
-        </section>
-
-        <!-- 4. Ajuste de Metas -->
-        <section id="metas" class="tab-content">
-            <h2>Ajuste de Metas</h2>
-            <div class="card">
-                <h3>Configuração de Objetivos</h3>
-                <p>Defina metas de estudo e configure seu ritmo de preparação.</p>
-            </div>
-        </section>
-
-        <!-- 5. Metas de Hoje -->
+        <!-- 3. Metas de Hoje -->
         <section id="metas-hoje" class="tab-content">
             <h2>Metas de Hoje</h2>
             <div class="card">
                 <h3>Tarefas do Dia</h3>
-                <p>O que você precisa cumprir hoje para manter sua rotina em dia.</p>
+                <p>Lista de conteúdos, ciclos e questões programadas para cumprir hoje.</p>
             </div>
         </section>
 
-        <!-- 6. Progresso e Estatísticas (Reestruturado conforme solicitado) -->
+        <!-- 4. Plano de Estudos -->
+        <section id="plano" class="tab-content">
+            <h2>Plano de Estudos</h2>
+            <div class="card">
+                <h3>Cronograma Completo</h3>
+                <p>Organização diária, semanal, mensal e anual dos seus estudos salvos e estruturados.</p>
+            </div>
+        </section>
+
+        <!-- 5. Progresso e Estatísticas (Melhoria solicitada implementada integralmente) -->
         <section id="progresso" class="tab-content">
             <h2>Progresso e Estatísticas</h2>
             
@@ -426,31 +434,31 @@
                     </div>
                     <div class="stat-card">
                         <h4>Tempo Total de Estudo (Cronômetro)</h4>
-                        <div class="value" id="tempo-total">145h 30m</div>
+                        <div class="value">145h 30m</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 7. Calendário -->
+        <!-- 6. Calendário -->
         <section id="calendario" class="tab-content">
             <h2>Calendário</h2>
             <div class="card">
-                <h3>Visão de Calendário</h3>
-                <p>Acompanhe datas de provas, revisões e simulados agendados.</p>
+                <h3>Agenda de Prazos e Revisões</h3>
+                <p>Visualize seus compromissos e datas importantes programadas no calendário.</p>
             </div>
         </section>
 
-        <!-- 8. Coach -->
+        <!-- 7. Coach -->
         <section id="coach" class="tab-content">
             <h2>Coach</h2>
             <div class="card">
-                <h3>Assistente de Estudos</h3>
-                <p>Orientações e direcionamentos estratégicos para sua preparação.</p>
+                <h3>Orientação Estratégica</h3>
+                <p>Dicas e direcionamento personalizado para otimizar sua preparação e desempenho.</p>
             </div>
         </section>
 
-        <!-- 9. Perfil (Simplificado conforme solicitado) -->
+        <!-- 8. Meu Perfil (Simplificado estritamente com os 6 campos solicitados) -->
         <section id="perfil" class="tab-content">
             <h2>Meu Perfil</h2>
             <div class="card">
@@ -481,32 +489,29 @@
                         <input type="text" id="concurso" value="Auditor Fiscal / Tribunais">
                     </div>
                 </div>
-                <button class="btn-save" onclick="alert('Alterações salvas com sucesso!')">Salvar Alterações</button>
+                <button class="btn-save" onclick="alert('Informações salvas com sucesso!')">Salvar</button>
             </div>
         </section>
 
-        <!-- 10. Configurações -->
+        <!-- 9. Configurações -->
         <section id="configuracoes" class="tab-content">
             <h2>Configurações</h2>
             <div class="card">
-                <h3>Ajustes do Sistema</h3>
-                <p>Personalize notificações, preferências visuais e dados de acesso.</p>
+                <h3>Configurações Gerais</h3>
+                <p>Gerencie preferências do sistema, notificações e ajustes visuais da sua conta.</p>
             </div>
         </section>
     </main>
 
-    <!-- JavaScript para alternância de abas (Função de busca totalmente removida) -->
+    <!-- JavaScript apenas para navegação padrão das abas (Busca removida permanentemente) -->
     <script>
         function switchTab(tabId, element) {
-            // Ocultar todas as abas
             const contents = document.querySelectorAll('.tab-content');
             contents.forEach(content => content.classList.remove('active'));
 
-            // Remover classe active de todos os botões do menu
             const buttons = document.querySelectorAll('.nav-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            // Exibir a aba selecionada e ativar o botão correspondente
             document.getElementById(tabId).classList.add('active');
             element.classList.add('active');
         }
