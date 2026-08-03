@@ -409,6 +409,65 @@
             border-color: var(--accent);
         }
 
+        /* Calendário Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 8px 0;
+        }
+
+        .calendar-cell {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            min-height: 75px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .calendar-cell:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .calendar-cell.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-cell.today {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .calendar-cell-number {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .calendar-cell-indicator {
+            font-size: 0.7rem;
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 4px;
+        }
+
         @media(min-width: 640px) {
             .meta-card-item {
                 flex-direction: row;
@@ -446,6 +505,30 @@
                 <p>Você concluiu sua meta de hoje. Continue firme nos estudos.</p>
                 <button class="btn-primary" onclick="fecharModalSucesso()">Continuar Jornada</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Matéria no Plano -->
+    <div id="modal-editar-materia-plano" class="modal-overlay">
+        <div class="modal-card">
+            <h3>Editar Matéria do Plano</h3>
+            <p>Altere o nome da matéria para este dia da semana.</p>
+            <div class="form-group">
+                <input type="text" id="input-editar-materia-nome" placeholder="Novo nome da matéria">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" style="background: var(--border);" onclick="fecharModalEditarPlano()">Cancelar</button>
+                <button class="btn-primary" onclick="salvarEdicaoMateriaPlano()">Salvar Alteração</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Resumo do Dia do Calendário -->
+    <div id="modal-resumo-calendario" class="modal-overlay">
+        <div class="modal-card" style="max-width: 550px; text-align: left;">
+            <h3 id="modal-resumo-titulo" style="text-align: center; margin-bottom: 20px;">Resumo do Dia</h3>
+            <div id="modal-resumo-conteudo" style="max-height: 60vh; overflow-y: auto; padding-right: 5px; margin-bottom: 25px;"></div>
+            <button class="btn-primary" onclick="fecharModalResumoCalendario()">Fechar</button>
         </div>
     </div>
 
@@ -632,8 +715,24 @@
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
                 <h2>📅 Calendário e Revisões</h2>
-                <p class="subtitle">Acompanhe suas revisões automáticas pendentes geradas pelos estudos.</p>
-                <div id="conteudo-calendario-sincronizado"></div>
+                <p class="subtitle">Acompanhe suas revisões e estudos diários. Clique em qualquer dia para ver o resumo completo.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <button class="btn-acao-sm" onclick="mudarMesCalendario(-1)">◀ Mês Anterior</button>
+                    <span id="calendario-mes-ano-titulo" style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);"></span>
+                    <button class="btn-acao-sm" onclick="mudarMesCalendario(1)">Próximo Mês ▶</button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Dom</div>
+                    <div class="calendar-day-header">Seg</div>
+                    <div class="calendar-day-header">Ter</div>
+                    <div class="calendar-day-header">Qua</div>
+                    <div class="calendar-day-header">Qui</div>
+                    <div class="calendar-day-header">Sex</div>
+                    <div class="calendar-day-header">Sáb</div>
+                </div>
+                <div id="calendario-dias-container" class="calendar-grid" style="margin-top: 8px;"></div>
             </div>
         </div>
 
@@ -736,6 +835,12 @@
         let materiaSelecionadaIndex = null;
         let topicosTemporariosPlanoDia = [];
         let topicoAtualConcluindo = null;
+        let editandoPlanoDia = null;
+        let editandoPlanoIndex = null;
+
+        // Estado do Calendário (Data atual do dispositivo)
+        let calendarioAnoAtual = new Date().getFullYear();
+        let calendarioMesAtual = new Date().getMonth(); // 0 a 11
 
         // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
@@ -798,6 +903,10 @@
                 renderizarProgresso();
             }
             if(screenId === 'calendario') {
+                // Sincronizar com a data atual do dispositivo ao abrir
+                const hoje = new Date();
+                calendarioAnoAtual = hoje.getFullYear();
+                calendarioMesAtual = hoje.getMonth();
                 renderizarCalendario();
             }
             if(screenId === 'plano') {
@@ -925,7 +1034,6 @@
             if(materiaSelecionadaIndex === null) return;
             const mat = appData.materias[materiaSelecionadaIndex];
             mat.topicos.splice(topIdx, 1);
-            // Re-numerar automaticamente a partir de 00
             mat.topicos.forEach((t, i) => {
                 const parts = t.nome.split(' - ');
                 const cleanName = parts.slice(1).join(' - ') || parts[0];
@@ -984,10 +1092,25 @@
             dias.forEach(d => {
                 const arr = appData.planoSemanal[d] || [];
                 if(arr.length > 0) {
+                    let materiasHtml = '';
+                    arr.forEach((matNome, mIdx) => {
+                        materiasHtml += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); padding: 8px 12px; border-radius: 8px; margin-top: 6px;">
+                                <span style="font-size: 0.95rem; color: #fff;">${matNome}</span>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="btn-acao-sm" onclick="abrirModalEditarPlano('${d}', ${mIdx})">Editar</button>
+                                    <button class="btn-acao-sm" onclick="excluirMateriaPlano('${d}', ${mIdx})">Excluir</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
                     html += `
                         <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                            <span style="color: var(--accent); font-size: 1.05rem;">${d}</span>
-                            <span style="color: var(--text-muted); font-size: 0.95rem;">${arr.join(', ')}</span>
+                            <span style="color: var(--accent); font-size: 1.05rem; font-weight: 700;">${d}</span>
+                            <div style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
+                                ${materiasHtml}
+                            </div>
                         </div>
                     `;
                 }
@@ -996,6 +1119,42 @@
                 html = `<p style="color: var(--text-muted); font-size: 0.95rem;">Nenhum planejamento cadastrado.</p>`;
             }
             container.innerHTML = html;
+        }
+
+        function abrirModalEditarPlano(dia, index) {
+            editandoPlanoDia = dia;
+            editandoPlanoIndex = index;
+            const nomeAtual = appData.planoSemanal[dia][index];
+            document.getElementById('input-editar-materia-nome').value = nomeAtual;
+            document.getElementById('modal-editar-materia-plano').style.display = 'flex';
+        }
+
+        function fecharModalEditarPlano() {
+            document.getElementById('modal-editar-materia-plano').style.display = 'none';
+            editandoPlanoDia = null;
+            editandoPlanoIndex = null;
+        }
+
+        function salvarEdicaoMateriaPlano() {
+            const novoNome = document.getElementById('input-editar-materia-nome').value.trim();
+            if(!novoNome) {
+                alert('O nome da matéria não pode estar vazio.');
+                return;
+            }
+            if(editandoPlanoDia !== null && editandoPlanoIndex !== null) {
+                appData.planoSemanal[editandoPlanoDia][editandoPlanoIndex] = novoNome;
+                salvarDadosLocais();
+                renderizarPlanoSemanalForm();
+                fecharModalEditarPlano();
+            }
+        }
+
+        function excluirMateriaPlano(dia, index) {
+            if(confirm('Deseja excluir esta matéria do planejamento?')) {
+                appData.planoSemanal[dia].splice(index, 1);
+                salvarDadosLocais();
+                renderizarPlanoSemanalForm();
+            }
         }
 
         // --- AJUSTE DE METAS ---
@@ -1027,10 +1186,8 @@
 
             let html = '';
             materiasDoDia.forEach(nomeMat => {
-                // Encontrar matéria correspondente nas cadastradas
                 const matCadastrada = appData.materias.find(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
                 if(matCadastrada && matCadastrada.topicos.length > 0) {
-                    // Pegar até X tópicos não concluídos conforme meta
                     const topicosPendentes = matCadastrada.topicos.filter(t => !t.concluido).slice(0, appData.ajusteMetas.topicosMateria);
                     topicosPendentes.forEach(top => {
                         html += `
@@ -1062,6 +1219,7 @@
 
         function confirmarConclusaoTopico() {
             const qtdQ = parseInt(document.getElementById('input-qtd-questoes').value) || 0;
+            const hojeDataStr = new Date().toLocaleDateString('pt-BR');
             if(topicoAtualConcluindo) {
                 const mat = appData.materias.find(m => m.nome === topicoAtualConcluindo.materia);
                 if(mat) {
@@ -1069,12 +1227,12 @@
                     if(top) {
                         top.concluido = true;
                         top.questoes = qtdQ;
-                        top.dataConclusao = new Date().toISOString();
+                        top.dataConclusao = hojeDataStr;
                         appData.historicoEstudos.push({
                             materia: mat.nome,
                             topico: top.nome,
                             questoes: qtdQ,
-                            data: new Date().toLocaleDateString('pt-BR')
+                            data: hojeDataStr
                         });
                         salvarDadosLocais();
                     }
@@ -1119,7 +1277,6 @@
 
             document.getElementById('stat-materias-concluidas').innerText = `${materiasConcluidas} / ${appData.materias.length}`;
             
-            // Revisões pendentes baseadas em 7 dias após conclusão
             let revisoesCount = 0;
             appData.materias.forEach(m => {
                 m.topicos.forEach(t => {
@@ -1155,38 +1312,139 @@
         }
 
         // --- CALENDÁRIO ---
+        function mudarMesCalendario(delta) {
+            calendarioMesAtual += delta;
+            if(calendarioMesAtual > 11) {
+                calendarioMesAtual = 0;
+                calendarioAnoAtual++;
+            } else if(calendarioMesAtual < 0) {
+                calendarioMesAtual = 11;
+                calendarioAnoAtual--;
+            }
+            renderizarCalendario();
+        }
+
         function renderizarCalendario() {
-            const container = document.getElementById('conteudo-calendario-sincronizado');
-            if(!container) return;
+            const container = document.getElementById('calendario-dias-container');
+            const tituloMesAno = document.getElementById('calendario-mes-ano-titulo');
+            if(!container || !tituloMesAno) return;
+
+            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            tituloMesAno.innerText = `${nomesMeses[calendarioMesAtual]} de ${calendarioAnoAtual}`;
+
+            const primeiroDiaIndex = new Date(calendarioAnoAtual, calendarioMesAtual, 1).getDay();
+            const totalDiasMes = new Date(calendarioAnoAtual, calendarioMesAtual + 1, 0).getDate();
+            const totalDiasMesAnterior = new Date(calendarioAnoAtual, calendarioMesAtual, 0).getDate();
 
             const hoje = new Date();
-            const dataStr = hoje.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const hojeDia = hoje.getDate();
+            const hojeMes = hoje.getMonth();
+            const hojeAno = hoje.getFullYear();
+
+            let html = '';
+
+            // Dias do mês anterior (preenchimento)
+            for (let i = primeiroDiaIndex - 1; i >= 0; i--) {
+                const diaNum = totalDiasMesAnterior - i;
+                html += `<div class="calendar-cell other-month"><span class="calendar-cell-number">${diaNum}</span></div>`;
+            }
+
+            // Dias do mês atual
+            for (let dia = 1; dia <= totalDiasMes; dia++) {
+                const isToday = (dia === hojeDia && calendarioMesAtual === hojeMes && calendarioAnoAtual === hojeAno);
+                
+                // Formatar data em DD/MM/YYYY para buscar histórico
+                const mesStr = String(calendarioMesAtual + 1).padStart(2, '0');
+                const diaStr = String(dia).padStart(2, '0');
+                const anoStr = calendarioAnoAtual;
+                const dataFormatada = `${diaStr}/${mesStr}/${anoStr}`;
+
+                const estudosDoDia = appData.historicoEstudos.filter(h => h.data === dataFormatada);
+                const qtdEstudos = estudosDoDia.length;
+
+                let indicadorHtml = '';
+                if(qtdEstudos > 0) {
+                    indicadorHtml = `<div class="calendar-cell-indicator">${qtdEstudos} estudo(s)</div>`;
+                }
+
+                html += `
+                    <div class="calendar-cell ${isToday ? 'today' : ''}" onclick="abrirResumoDiaCalendario('${dataFormatada}')">
+                        <span class="calendar-cell-number">${dia}</span>
+                        ${indicadorHtml}
+                    </div>
+                `;
+            }
+
+            // Completar grade com dias do próximo mês
+            const totalCelulasPreenchidas = primeiroDiaIndex + totalDiasMes;
+            const celulasRestantes = totalCelulasPreenchidas % 7 === 0 ? 0 : 7 - (totalCelulasPreenchidas % 7);
+            for (let d = 1; d <= celulasRestantes; d++) {
+                html += `<div class="calendar-cell other-month"><span class="calendar-cell-number">${d}</span></div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function abrirResumoDiaCalendario(dataFormatada) {
+            const tituloEl = document.getElementById('modal-resumo-titulo');
+            const conteudoEl = document.getElementById('modal-resumo-conteudo');
+            if(!tituloEl || !conteudoEl) return;
+
+            tituloEl.innerText = `Resumo do Dia: ${dataFormatada}`;
+
+            const estudosDoDia = appData.historicoEstudos.filter(h => h.data === dataFormatada);
+            
+            // Tópicos concluídos nessa data
+            let topicosConcluidosDia = [];
+            let materiasEstudadasSet = new Set();
+            let totalQuestoesDia = 0;
+
+            estudosDoDia.forEach(est => {
+                materiasEstudadasSet.add(est.materia);
+                topicosConcluidosDia.push(est.topico);
+                totalQuestoesDia += est.questoes || 0;
+            });
+
+            // Revisões realizadas / pendentes estimadas
+            let revisoesPendentesCount = 0;
+            appData.materias.forEach(m => {
+                m.topicos.forEach(t => {
+                    if(t.concluido) revisoesPendentesCount++;
+                });
+            });
 
             let html = `
-                <div style="margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px;">
-                    <span style="color: var(--accent); font-weight: 600; display: block; margin-bottom: 5px;">Data Atual do Dispositivo</span>
-                    <span style="font-size: 1.1rem; font-weight: 700; color: #fff;">${dataStr.charAt(0).toUpperCase() + dataStr.slice(1)}</span>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <span style="color: var(--accent); font-weight: 700; display: block; margin-bottom: 5px;">📚 Matérias Estudadas</span>
+                        <span style="color: #fff; font-size: 0.95rem;">${materiasEstudadasSet.size > 0 ? Array.from(materiasEstudadasSet).join(', ') : 'Nenhuma matéria estudada neste dia.'}</span>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <span style="color: var(--success); font-weight: 700; display: block; margin-bottom: 5px;">✅ Tópicos Concluídos</span>
+                        ${topicosConcluidosDia.length > 0 ? topicosConcluidosDia.map(t => `<div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• ${t}</div>`).join('') : '<span style="color: var(--text-muted); font-size: 0.9rem;">Nenhum tópico concluído.</span>'}
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <span style="color: var(--warning); font-weight: 700; display: block; margin-bottom: 5px;">🔄 Revisões e Desempenho</span>
+                        <div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• Revisões Realizadas / Sincronizadas: ${estudosDoDia.length}</div>
+                        <div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• Revisões Pendentes Atuais: ${revisoesPendentesCount}</div>
+                        <div style="font-size: 0.9rem; color: #success; margin-top: 4px;">• Questões Resolvidas: ${totalQuestoesDia}</div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <span style="color: var(--accent); font-weight: 700; display: block; margin-bottom: 5px;">📈 Progresso do Dia</span>
+                        <span style="color: #fff; font-size: 0.95rem;">${topicosConcluidosDia.length > 0 ? 'Meta diária executada com sucesso.' : 'Dia sem registros de conclusão.'}</span>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Histórico de Estudos e Revisões Recentes</h3>
             `;
 
-            if(appData.historicoEstudos.length === 0) {
-                html += `<p style="color: var(--text-muted);">Nenhum estudo registrado até o momento.</p>`;
-            } else {
-                appData.historicoEstudos.slice().reverse().forEach(hist => {
-                    html += `
-                        <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-                            <div style="display: flex; justify-content: space-width; width: 100%; justify-content: space-between;">
-                                <span style="color: var(--accent);">${hist.materia}</span>
-                                <span style="color: var(--text-muted); font-size: 0.85rem;">${hist.data}</span>
-                            </div>
-                            <span style="font-size: 1rem; color: #fff;">${hist.topico}</span>
-                            <span style="font-size: 0.85rem; color: var(--success);">Questões resolvidas: ${hist.questoes}</span>
-                        </div>
-                    `;
-                });
-            }
-            container.innerHTML = html;
+            conteudoEl.innerHTML = html;
+            document.getElementById('modal-resumo-calendario').style.display = 'flex';
+        }
+
+        function fecharModalResumoCalendario() {
+            document.getElementById('modal-resumo-calendario').style.display = 'none';
         }
 
         // --- PERFIL ---
@@ -1223,7 +1481,6 @@
         }
 
         function renderizarTodasTelas() {
-            // Aplicar configurações salvas
             if(appData.config.cor) {
                 document.documentElement.style.setProperty('--accent', appData.config.cor);
                 const sel = document.getElementById('select-cor');
