@@ -55,6 +55,9 @@
             font-weight: 600;
             color: var(--text-main);
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .nav-icons {
@@ -218,7 +221,7 @@
             margin-bottom: 25px;
         }
 
-        /* Metas de Hoje com Letras Grandes e Espaçadas */
+        /* Metas de Hoje e Revisões */
         .meta-card-item {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border);
@@ -264,7 +267,7 @@
             background-color: var(--success-hover);
         }
 
-        /* Formulários e Configurações Exclusivas */
+        /* Formulários e Configurações */
         .form-group {
             margin-bottom: 22px;
         }
@@ -310,7 +313,7 @@
             background-color: var(--accent-hover);
         }
 
-        /* Modais / Alertas de Conclusão Customizados */
+        /* Modais Customizados */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -489,7 +492,12 @@
     <!-- Toast de Feedback Discreto -->
     <div id="toast-feedback">Salvo com sucesso!</div>
 
-    <!-- Modal de Questões e Mensagem Motivacional -->
+    <!-- Banner de Lembretes Discretos -->
+    <div id="banner-lembretes" style="background: rgba(245, 158, 11, 0.1); border-bottom: 1px solid rgba(245, 158, 11, 0.3); padding: 10px 24px; text-align: center; font-size: 0.9rem; color: var(--warning); display: none;">
+        ⚠️ <span id="txt-lembrete-conteudo">Você possui revisões pendentes acumuladas. Mantenha seu cronograma atualizado!</span>
+    </div>
+
+    <!-- Modal de Questões e Conclusão -->
     <div id="modal-questoes" class="modal-overlay">
         <div class="modal-card">
             <div id="modal-etapa-pergunta">
@@ -502,7 +510,7 @@
             </div>
             <div id="modal-etapa-sucesso" style="display: none;">
                 <h3 style="color: var(--success); margin-bottom: 15px;">Parabéns!</h3>
-                <p>Você concluiu sua meta de hoje. Continue firme nos estudos.</p>
+                <p id="msg-sucesso-coach">Você concluiu sua meta de hoje. Continue firme nos estudos.</p>
                 <button class="btn-primary" onclick="fecharModalSucesso()">Continuar Jornada</button>
             </div>
         </div>
@@ -532,10 +540,25 @@
         </div>
     </div>
 
-    <!-- Menu Superior Fixo com Ícones -->
+    <!-- Modal de Edição Rápida via Busca -->
+    <div id="modal-editar-topico-busca" class="modal-overlay">
+        <div class="modal-card">
+            <h3>Editar Tópico</h3>
+            <div class="form-group">
+                <input type="text" id="input-editar-topico-nome" placeholder="Nome do Tópico">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" style="background: var(--border);" onclick="document.getElementById('modal-editar-topico-busca').style.display='none'">Cancelar</button>
+                <button class="btn-primary" onclick="salvarEdicaoTopicoBusca()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Superior Fixo com Ícones e Busca Global -->
     <header class="top-nav-bar">
         <div class="brand-title">
             <span>Plataforma de Estudos do Amigo</span>
+            <input type="text" id="input-busca-global" placeholder="🔍 Buscar matérias/tópicos..." oninput="executarBuscaGlobal(this.value)" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; width: 190px;" onfocus="this.style.width='250px'" onblur="if(!this.value)this.style.width='190px'">
         </div>
         <ul class="nav-icons">
             <li><button class="active" onclick="switchScreen('dashboard', event)" title="Dashboard / Início">🏠</button></li>
@@ -545,6 +568,7 @@
             <li><button onclick="switchScreen('metas', event)" title="Metas de Hoje">⚡</button></li>
             <li><button onclick="switchScreen('progresso', event)" title="Progresso e Estatísticas">📈</button></li>
             <li><button onclick="switchScreen('calendario', event)" title="Calendário e Revisões">📅</button></li>
+            <li><button onclick="switchScreen('coach', event)" title="Coach & Relatórios">🤖</button></li>
             <li><button onclick="switchScreen('perfil', event)" title="Perfil">👤</button></li>
             <li><button onclick="switchScreen('config', event)" title="Configurações">⚙️</button></li>
         </ul>
@@ -561,7 +585,7 @@
                 <div id="home-date" style="font-size: 1.1rem; font-weight: bold; color: var(--accent); margin-bottom: 25px;"></div>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                     <button class="btn-iniciar-estudos" onclick="switchScreen('metas')">INICIAR ESTUDOS</button>
-                    <button class="btn-iniciar-estudos" style="background-color: var(--accent);" onclick="switchScreen('progresso')">VER ESTATÍSTICAS</button>
+                    <button class="btn-iniciar-estudos" style="background-color: var(--accent);" onclick="continuarOndeParei()">CONTINUAR DE ONDE PAREI</button>
                 </div>
             </div>
         </div>
@@ -612,9 +636,13 @@
         <div id="plano" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>📖 Plano de Estudos</h2>
-                <p class="subtitle">Monte seu planejamento semanal selecionando o dia e adicionando as matérias desejadas.</p>
+                <h2>📖 Plano de Estudos & Automatização</h2>
+                <p class="subtitle">Monte seu planejamento semanal ou distribua as matérias automaticamente.</p>
                 
+                <div style="margin-bottom: 25px;">
+                    <button class="btn-primary" style="background: var(--success);" onclick="gerarPlanoAutomatico()">⚡ Distribuir Matérias Automaticamente na Semana</button>
+                </div>
+
                 <div class="form-group">
                     <label>Dia da Semana</label>
                     <select id="select-dia-semana" onchange="renderizarPlanoSemanalForm()">
@@ -669,15 +697,15 @@
         <div id="metas" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>🎯 Metas de Hoje</h2>
-                <p class="subtitle" id="metas-subtitle">Tópicos sincronizados automaticamente com base no seu plano e metas.</p>
+                <h2>🎯 Metas de Hoje & Revisões</h2>
+                <p class="subtitle" id="metas-subtitle">Tópicos e revisões pendentes sincronizados em tempo real.</p>
                 
                 <div id="container-pendencia" style="margin-bottom: 20px;"></div>
                 <div id="lista-metas-hoje"></div>
             </div>
         </div>
 
-        <!-- 6. TELA PROGRESSO, ESTATÍSTICAS E DASHBOARD -->
+        <!-- 6. TELA PROGRESSO E ESTATÍSTICAS -->
         <div id="progresso" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
@@ -705,7 +733,7 @@
                     </div>
                     <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
                         <span id="stat-revisoes-realizadas" style="font-size: 1.6rem; font-weight: 700; color: var(--success); display: block; margin-bottom: 5px;">0</span>
-                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões / Concluídos</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Revisões Realizadas</span>
                     </div>
                 </div>
 
@@ -717,8 +745,8 @@
         <div id="calendario" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
-                <h2>📅 Calendário e Revisões</h2>
-                <p class="subtitle">Acompanhe suas revisões e estudos diários. Clique em qualquer dia para ver o resumo completo.</p>
+                <h2>📅 Calendário e Ciclos de Revisão</h2>
+                <p class="subtitle">Acompanhe seus estudos diários e ciclos R1-R4. Clique em qualquer dia para ver o resumo completo.</p>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <button class="btn-acao-sm" onclick="mudarMesCalendario(-1)">◀ Mês Anterior</button>
@@ -739,7 +767,20 @@
             </div>
         </div>
 
-        <!-- 8. TELA PERFIL -->
+        <!-- 8. TELA COACH DE ESTUDOS E RELATÓRIOS -->
+        <div id="coach" class="screen">
+            <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
+            <div class="card-clean">
+                <h2>🤖 Coach de Estudos & Relatórios</h2>
+                <p class="subtitle">Análises de desempenho, resumos semanais e panoramas mensais gerados automaticamente.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;" id="container-relatorios-coach">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. TELA PERFIL -->
         <div id="perfil" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
@@ -773,7 +814,7 @@
             </div>
         </div>
 
-        <!-- 9. TELA CONFIGURAÇÕES -->
+        <!-- 10. TELA CONFIGURAÇÕES -->
         <div id="config" class="screen">
             <button class="btn-voltar" onclick="switchScreen('dashboard')">← Voltar</button>
             <div class="card-clean">
@@ -804,7 +845,7 @@
     </main>
 
     <script>
-        // Estado Global da Aplicação
+        // Estado Global Completo Sincronizado
         let appData = {
             materias: [],
             planoSemanal: {
@@ -821,6 +862,8 @@
                 topicosMateria: 2
             },
             historicoEstudos: [],
+            revisoesPendentes: [], // [{ id, materia, topico, tipoR, dataPrevista, concluida }]
+            ultimoAcesso: null, // { materia, topico }
             perfil: {
                 nome: "",
                 idade: "",
@@ -838,14 +881,14 @@
         let materiaSelecionadaIndex = null;
         let topicosTemporariosPlanoDia = [];
         let topicoAtualConcluindo = null;
+        let revisaoAtualConcluindo = null;
         let editandoPlanoDia = null;
         let editandoPlanoIndex = null;
+        let topicoBuscaEdicaoContext = null; // { matIdx, topIdx }
 
-        // Estado do Calendário (Data atual do dispositivo)
         let calendarioAnoAtual = new Date().getFullYear();
-        let calendarioMesAtual = new Date().getMonth(); // 0 a 11
+        let calendarioMesAtual = new Date().getMonth();
 
-        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
             carregarDadosLocais();
             atualizarDataAtual();
@@ -853,7 +896,7 @@
         });
 
         function carregarDadosLocais() {
-            const saved = localStorage.getItem('plataforma_estudos_amigo_data');
+            const saved = localStorage.getItem('plataforma_estudos_germani_data');
             if (saved) {
                 try {
                     appData = JSON.parse(saved);
@@ -864,7 +907,7 @@
         }
 
         function salvarDadosLocais(mostrarFeedback = true) {
-            localStorage.setItem('plataforma_estudos_amigo_data', JSON.stringify(appData));
+            localStorage.setItem('plataforma_estudos_germani_data', JSON.stringify(appData));
             sincronizarTudoEmTempoReal();
             if(mostrarFeedback) {
                 mostrarToast("Sincronizado e salvo com sucesso!");
@@ -877,6 +920,8 @@
             renderizarMetasHoje();
             renderizarProgresso();
             renderizarCalendario();
+            renderizarCoachRelatorios();
+            verificarLembretesPendentes();
             carregarPerfilForm();
             aplicarConfiguracoesVisuais();
         }
@@ -933,8 +978,9 @@
                     'metas': 4,
                     'progresso': 5,
                     'calendario': 6,
-                    'perfil': 7,
-                    'config': 8
+                    'coach': 7,
+                    'perfil': 8,
+                    'config': 9
                 };
                 const iconButtons = document.querySelectorAll('.nav-icons button');
                 const idx = mapScreenIcon[screenId];
@@ -944,27 +990,30 @@
                 }
             }
 
-            if(screenId === 'materias') {
-                voltarParaListaMaterias();
-            }
-            if(screenId === 'metas') {
-                renderizarMetasHoje();
-            }
-            if(screenId === 'progresso') {
-                renderizarProgresso();
-            }
+            if(screenId === 'materias') voltarParaListaMaterias();
+            if(screenId === 'metas') renderizarMetasHoje();
+            if(screenId === 'progresso') renderizarProgresso();
+            if(screenId === 'coach') renderizarCoachRelatorios();
             if(screenId === 'calendario') {
                 const hoje = new Date();
                 calendarioAnoAtual = hoje.getFullYear();
                 calendarioMesAtual = hoje.getMonth();
                 renderizarCalendario();
             }
-            if(screenId === 'plano') {
-                renderizarPlanoSemanalForm();
+            if(screenId === 'plano') renderizarPlanoSemanalForm();
+        }
+
+        // --- BOTÃO CONTINUAR DE ONDE PAREI ---
+        function continuarOndeParei() {
+            if(appData.ultimoAcesso && appData.ultimoAcesso.materia) {
+                switchScreen('metas');
+                mostrarToast(`Retomando: ${appData.ultimoAcesso.materia}`);
+            } else {
+                switchScreen('metas');
             }
         }
 
-        // --- TELA DE MATÉRIAS ---
+        // --- MATÉRIAS E TÓPICOS ---
         function adicionarMateria() {
             const input = document.getElementById('input-nome-materia');
             const nome = input.value.trim();
@@ -974,10 +1023,7 @@
             }
             const existe = appData.materias.some(m => m.nome.toLowerCase() === nome.toLowerCase());
             if(!existe) {
-                appData.materias.push({
-                    nome: nome,
-                    topicos: []
-                });
+                appData.materias.push({ nome: nome, topicos: [] });
             }
             input.value = '';
             salvarDadosLocais();
@@ -1074,7 +1120,10 @@
                 html += `
                     <div class="item-row">
                         <span>${top.nome} ${top.concluido ? '✅' : ''}</span>
-                        <button class="btn-acao-sm" onclick="excluirTopicoMateria(${idx})">Excluir</button>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn-acao-sm" onclick="abrirEditarTopicoDireto(${materiaSelecionadaIndex}, ${idx})">Editar</button>
+                            <button class="btn-acao-sm" onclick="excluirTopicoMateria(${idx})">Excluir</button>
+                        </div>
                     </div>
                 `;
             });
@@ -1095,7 +1144,7 @@
             renderizarTopicosMateria();
         }
 
-        // --- PLANO DE ESTUDOS ---
+        // --- PLANO DE ESTUDOS E GERAÇÃO AUTOMÁTICA ---
         function renderizarPlanoSemanalForm() {
             const diaSelect = document.getElementById('select-dia-semana');
             if(!diaSelect) return;
@@ -1116,10 +1165,7 @@
             
             const jaExiste = appData.materias.some(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
             if(!jaExiste) {
-                appData.materias.push({
-                    nome: nomeMat,
-                    topicos: []
-                });
+                appData.materias.push({ nome: nomeMat, topicos: [] });
             }
 
             input.value = '';
@@ -1146,14 +1192,30 @@
             topicosTemporariosPlanoDia.forEach(nomeMat => {
                 const jaExiste = appData.materias.some(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
                 if(!jaExiste) {
-                    appData.materias.push({
-                        nome: nomeMat,
-                        topicos: []
-                    });
+                    appData.materias.push({ nome: nomeMat, topicos: [] });
                 }
             });
 
             salvarDadosLocais(mostrarFeedback);
+        }
+
+        function gerarPlanoAutomatico() {
+            if(appData.materias.length === 0) {
+                alert('Cadastre ao menos uma matéria antes de distribuir automaticamente.');
+                return;
+            }
+            const dias = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira"];
+            let matIndex = 0;
+            dias.forEach(d => {
+                let atribuidas = [];
+                for(let i = 0; i < appData.ajusteMetas.materiasDia; i++) {
+                    atribuidas.push(appData.materias[matIndex % appData.materias.length].nome);
+                    matIndex++;
+                }
+                appData.planoSemanal[d] = atribuidas;
+            });
+            salvarDadosLocais();
+            mostrarToast("Plano distribuído automaticamente com sucesso!");
         }
 
         function renderizarListaPlanoSemanalGeral() {
@@ -1196,8 +1258,7 @@
         function abrirModalEditarPlano(dia, index) {
             editandoPlanoDia = dia;
             editandoPlanoIndex = index;
-            const nomeAtual = appData.planoSemanal[dia][index];
-            document.getElementById('input-editar-materia-nome').value = nomeAtual;
+            document.getElementById('input-editar-materia-nome').value = appData.planoSemanal[dia][index];
             document.getElementById('modal-editar-materia-plano').style.display = 'flex';
         }
 
@@ -1210,20 +1271,11 @@
         function salvarEdicaoMateriaPlano() {
             const novoNome = document.getElementById('input-editar-materia-nome').value.trim();
             if(!novoNome) {
-                alert('O nome da matéria não pode estar vazio.');
+                alert('O nome não pode estar vazio.');
                 return;
             }
             if(editandoPlanoDia !== null && editandoPlanoIndex !== null) {
                 appData.planoSemanal[editandoPlanoDia][editandoPlanoIndex] = novoNome;
-                
-                const jaExiste = appData.materias.some(m => m.nome.toLowerCase() === novoNome.toLowerCase());
-                if(!jaExiste) {
-                    appData.materias.push({
-                        nome: novoNome,
-                        topicos: []
-                    });
-                }
-
                 salvarDadosLocais();
                 fecharModalEditarPlano();
             }
@@ -1236,7 +1288,7 @@
             }
         }
 
-        // --- AJUSTE DE METAS ---
+        // --- SISTEMA INTELIGENTE DE REVISÕES E METAS ---
         function salvarAjusteMetas(mostrarFeedback = false) {
             const qtdMat = parseInt(document.getElementById('input-qtd-materias-dia').value) || 2;
             const qtdTop = parseInt(document.getElementById('input-qtd-topicos-materia').value) || 2;
@@ -1245,9 +1297,8 @@
             salvarDadosLocais(mostrarFeedback);
         }
 
-        // --- METAS DE HOJE ---
         function renderizarMetasHoje() {
-            const hojeIndex = new Date().getDay(); // 0 (Domingo) a 6 (Sábado)
+            const hojeIndex = new Date().getDay();
             const mapDias = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
             const diaNome = mapDias[hojeIndex];
 
@@ -1256,63 +1307,98 @@
             const subtitle = document.getElementById('metas-subtitle');
             if(!container) return;
 
-            subtitle.innerText = `Sua meta para hoje (${diaNome}).`;
-
-            if(materiasDoDia.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">Nenhuma matéria programada para hoje no seu Plano de Estudos.</p>`;
-                return;
-            }
-
-            const maxMateriasDia = appData.ajusteMetas.materiasDia || materiasDoDia.length;
-            const materiasFiltradas = materiasDoDia.slice(0, maxMateriasDia);
+            subtitle.innerText = `Sua meta para hoje (${diaNome}) e revisões ativas.`;
 
             let html = '';
-            let totalTopicosExibidos = 0;
 
-            materiasFiltradas.forEach(nomeMat => {
-                let matCadastrada = appData.materias.find(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
-                
-                if(!matCadastrada) {
-                    matCadastrada = { nome: nomeMat, topicos: [] };
-                    appData.materias.push(matCadastrada);
-                }
+            // 1. Renderizar Revisões Pendentes para Hoje ou Atrasadas (R1, R2, R3, R4)
+            const hojeStr = new Date().toLocaleDateString('pt-BR');
+            const revisoesHoje = appData.revisoesPendentes.filter(r => !r.concluida);
 
-                if(matCadastrada.topicos.length > 0) {
-                    const topicosPendentes = matCadastrada.topicos.filter(t => !t.concluido).slice(0, appData.ajusteMetas.topicosMateria);
-                    topicosPendentes.forEach(top => {
-                        totalTopicosExibidos++;
-                        html += `
-                            <div class="meta-card-item">
-                                <div class="meta-info">
-                                    <span class="materia-tag">${matCadastrada.nome}</span>
-                                    <h3>${top.nome}</h3>
-                                </div>
-                                <button class="btn-concluir-topico" onclick="abrirModalConclusao('${matCadastrada.nome}', '${top.nome}')">Concluir Tópico</button>
+            revisoesHoje.forEach(rev => {
+                html += `
+                    <div class="meta-card-item" style="border-left: 4px solid var(--warning);">
+                        <div class="meta-info">
+                            <span class="materia-tag" style="color: var(--warning);">⭐ ${rev.tipoR} – ${rev.materia}</span>
+                            <h3>${rev.topico}</h3>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
+                                ✅ Ler a lei seca / resumo.<br>
+                                ✅ Resolver questões do tópico.<br>
+                                ✅ Marcar a revisão como concluída.
                             </div>
-                        `;
-                    });
-                } else {
-                    html += `
-                        <div class="meta-card-item" style="opacity: 0.8;">
-                            <div class="meta-info">
-                                <span class="materia-tag">${matCadastrada.nome}</span>
-                                <h3 style="color: var(--text-muted); font-size: 1.1rem; font-style: italic;">Nenhum tópico cadastrado nesta matéria ainda. Adicione tópicos para iniciar.</h3>
-                            </div>
-                            <button class="btn-acao-sm" onclick="switchScreen('materias')">Adicionar Tópicos</button>
                         </div>
-                    `;
-                }
+                        <button class="btn-concluir-topico" style="background: var(--warning);" onclick="abrirModalConclusaoRevisao('${rev.id}')">Concluir Revisão</button>
+                    </div>
+                `;
             });
 
-            if(html === '') {
-                html = `<p style="color: var(--success); text-align: center; padding: 20px; font-weight: 600;">Parabéns! Você concluiu todas as metas programadas para hoje.</p>`;
+            // 2. Renderizar Metas de Estudo Diário
+            if(materiasDoDia.length === 0) {
+                html += `<p style="color: var(--text-muted); text-align: center; padding: 20px;">Nenhuma matéria programada para hoje no seu Plano de Estudos.</p>`;
+            } else {
+                const maxMat = appData.ajusteMetas.materiasDia || materiasDoDia.length;
+                materiasDoDia.slice(0, maxMat).forEach(nomeMat => {
+                    let matCadastrada = appData.materias.find(m => m.nome.toLowerCase() === nomeMat.toLowerCase());
+                    
+                    if(!matCadastrada) {
+                        matCadastrada = { nome: nomeMat, topicos: [] };
+                        appData.materias.push(matCadastrada);
+                    }
+
+                    if(matCadastrada.topicos.length > 0) {
+                        const pendentes = matCadastrada.topicos.filter(t => !t.concluido).slice(0, appData.ajusteMetas.topicosMateria);
+                        if(pendentes.length > 0) {
+                            pendentes.forEach(top => {
+                                html += `
+                                    <div class="meta-card-item">
+                                        <div class="meta-info">
+                                            <span class="materia-tag">${matCadastrada.nome}</span>
+                                            <h3>${top.nome}</h3>
+                                        </div>
+                                        <button class="btn-concluir-topico" onclick="abrirModalConclusao('${matCadastrada.nome}', '${top.nome}')">Concluir Tópico</button>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            html += `
+                                <div class="meta-card-item" style="opacity: 0.8;">
+                                    <div class="meta-info">
+                                        <span class="materia-tag">${matCadastrada.nome}</span>
+                                        <h3 style="color: var(--success); font-size: 1.1rem;">Todos os tópicos desta matéria foram concluídos!</h3>
+                                    </div>
+                                    <button class="btn-acao-sm" onclick="switchScreen('materias')">Gerenciar Tópicos</button>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        html += `
+                            <div class="meta-card-item" style="opacity: 0.9;">
+                                <div class="meta-info">
+                                    <span class="materia-tag">${matCadastrada.nome}</span>
+                                    <h3 style="color: var(--warning); font-size: 1.1rem;">Cadastrar tópicos para esta matéria.</h3>
+                                </div>
+                                <button class="btn-acao-sm" onclick="switchScreen('materias')">Cadastrar Tópicos</button>
+                            </div>
+                        `;
+                    }
+                });
             }
+
             container.innerHTML = html;
         }
 
         function abrirModalConclusao(nomeMat, nomeTop) {
             topicoAtualConcluindo = { materia: nomeMat, topico: nomeTop };
+            appData.ultimoAcesso = { materia: nomeMat, topico: nomeTop };
             document.getElementById('input-qtd-questoes').value = "40";
+            document.getElementById('modal-etapa-pergunta').style.display = 'block';
+            document.getElementById('modal-etapa-sucesso').style.display = 'none';
+            document.getElementById('modal-questoes').style.display = 'flex';
+        }
+
+        function abrirModalConclusaoRevisao(revId) {
+            revisaoAtualConcluindo = revId;
+            document.getElementById('input-qtd-questoes').value = "20";
             document.getElementById('modal-etapa-pergunta').style.display = 'block';
             document.getElementById('modal-etapa-sucesso').style.display = 'none';
             document.getElementById('modal-questoes').style.display = 'flex';
@@ -1320,8 +1406,22 @@
 
         function confirmarConclusaoTopico() {
             const qtdQ = parseInt(document.getElementById('input-qtd-questoes').value) || 0;
-            const hojeDataStr = new Date().toLocaleDateString('pt-BR');
-            if(topicoAtualConcluindo) {
+            const hoje = new Date();
+            const hojeDataStr = hoje.toLocaleDateString('pt-BR');
+
+            if(revisaoAtualConcluindo) {
+                const rev = appData.revisoesPendentes.find(r => r.id === revisaoAtualConcluindo);
+                if(rev) {
+                    rev.concluida = true;
+                    appData.historicoEstudos.push({
+                        materia: rev.materia,
+                        topico: `Revisão ${rev.tipoR}: ${rev.topico}`,
+                        questoes: qtdQ,
+                        data: hojeDataStr
+                    });
+                }
+                revisaoAtualConcluindo = null;
+            } else if(topicoAtualConcluindo) {
                 const mat = appData.materias.find(m => m.nome.toLowerCase() === topicoAtualConcluindo.materia.toLowerCase());
                 if(mat) {
                     const top = mat.topicos.find(t => t.nome === topicoAtualConcluindo.topico);
@@ -1335,12 +1435,35 @@
                             questoes: qtdQ,
                             data: hojeDataStr
                         });
-                        salvarDadosLocais();
+
+                        // Gerar Ciclos de Revisão Automáticos (R1: 1d, R2: 7d, R3: 15d, R4: 30d)
+                        const intervalos = [
+                            { tipo: 'R1', dias: 1 },
+                            { tipo: 'R2', dias: 7 },
+                            { tipo: 'R3', dias: 15 },
+                            { tipo: 'R4', dias: 30 }
+                        ];
+
+                        intervalos.forEach(iv => {
+                            let dataRev = new Date();
+                            dataRev.setDate(hoje.getDate() + iv.dias);
+                            appData.revisoesPendentes.push({
+                                id: '_' + Math.random().toString(36).substr(2, 9),
+                                materia: mat.nome,
+                                topico: top.nome,
+                                tipoR: iv.tipo,
+                                dataPrevista: dataRev.toLocaleDateString('pt-BR'),
+                                concluida: false
+                            });
+                        });
                     }
                 }
             }
+
+            salvarDadosLocais(false);
             document.getElementById('modal-etapa-pergunta').style.display = 'none';
             document.getElementById('modal-etapa-sucesso').style.display = 'block';
+            document.getElementById('msg-sucesso-coach').innerText = "Parabéns! Você concluiu sua meta de hoje com excelência e alta performance.";
         }
 
         function fecharModalSucesso() {
@@ -1349,7 +1472,84 @@
             renderizarMetasHoje();
         }
 
-        // --- PROGRESSO, ESTATÍSTICAS E DASHBOARD ---
+        // --- BUSCA GLOBAL E EDIÇÃO RÁPIDA ---
+        function executarBuscaGlobal(termo) {
+            const query = termo.trim().toLowerCase();
+            if(!query) {
+                renderizarListaMaterias();
+                return;
+            }
+            const container = document.getElementById('lista-materias-cadastradas');
+            if(!container) return;
+
+            let html = `<h3 style="font-size: 1rem; margin-bottom: 10px; color: var(--accent);">Resultados da Busca: "${termo}"</h3>`;
+            let encontrados = 0;
+
+            appData.materias.forEach((mat, mIdx) => {
+                mat.topicos.forEach((top, tIdx) => {
+                    if(mat.nome.toLowerCase().includes(query) || top.nome.toLowerCase().includes(query)) {
+                        encontrados++;
+                        html += `
+                            <div class="item-row">
+                                <span>📚 ${mat.nome} ➔ ${top.nome} ${top.concluido ? '✅' : ''}</span>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="btn-acao-sm" onclick="abrirEditarTopicoDireto(${mIdx}, ${tIdx})">Editar</button>
+                                    <button class="btn-acao-sm" onclick="excluirTopicoGlobal(${mIdx}, ${tIdx})">Excluir</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+
+            if(encontrados === 0) {
+                html += `<p style="color: var(--text-muted);">Nenhum resultado encontrado.</p>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function abrirEditarTopicoDireto(mIdx, tIdx) {
+            topicoBuscaEdicaoContext = { mIdx, tIdx };
+            const top = appData.materias[mIdx].topicos[tIdx];
+            document.getElementById('input-editar-topico-nome').value = top.nome;
+            document.getElementById('modal-editar-topico-busca').style.display = 'flex';
+        }
+
+        function salvarEdicaoTopicoBusca() {
+            const novoNome = document.getElementById('input-editar-topico-nome').value.trim();
+            if(!novoNome) return;
+            if(topicoBuscaEdicaoContext) {
+                const { mIdx, tIdx } = topicoBuscaEdicaoContext;
+                appData.materias[mIdx].topicos[tIdx].nome = novoNome;
+                salvarDadosLocais();
+                document.getElementById('modal-editar-topico-busca').style.display = 'none';
+                if(materiaSelecionadaIndex !== null) renderizarTopicosMateria();
+            }
+        }
+
+        function excluirTopicoGlobal(mIdx, tIdx) {
+            if(confirm('Excluir este tópico?')) {
+                appData.materias[mIdx].topicos.splice(tIdx, 1);
+                salvarDadosLocais();
+            }
+        }
+
+        // --- LEMBRETES DISCRETOS ---
+        function verificarLembretesPendentes() {
+            const banner = document.getElementById('banner-lembretes');
+            const txt = document.getElementById('txt-lembrete-conteudo');
+            if(!banner || !txt) return;
+
+            const pendentesCount = appData.revisoesPendentes.filter(r => !r.concluida).length;
+            if(pendentesCount > 0) {
+                txt.innerText = `Você possui ${pendentesCount} revisão(ões) pendente(s) acumulada(s). O cronograma foi equilibrado automaticamente.`;
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        // --- ESTATÍSTICAS, PROGRESSO E COACH ---
         function renderizarProgresso() {
             let totalTopicos = 0;
             let concluidosTopicos = 0;
@@ -1384,12 +1584,7 @@
             if(txtConcluidosRestantes) txtConcluidosRestantes.innerText = `${concluidosTopicos} / ${totalTopicos} Tópicos`;
             if(statMateriasConcluidas) statMateriasConcluidas.innerText = `${materiasConcluidas} / ${appData.materias.length}`;
             
-            let revisoesCount = 0;
-            appData.materias.forEach(m => {
-                m.topicos.forEach(t => {
-                    if(t.concluido) revisoesCount++;
-                });
-            });
+            let revisoesCount = appData.revisoesPendentes.filter(r => r.concluida).length;
             if(statRevisoesRealizadas) statRevisoesRealizadas.innerText = revisoesCount;
 
             const detalhesContainer = document.getElementById('detalhes-materias-progresso');
@@ -1418,6 +1613,39 @@
                 `;
             });
             detalhesContainer.innerHTML = html;
+        }
+
+        function renderizarCoachRelatorios() {
+            const container = document.getElementById('container-relatorios-coach');
+            if(!container) return;
+
+            let totalQuestoes = 0;
+            let concluidosCount = 0;
+            appData.historicoEstudos.forEach(h => {
+                totalQuestoes += h.questoes || 0;
+                concluidosCount++;
+            });
+
+            let totalTopicos = 0;
+            appData.materias.forEach(m => totalTopicos += m.topicos.length);
+            let pctGeral = totalTopicos > 0 ? Math.round((appData.historicoEstudos.length / totalTopicos) * 100) : 0;
+
+            html = `
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+                    <span style="color: var(--success); font-weight: 700; display: block; margin-bottom: 8px;">📊 Feedback Diário & Semanal</span>
+                    <p style="color: #fff; font-size: 0.95rem; line-height: 1.5;">Parabéns! Sua constância está gerando resultados sólidos. Você já concluiu <b>${concluidosCount}</b> tópicos/revisões e acumulou <b>${totalQuestoes}</b> questões resolvidas com alto desempenho.</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 12px;">
+                    <span style="color: var(--accent); font-weight: 700; display: block; margin-bottom: 8px;">📈 Panorama Mensal Geral</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #fff;">
+                        <div>• Evolução Geral do Curso: <b>${pctGeral}%</b></div>
+                        <div>• Total de Revisões Concluídas: <b>${appData.revisoesPendentes.filter(r => r.concluida).length}</b></div>
+                        <div>• Matérias Cadastradas: <b>${appData.materias.length}</b></div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
         }
 
         // --- CALENDÁRIO ---
@@ -1470,7 +1698,7 @@
 
                 let indicadorHtml = '';
                 if(qtdEstudos > 0) {
-                    indicadorHtml = `<div class="calendar-cell-indicator">${qtdEstudos} estudo(s)</div>`;
+                    indicadorHtml = `<div class="calendar-cell-indicator">${qtdEstudos} registro(s)</div>`;
                 }
 
                 html += `
@@ -1496,7 +1724,6 @@
             if(!tituloEl || !conteudoEl) return;
 
             tituloEl.innerText = `Resumo do Dia: ${dataFormatada}`;
-
             const estudosDoDia = appData.historicoEstudos.filter(h => h.data === dataFormatada);
             
             let topicosConcluidosDia = [];
@@ -1509,35 +1736,16 @@
                 totalQuestoesDia += est.questoes || 0;
             });
 
-            let revisoesPendentesCount = 0;
-            appData.materias.forEach(m => {
-                m.topicos.forEach(t => {
-                    if(t.concluido) revisoesPendentesCount++;
-                });
-            });
-
             let html = `
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                     <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
-                        <span style="color: var(--accent); font-weight: 700; display: block; margin-bottom: 5px;">📚 Matérias Estudadas</span>
-                        <span style="color: #fff; font-size: 0.95rem;">${materiasEstudadasSet.size > 0 ? Array.from(materiasEstudadasSet).join(', ') : 'Nenhuma matéria estudada neste dia.'}</span>
+                        <span style="color: var(--accent); font-weight: 700; display: block; margin-bottom: 5px;">📚 Matérias e Tópicos</span>
+                        ${topicosConcluidosDia.length > 0 ? topicosConcluidosDia.map(t => `<div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• ${t}</div>`).join('') : '<span style="color: var(--text-muted); font-size: 0.9rem;">Nenhum registro neste dia.</span>'}
                     </div>
 
                     <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
-                        <span style="color: var(--success); font-weight: 700; display: block; margin-bottom: 5px;">✅ Tópicos Concluídos</span>
-                        ${topicosConcluidosDia.length > 0 ? topicosConcluidosDia.map(t => `<div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• ${t}</div>`).join('') : '<span style="color: var(--text-muted); font-size: 0.9rem;">Nenhum tópico concluído.</span>'}
-                    </div>
-
-                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
-                        <span style="color: var(--warning); font-weight: 700; display: block; margin-bottom: 5px;">🔄 Revisões e Desempenho</span>
-                        <div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• Revisões Realizadas / Sincronizadas: ${estudosDoDia.length}</div>
-                        <div style="font-size: 0.9rem; color: #fff; margin-top: 4px;">• Revisões Pendentes Atuais: ${revisoesPendentesCount}</div>
-                        <div style="font-size: 0.9rem; color: var(--success); margin-top: 4px;">• Questões Resolvidas: ${totalQuestoesDia}</div>
-                    </div>
-
-                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
-                        <span style="color: var(--accent); font-weight: 700; display: block; margin-bottom: 5px;">📈 Progresso do Dia</span>
-                        <span style="color: #fff; font-size: 0.95rem;">${topicosConcluidosDia.length > 0 ? 'Meta diária executada com sucesso.' : 'Dia sem registros de conclusão.'}</span>
+                        <span style="color: var(--success); font-weight: 700; display: block; margin-bottom: 5px;">⚡ Questões Resolvidas</span>
+                        <span style="color: #fff; font-size: 0.95rem;">${totalQuestoesDia} questões</span>
                     </div>
                 </div>
             `;
@@ -1550,7 +1758,7 @@
             document.getElementById('modal-resumo-calendario').style.display = 'none';
         }
 
-        // --- PERFIL ---
+        // --- PERFIL E CONFIGURAÇÕES ---
         function salvarPerfil(mostrarFeedback = false) {
             appData.perfil.nome = document.getElementById('input-perfil-nome').value;
             appData.perfil.idade = document.getElementById('input-perfil-idade').value;
@@ -1565,24 +1773,18 @@
             const elNome = document.getElementById('input-perfil-nome');
             if(!elNome) return;
             if(document.activeElement !== elNome) elNome.value = appData.perfil.nome || '';
-            
             const elIdade = document.getElementById('input-perfil-idade');
             if(elIdade && document.activeElement !== elIdade) elIdade.value = appData.perfil.idade || '';
-            
             const elNasc = document.getElementById('input-perfil-nascimento');
             if(elNasc && document.activeElement !== elNasc) elNasc.value = appData.perfil.nascimento || '';
-            
             const elCidade = document.getElementById('input-perfil-cidade');
             if(elCidade && document.activeElement !== elCidade) elCidade.value = appData.perfil.cidade || '';
-            
             const elEstado = document.getElementById('input-perfil-estado');
             if(elEstado && document.activeElement !== elEstado) elEstado.value = appData.perfil.estado || '';
-            
             const elObj = document.getElementById('input-perfil-objetivo');
             if(elObj && document.activeElement !== elObj) elObj.value = appData.perfil.objetivo || '';
         }
 
-        // --- CONFIGURAÇÕES ---
         function mudarCorTema(corHex) {
             appData.config.cor = corHex;
             document.documentElement.style.setProperty('--accent', corHex);
