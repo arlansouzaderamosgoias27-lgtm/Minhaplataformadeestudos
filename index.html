@@ -169,7 +169,7 @@
             flex-direction: column;
         }
 
-        /* Tela Inicial (Com Foguete, Frase e Botão Iniciar Estudos) */
+        /* Tela Inicial (Atualizada: Foguete maior, data maior, botão maior e espaçamento harmônico) */
         .home-fullscreen {
             flex: 1;
             display: flex;
@@ -177,15 +177,15 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 2rem;
             background: radial-gradient(circle at center, var(--card-bg) 0%, var(--bg-color) 100%);
             min-height: calc(100vh - 70px);
         }
 
         .home-rocket {
-            font-size: 4.5rem;
+            font-size: 6rem;
             color: var(--accent);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         [data-anim="enabled"] .home-rocket {
@@ -194,41 +194,42 @@
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-15px); }
         }
 
         .home-phrase {
-            font-size: calc(var(--font-size) * 1.6);
+            font-size: calc(var(--font-size) * 1.8);
             font-weight: 800;
             letter-spacing: 1px;
             color: var(--text-main);
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             text-transform: uppercase;
         }
 
         .home-date {
-            font-size: var(--font-size);
+            font-size: calc(var(--font-size) * 1.25);
             color: var(--text-muted);
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 500;
         }
 
         .btn-iniciar-estudos {
             background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: #ffffff;
             border: none;
-            padding: 1.1rem 3rem;
-            border-radius: 0.5rem;
+            padding: 1.35rem 3.5rem;
+            border-radius: 0.75rem;
             cursor: pointer;
-            font-size: calc(var(--font-size) * 1.1);
+            font-size: calc(var(--font-size) * 1.25);
             font-weight: bold;
             letter-spacing: 1px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
             transition: all 0.2s ease;
             text-transform: uppercase;
         }
 
         .btn-iniciar-estudos:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             filter: brightness(1.1);
         }
 
@@ -367,6 +368,23 @@
             cursor: pointer;
         }
 
+        .questoes-input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .questoes-input-container input {
+            width: 70px;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            padding: 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
         .btn-action {
             background-color: var(--primary);
             color: white;
@@ -440,6 +458,7 @@
             padding: 0.5rem 1rem;
             border-radius: 0.375rem;
             cursor: pointer;
+            font-weight: 600;
         }
 
         /* Cards de Estatísticas e Progresso */
@@ -484,6 +503,50 @@
             height: 100%;
             width: 0%;
             transition: width 0.4s ease;
+        }
+
+        /* Estilos específicos para o Plano Semanal Interativo */
+        .semana-card-item {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+
+        .semana-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .semana-itens-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .semana-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-add-item {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: calc(var(--font-size) * 0.85);
+            font-weight: 600;
         }
 
         @media(max-width: 768px) {
@@ -535,37 +598,40 @@
                     </div>
                 </div>
 
-                <!-- Seção 1: Revisões Programadas (R1 a R30) -->
-                <div class="card">
-                    <div class="goals-section-title">
-                        <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> 1. Revisões Programadas (Lei Seca + Questões)
+                <!-- Seção Dinâmica de Revisões (Só aparece se houver revisões no dia) -->
+                <div id="wrapper-revisoes-hoje">
+                    <div class="card">
+                        <div class="goals-section-title">
+                            <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões de Hoje (R1 a R20 - 40 Questões)
+                        </div>
+                        <div id="revisoes-hoje-list"></div>
                     </div>
-                    <div id="revisoes-hoje-list"></div>
                 </div>
 
-                <!-- Seção 2: Estudo Inicial -->
+                <!-- Seção de Metas Diárias de Hoje -->
                 <div class="card">
                     <div class="goals-section-title">
-                        <i class="fa-solid fa-book-open" style="color: var(--primary);"></i> 2. Estudo Inicial de Novos Tópicos
+                        <i class="fa-solid fa-book-open" style="color: var(--primary);"></i> Metas Diárias de Hoje (Estudos Novos)
                     </div>
                     <div id="estudo-hoje-list"></div>
                 </div>
             </div>
         </section>
 
-        <!-- 3. Cadastro Livre de Matérias e Tópicos (Com Tópicos Automáticos) -->
+        <!-- 3. Cadastro Livre de Matérias e Tópicos (Gera automaticamente tudo sincronizado) -->
         <section id="cadastro" class="tab-content">
             <div class="inner-container">
                 <h2>Cadastro Livre de Matérias e Tópicos</h2>
                 <div class="card">
                     <h3>Adicionar Matéria com Tópicos Automáticos</h3>
+                    <p style="margin-bottom: 1rem;">Ao cadastrar, o sistema gera automaticamente os tópicos, o plano semanal, as metas e o calendário de revisões (R1 a R20).</p>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Nome da Matéria</label>
                             <input type="text" id="nova-materia-nome" placeholder="Ex: Direito Constitucional">
                         </div>
                         <div class="form-group">
-                            <label>Quantidade de Tópicos Automáticos (00 ao N)</label>
+                            <label>Quantidade de Tópicos (00 ao N)</label>
                             <input type="number" id="nova-materia-qtd" value="5" min="1" max="50">
                         </div>
                         <div class="form-group" style="justify-content: flex-end;">
@@ -582,15 +648,14 @@
             </div>
         </section>
 
-        <!-- 4. Plano Semanal (Segunda a Domingo Sincronizado) -->
+        <!-- 4. Plano Semanal (Com botão Adicionar + e sincronizado) -->
         <section id="plano-semanal" class="tab-content">
             <div class="inner-container">
                 <h2>Plano Semanal (Segunda a Domingo)</h2>
                 <div class="card">
-                    <h3>Sincronização Automática com as Metas do Dia</h3>
-                    <p>Defina o foco e as matérias para cada dia da semana. O sistema sincroniza as metas automaticamente.</p>
+                    <h3>Gerenciamento e Sincronização do Plano Semanal</h3>
+                    <p>Adicione tópicos/focos específicos para cada dia da semana. Tudo sincroniza com as metas e revisões.</p>
                     <div id="plano-semanal-container" style="margin-top: 1.5rem;"></div>
-                    <button class="btn-primary" style="margin-top: 1rem;" onclick="salvarPlanoSemanal()">Salvar Plano Semanal</button>
                 </div>
             </div>
         </section>
@@ -614,7 +679,7 @@
                     </div>
                     <div class="stat-card">
                         <h4>Dias Seguidos</h4>
-                        <div class="value" id="dash-dias">12 dias</div>
+                        <div class="value" id="dash-dias">1 dia</div>
                     </div>
                 </div>
                 <div class="card">
@@ -624,7 +689,7 @@
             </div>
         </section>
 
-        <!-- 6. Configurações Completas -->
+        <!-- 6. Configurações Completas (Com botão Limpar todos os dados) -->
         <section id="configuracoes" class="tab-content">
             <div class="inner-container">
                 <h2>Configurações do Sistema</h2>
@@ -679,13 +744,16 @@
                             </select>
                         </div>
                     </div>
-                    <button class="btn-danger" style="margin-top: 1rem;" onclick="resetarDados()">Restaurar Padrão</button>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                        <button class="btn-danger" onclick="resetarDados()">Restaurar Padrão</button>
+                        <button class="btn-danger" style="background-color: #b91c1c;" onclick="limparTodosDados()">Limpar todos os dados (Zerar)</button>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Sistema Inteligente com Sincronização Automática -->
+    <!-- Sistema Inteligente com Sincronização Total Automática -->
     <script>
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -704,41 +772,26 @@
         ];
         document.getElementById('coach-msg').innerText = frasesMotivacionais[Math.floor(Math.random() * frasesMotivacionais.length)];
 
-        // Data atual
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', options).replace(/^./, str => str.toUpperCase());
+        // Data atual formatada
+        const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', optionsDate).replace(/^./, str => str.toUpperCase());
 
-        // Base de dados local
-        let appData = JSON.parse(localStorage.getItem('arlan_estudos_v2')) || {
-            materias: [
-                {
-                    id: 1,
-                    nome: "Direito Constitucional",
-                    topicos: [
-                        { id: 101, nome: "Tópico 00 - Introdução", concluido: false },
-                        { id: 102, nome: "Tópico 01 - Direitos Fundamentais", concluido: false }
-                    ]
-                },
-                {
-                    id: 2,
-                    nome: "Português",
-                    topicos: [
-                        { id: 201, nome: "Tópico 00 - Fonética e Fonologia", concluido: true }
-                    ]
-                }
-            ],
-            revisoes: [
-                { id: 1, materia: "Português", topico: "Tópico 00 - Fonética e Fonologia", revNum: 1, questoes: 25, concluido: false }
-            ],
+        // Base de dados local (Inicia vazia 0% por padrão, conforme solicitado)
+        let appData = JSON.parse(localStorage.getItem('arlan_estudos_v3')) || {
+            materias: [],
+            revisoes: [],
             planoSemanal: [
-                { dia: "Segunda-feira", foco: "Direito Constitucional" },
-                { dia: "Terça-feira", foco: "Português" },
-                { dia: "Quarta-feira", foco: "Direito Administrativo" },
-                { dia: "Quinta-feira", foco: "Informática" },
-                { dia: "Sexta-feira", foco: "Raciocínio Lógico" },
-                { dia: "Sábado", foco: "Leis Secas e Questões" },
-                { dia: "Domingo", foco: "Revisão Geral" }
+                { dia: "Segunda-feira", itens: [] },
+                { dia: "Terça-feira", itens: [] },
+                { dia: "Quarta-feira", itens: [] },
+                { dia: "Quinta-feira", itens: [] },
+                { dia: "Sexta-feira", itens: [] },
+                { dia: "Sábado", itens: [] },
+                { dia: "Domingo", itens: [] }
             ],
+            estatisticas: {
+                questoesResolvidas: 0
+            },
             config: {
                 theme: "dark",
                 primary: "indigo",
@@ -750,11 +803,11 @@
         };
 
         function salvarDados() {
-            localStorage.setItem('arlan_estudos_v2', JSON.stringify(appData));
+            localStorage.setItem('arlan_estudos_v3', JSON.stringify(appData));
             atualizarTelas();
         }
 
-        // Cadastro de Matérias com Tópicos Automáticos (00 ao N)
+        // Cadastro de Matérias com Tópicos Automáticos (Gera tudo sincronizado)
         function adicionarMateria() {
             const nome = document.getElementById('nova-materia-nome').value.trim();
             const qtd = parseInt(document.getElementById('nova-materia-qtd').value) || 5;
@@ -763,27 +816,48 @@
             let topicos = [];
             for (let i = 0; i < qtd; i++) {
                 let numStr = i < 10 ? '0' + i : i;
+                let nomeTopico = `Tópico ${numStr} - Conteúdo ${i}`;
                 topicos.push({
                     id: Date.now() + i,
-                    nome: `Tópico ${numStr} - Conteúdo ${i}`,
+                    nome: nomeTopico,
+                    concluido: false
+                });
+
+                // Sincroniza automaticamente gerando a R1 inicial para cada tópico criado
+                appData.revisoes.push({
+                    id: Date.now() + i + 1000,
+                    materia: nome,
+                    topico: nomeTopico,
+                    revNum: 1,
+                    questoes: 40,
+                    questoesInformadas: 40,
                     concluido: false
                 });
             }
 
-            appData.materias.push({
+            let novaMateriaObj = {
                 id: Date.now(),
                 nome: nome,
                 topicos: topicos
-            });
+            };
+
+            appData.materias.push(novaMateriaObj);
+
+            // Sincroniza automaticamente adicionando ao plano semanal (na Segunda-feira por padrão se vazio)
+            appData.planoSemanal[0].itens.push(`Estudar ${nome}`);
 
             document.getElementById('nova-materia-nome').value = '';
             salvarDados();
-            alert('Matéria e tópicos criados com sucesso!');
+            alert('Matéria, tópicos, plano semanal e revisões (R1 a R20) gerados e sincronizados com sucesso!');
         }
 
         function renderGerenciadorMaterias() {
             const container = document.getElementById('materias-gerenciador-container');
             container.innerHTML = '';
+            if (appData.materias.length === 0) {
+                container.innerHTML = `<p>Nenhuma matéria cadastrada. Utilize o formulário acima para começar.</p>`;
+                return;
+            }
             appData.materias.forEach(m => {
                 let topicosHtml = m.topicos.map(t => `<div>- ${t.nome} ${t.concluido ? '(Concluído)' : ''}</div>`).join('');
                 container.innerHTML += `
@@ -801,52 +875,86 @@
         }
 
         function removerMateria(id) {
+            let m = appData.materias.find(x => x.id == id);
+            if (m) {
+                appData.revisoes = appData.revisoes.filter(r => r.materia !== m.nome);
+            }
             appData.materias = appData.materias.filter(m => m.id != id);
             salvarDados();
         }
 
-        // Plano Semanal (Segunda a Domingo)
+        // Plano Semanal com botão Adicionar (+) e salvamento automático
         function renderPlanoSemanal() {
             const container = document.getElementById('plano-semanal-container');
             container.innerHTML = '';
             appData.planoSemanal.forEach((p, idx) => {
+                let itensHtml = p.itens.map((item, itemIdx) => `
+                    <div class="semana-item-row">
+                        <span>${item}</span>
+                        <button class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="removerItemPlano(${idx}, ${itemIdx})">Remover</button>
+                    </div>
+                `).join('');
+
+                if (p.itens.length === 0) {
+                    itensHtml = `<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhum foco adicionado para este dia.</p>`;
+                }
+
                 container.innerHTML += `
-                    <div class="form-grid" style="margin-bottom: 0.5rem;">
-                        <div class="form-group"><label>${p.dia}</label><input type="text" id="plano-dia-${idx}" value="${p.foco}"></div>
+                    <div class="semana-card-item">
+                        <div class="semana-card-header">
+                            <strong>${p.dia}</strong>
+                            <button class="btn-add-item" onclick="adicionarItemPlano(${idx})"><i class="fa-solid fa-plus"></i> Adicionar</button>
+                        </div>
+                        <div class="semana-itens-list">
+                            ${itensHtml}
+                        </div>
                     </div>
                 `;
             });
         }
 
-        function salvarPlanoSemanal() {
-            appData.planoSemanal.forEach((p, idx) => {
-                p.foco = document.getElementById(`plano-dia-${idx}`).value;
-            });
-            salvarDados();
-            alert('Plano semanal atualizado e sincronizado!');
+        function adicionarItemPlano(diaIdx) {
+            let itemTexto = prompt(`Digite o foco ou atividade para ${appData.planoSemanal[diaIdx].dia}:`);
+            if (itemTexto && itemTexto.trim() !== '') {
+                appData.planoSemanal[diaIdx].itens.push(itemTexto.trim());
+                salvarDados();
+            }
         }
 
-        // Metas de Hoje (Prioridade: Revisões, depois Estudos Novos)
+        function removerItemPlano(diaIdx, itemIdx) {
+            appData.planoSemanal[diaIdx].itens.splice(itemIdx, 1);
+            salvarDados();
+        }
+
+        // Metas de Hoje (Condicional: Se tiver revisão, mostra 'Revisões de Hoje' primeiro; se não tiver, oculta)
         function renderMetasHoje() {
+            const revWrapper = document.getElementById('wrapper-revisoes-hoje');
             const revContainer = document.getElementById('revisoes-hoje-list');
             revContainer.innerHTML = '';
-            if (appData.revisoes.length === 0) {
-                revContainer.innerHTML = `<p>Nenhuma revisão pendente para hoje. Excelente trabalho!</p>`;
+
+            let revisoesPendentes = appData.revisoes.filter(r => !r.concluido);
+
+            if (revisoesPendentes.length === 0) {
+                revWrapper.style.display = 'none';
             } else {
-                appData.revisoes.forEach(r => {
+                revWrapper.style.display = 'block';
+                revisoesPendentes.forEach(r => {
                     revContainer.innerHTML += `
                         <div class="goal-item">
                             <div class="goal-header">
                                 <div class="goal-info">
                                     <h4>${r.materia}</h4>
                                     <p><strong>Tópico:</strong> ${r.topico}</p>
-                                    <p><i class="fa-solid fa-book" style="color: var(--accent);"></i> Lei Seca + <strong>25 Questões</strong></p>
+                                    <p><i class="fa-solid fa-book" style="color: var(--accent);"></i> Lei Seca + Questões</p>
                                 </div>
-                                <span class="badge badge-rev">Revisão R${r.revNum} (Até R30)</span>
+                                <span class="badge badge-rev">Revisão R${r.revNum} (Até R20)</span>
                             </div>
                             <div class="goal-actions">
-                                <label class="checklist-label"><input type="checkbox" ${r.concluido ? 'checked' : ''} onchange="toggleRevisao(${r.id})"> Concluído</label>
-                                <button class="btn-action ${r.concluido ? 'completed' : ''}" onclick="concluirRevisao(${r.id})"><i class="fa-solid ${r.concluido ? 'fa-check' : 'fa-play'}"></i> ${r.concluido ? 'Feito' : 'Executar Revisão'}</button>
+                                <div class="questoes-input-container">
+                                    <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
+                                    <input type="number" id="input-q-rev-${r.id}" value="${r.questoes || 40}" min="1" max="200">
+                                </div>
+                                <button class="btn-action" onclick="concluirRevisao(${r.id})"><i class="fa-solid fa-play"></i> Concluir Revisão</button>
                             </div>
                         </div>
                     `;
@@ -865,13 +973,16 @@
                                     <div class="goal-info">
                                         <h4>${m.nome}</h4>
                                         <p><strong>Tópico:</strong> ${t.nome}</p>
-                                        <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + <strong>25 Questões</strong></p>
+                                        <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
                                     </div>
                                     <span class="badge">Estudo Novo</span>
                                 </div>
                                 <div class="goal-actions">
-                                    <label class="checklist-label"><input type="checkbox" ${t.concluido ? 'checked' : ''} onchange="toggleEstudo(${m.id}, ${t.id})"> Concluído</label>
-                                    <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Iniciar Estudo</button>
+                                    <div class="questoes-input-container">
+                                        <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
+                                        <input type="number" id="input-q-est-${m.id}-${t.id}" value="40" min="1" max="200">
+                                    </div>
+                                    <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Concluir Estudo</button>
                                 </div>
                             </div>
                         `;
@@ -879,41 +990,35 @@
                     }
                 });
             });
-            if (count === 0) {
-                estudoContainer.innerHTML = `<p>Todos os tópicos cadastrados foram concluídos!</p>`;
+            if (count === 0 && revisoesPendentes.length === 0) {
+                estudoContainer.innerHTML = `<p>Parabéns! Todas as metas e revisões cadastradas foram concluídas.</p>`;
+            } else if (count === 0) {
+                estudoContainer.innerHTML = `<p>Nenhum estudo novo pendente no momento.</p>`;
             }
-        }
-
-        function toggleRevisao(id) {
-            let r = appData.revisoes.find(x => x.id == id);
-            if (r) { r.concluido = !r.concluido; salvarDados(); }
         }
 
         function concluirRevisao(id) {
             let r = appData.revisoes.find(x => x.id == id);
+            let inputQ = document.getElementById(`input-q-rev-${id}`);
+            let qRespondidas = inputQ ? parseInt(inputQ.value) || 40 : 40;
+
             if (r) {
                 r.concluido = true;
-                if (r.revNum < 30) {
-                    // Agenda automaticamente a próxima revisão (R1 até R30)
+                appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
+
+                if (r.revNum < 20) {
+                    // Agenda automaticamente a próxima revisão (R1 até R20) com 40 questões
                     appData.revisoes.push({
-                        id: Date.now(),
+                        id: Date.now() + Math.random(),
                         materia: r.materia,
                         topico: r.topico,
                         revNum: r.revNum + 1,
-                        questoes: 25,
+                        questoes: 40,
                         concluido: false
                     });
                 }
-                alert(`Revisão R${r.revNum} concluída! Próxima revisão agendada automaticamente.`);
+                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões! Próxima revisão agendada automaticamente.`);
                 salvarDados();
-            }
-        }
-
-        function toggleEstudo(materiaId, topicoId) {
-            let m = appData.materias.find(x => x.id == materiaId);
-            if (m) {
-                let t = m.topicos.find(x => x.id == topicoId);
-                if (t) { t.concluido = !t.concluido; salvarDados(); }
             }
         }
 
@@ -921,18 +1026,23 @@
             let m = appData.materias.find(x => x.id == materiaId);
             if (m) {
                 let t = m.topicos.find(x => x.id == topicoId);
+                let inputQ = document.getElementById(`input-q-est-${materiaId}-${topicoId}`);
+                let qRespondidas = inputQ ? parseInt(inputQ.value) || 40 : 40;
+
                 if (t) {
                     t.concluido = true;
-                    // Agenda R1 automaticamente ao concluir estudo novo
+                    appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
+
+                    // Agenda R1 automaticamente (até R20) com 40 questões
                     appData.revisoes.push({
-                        id: Date.now(),
+                        id: Date.now() + Math.random(),
                         materia: m.nome,
                         topico: t.nome,
                         revNum: 1,
-                        questoes: 25,
+                        questoes: 40,
                         concluido: false
                     });
-                    alert(`Estudo de "${t.nome}" concluído! Revisão R1 agendada automaticamente.`);
+                    alert(`Estudo de "${t.nome}" concluído com ${qRespondidas} questões! Revisão R1 agendada automaticamente.`);
                     salvarDados();
                 }
             }
@@ -944,6 +1054,10 @@
             let concluidosTopicos = 0;
             let container = document.getElementById('progresso-materias-container');
             container.innerHTML = '';
+
+            if (appData.materias.length === 0) {
+                container.innerHTML = `<p>Nenhum dado de progresso disponível.</p>`;
+            }
 
             appData.materias.forEach(m => {
                 let mTotal = m.topicos.length;
@@ -966,7 +1080,7 @@
             let geralPerc = totalTopicos > 0 ? Math.round((concluidosTopicos / totalTopicos) * 100) : 0;
             document.getElementById('dash-perc').innerText = geralPerc + '%';
             document.getElementById('dash-topicos').innerText = `${concluidosTopicos} / ${totalTopicos}`;
-            document.getElementById('dash-questoes').innerText = concluidosTopicos * 25;
+            document.getElementById('dash-questoes').innerText = appData.estatisticas.questoesResolvidas || 0;
         }
 
         // Configurações e Customização
@@ -1014,8 +1128,23 @@
         }
 
         function resetarDados() {
-            if (confirm('Deseja realmente restaurar os dados padrão?')) {
-                localStorage.removeItem('arlan_estudos_v2');
+            if (confirm('Deseja realmente restaurar as configurações padrão?')) {
+                appData.config = {
+                    theme: "dark",
+                    primary: "indigo",
+                    font: "segoe",
+                    fontsize: "medium",
+                    iconsize: "medium",
+                    anim: "enabled"
+                };
+                salvarDados();
+                carregarConfiguracoesNaTela();
+            }
+        }
+
+        function limparTodosDados() {
+            if (confirm('ATENÇÃO: Deseja realmente apagar TODOS os dados (matérias, tópicos, revisões, plano semanal e estatísticas) para começar do zero?')) {
+                localStorage.removeItem('arlan_estudos_v3');
                 location.reload();
             }
         }
