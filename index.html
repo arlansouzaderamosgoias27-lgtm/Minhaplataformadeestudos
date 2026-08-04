@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Estudos</title>
-    <!-- Font Awesome para corrigir e garantir ícones perfeitos no PC e no celular -->
+    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -17,6 +17,7 @@
             --border-color: #334155;
             --success: #10b981;
             --accent: #f59e0b;
+            --danger: #ef4444;
         }
 
         * {
@@ -34,7 +35,7 @@
             min-height: 100vh;
         }
 
-        /* Menu superior original mantido, sem barra de pesquisa e com ícones corrigidos */
+        /* Menu superior minimalista com ícones (sem texto) */
         header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -69,14 +70,15 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.75rem;
             border-radius: 0.375rem;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            justify-content: center;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .nav-btn:hover, .nav-btn.active {
@@ -84,7 +86,30 @@
             color: #ffffff;
         }
 
-        /* Conteúdo Principal */
+        /* Tooltip simples para os ícones */
+        .nav-btn::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: var(--text-main);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            border: 1px solid var(--border-color);
+            z-index: 1001;
+        }
+
+        .nav-btn:hover::after {
+            opacity: 1;
+        }
+
         main {
             flex: 1;
             display: flex;
@@ -101,7 +126,7 @@
             flex-direction: column;
         }
 
-        /* 1. Tela Inicial original ocupando toda a página */
+        /* Tela Inicial */
         .home-fullscreen {
             flex: 1;
             display: flex;
@@ -161,7 +186,7 @@
             box-shadow: 0 15px 25px rgba(79, 70, 229, 0.4);
         }
 
-        /* Layout padrão para as demais telas internas */
+        /* Containers e Cards */
         .inner-container {
             padding: 2rem;
             max-width: 1200px;
@@ -195,7 +220,30 @@
             line-height: 1.5;
         }
 
-        /* Estilos específicos para Metas de Hoje com as duas seções */
+        /* Coach Box */
+        .coach-banner {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(16, 185, 129, 0.15));
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.25rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .coach-banner i {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-top: 0.1rem;
+        }
+
+        .coach-banner p {
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        /* Seções e Listas de Metas */
         .goals-section-title {
             display: flex;
             align-items: center;
@@ -299,7 +347,84 @@
             background-color: var(--success);
         }
 
-        /* Melhoria na Tela Progresso e Estatísticas (Mantendo layout original) */
+        /* Formulários e Tabelas */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-group input, .form-group select {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: rgba(255,255,255,0.02);
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-main);
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -343,74 +468,6 @@
             width: 0%;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            text-align: left;
-            font-size: 0.95rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: rgba(255,255,255,0.02);
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        td {
-            color: var(--text-main);
-        }
-
-        /* Simplificação da Tela Meu Perfil (Apenas os 6 campos solicitados) */
-        .profile-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-
-        .form-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .form-group input {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            font-size: 1rem;
-        }
-
-        .btn-save {
-            background-color: var(--primary);
-            color: #ffffff;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            transition: background-color 0.2s;
-        }
-
-        .btn-save:hover {
-            background-color: var(--primary-hover);
-        }
-
         @media(max-width: 768px) {
             header {
                 flex-direction: column;
@@ -426,24 +483,25 @@
 </head>
 <body>
 
-    <!-- Menu Superior (Sem barra de pesquisa e com ícones corrigidos) -->
+    <!-- Menu Superior Minimalista com Ícones (Sem Texto) -->
     <header>
         <div class="logo"><i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> Plataforma de Estudos</div>
         <nav>
-            <button class="nav-btn active" onclick="switchTab('inicio', this)"><i class="fa-solid fa-house"></i> Tela Inicial</button>
-            <button class="nav-btn" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
-            <button class="nav-btn" onclick="switchTab('metas-hoje', this)"><i class="fa-solid fa-list-check"></i> Metas de Hoje</button>
-            <button class="nav-btn" onclick="switchTab('plano', this)"><i class="fa-solid fa-calendar-days"></i> Plano de Estudos</button>
-            <button class="nav-btn" onclick="switchTab('progresso', this)"><i class="fa-solid fa-chart-line"></i> Progresso e Estatísticas</button>
-            <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="fa-solid fa-calendar"></i> Calendário</button>
-            <button class="nav-btn" onclick="switchTab('coach', this)"><i class="fa-solid fa-robot"></i> Coach</button>
-            <button class="nav-btn" onclick="switchTab('perfil', this)"><i class="fa-solid fa-user"></i> Perfil</button>
-            <button class="nav-btn" onclick="switchTab('configuracoes', this)"><i class="fa-solid fa-gear"></i> Configurações</button>
+            <button class="nav-btn active" data-tooltip="Tela Inicial" onclick="switchTab('inicio', this)"><i class="fa-solid fa-house"></i></button>
+            <button class="nav-btn" data-tooltip="Dashboard" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i></button>
+            <button class="nav-btn" data-tooltip="Metas de Hoje" onclick="switchTab('metas-hoje', this)"><i class="fa-solid fa-list-check"></i></button>
+            <button class="nav-btn" data-tooltip="Cadastro Livre" onclick="switchTab('cadastro', this)"><i class="fa-solid fa-book-bookmark"></i></button>
+            <button class="nav-btn" data-tooltip="Plano Semanal" onclick="switchTab('plano-semanal', this)"><i class="fa-solid fa-calendar-days"></i></button>
+            <button class="nav-btn" data-tooltip="Metas Diárias" onclick="switchTab('config-metas', this)"><i class="fa-solid fa-sliders"></i></button>
+            <button class="nav-btn" data-tooltip="Progresso e Estatísticas" onclick="switchTab('progresso', this)"><i class="fa-solid fa-chart-line"></i></button>
+            <button class="nav-btn" data-tooltip="Calendário Inteligente" onclick="switchTab('calendario', this)"><i class="fa-solid fa-calendar"></i></button>
+            <button class="nav-btn" data-tooltip="Meu Perfil" onclick="switchTab('perfil', this)"><i class="fa-solid fa-user"></i></button>
+            <button class="nav-btn" data-tooltip="Configurações" onclick="switchTab('configuracoes', this)"><i class="fa-solid fa-gear"></i></button>
         </nav>
     </header>
 
     <main>
-        <!-- 1. Tela Inicial Original Ocupando Toda a Página -->
+        <!-- 1. Tela Inicial -->
         <section id="inicio" class="tab-content active">
             <div class="home-fullscreen">
                 <div class="home-rocket"><i class="fa-solid fa-rocket"></i></div>
@@ -458,390 +516,513 @@
         <!-- 2. Dashboard -->
         <section id="dashboard" class="tab-content">
             <div class="inner-container">
-                <h2>Dashboard</h2>
-                <div class="card">
-                    <h3>Visão Geral</h3>
-                    <p>Acompanhe o resumo das suas atividades e atalhos rápidos para a sua rotina de preparação.</p>
+                <h2>Dashboard de Desempenho</h2>
+                <div class="coach-banner">
+                    <i class="fa-solid fa-robot"></i>
+                    <div>
+                        <strong>Treinador IA:</strong> <span id="coach-msg-dashboard">Sua consistência está gerando frutos. Mantenha o ritmo implacável nas revisões para garantir a retenção de longo prazo!</span>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Progresso Geral</h4>
+                        <div class="value" id="dash-perc">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Tópicos Concluídos</h4>
+                        <div class="value" id="dash-topicos">0 / 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Questões Resolvidas</h4>
+                        <div class="value" id="dash-questoes">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Dias Seguidos</h4>
+                        <div class="value" id="dash-dias">12 dias</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Previsão de Conclusão</h4>
+                        <div class="value" id="dash-previsao">Outubro / 2026</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 3. Metas de Hoje (Com seções separadas de Estudo Inicial e Revisões Programadas) -->
+        <!-- 3. Metas de Hoje (Primeiro Revisões, Depois Estudos Novos) -->
         <section id="metas-hoje" class="tab-content">
             <div class="inner-container">
                 <h2>Metas de Hoje</h2>
-                
-                <!-- Seção 1: Estudo Inicial -->
-                <div class="card">
-                    <div class="goals-section-title">
-                        <i class="fa-solid fa-book-open" style="color: var(--primary);"></i> Estudo Inicial
-                    </div>
-                    <div id="estudo-inicial-list">
-                        <!-- Itens injetados via JavaScript -->
+                <div class="coach-banner">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <div>
+                        <strong>Regra de Ouro:</strong> Primeiro limpe todas as <strong>Revisões Programadas</strong> (Lei Seca + Questões) para blindar sua memória, e só depois avance para o <strong>Estudo Inicial</strong>!
                     </div>
                 </div>
 
-                <!-- Seção 2: Revisões Programadas (R1 a R30) -->
+                <!-- Seção 1: Revisões Programadas -->
                 <div class="card">
                     <div class="goals-section-title">
-                        <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões Programadas (Lei Seca + Questões)
+                        <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> 1. Revisões Programadas (Lei Seca + Questões)
                     </div>
-                    <div id="revisoes-programadas-list">
-                        <!-- Itens injetados via JavaScript -->
+                    <div id="revisoes-hoje-list">
+                        <!-- Injetado via JS -->
+                    </div>
+                </div>
+
+                <!-- Seção 2: Estudo Inicial -->
+                <div class="card">
+                    <div class="goals-section-title">
+                        <i class="fa-solid fa-book-open" style="color: var(--primary);"></i> 2. Estudo Inicial de Novos Tópicos
+                    </div>
+                    <div id="estudo-hoje-list">
+                        <!-- Injetado via JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 4. Plano de Estudos -->
-        <section id="plano" class="tab-content">
+        <!-- 4. Cadastro Livre de Matérias e Tópicos (Começando em 00, sem limite) -->
+        <section id="cadastro" class="tab-content">
             <div class="inner-container">
-                <h2>Plano de Estudos</h2>
+                <h2>Cadastro Livre de Matérias e Tópicos</h2>
                 <div class="card">
-                    <h3>Cronograma Completo</h3>
-                    <p>Organização diária, semanal, mensal e anual dos seus estudos salvos e estruturados.</p>
+                    <h3>Adicionar Nova Matéria</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome da Matéria</label>
+                            <input type="text" id="nova-materia-nome" placeholder="Ex: Direito Administrativo">
+                        </div>
+                        <div class="form-group" style="justify-content: flex-end;">
+                            <label>&nbsp;</label>
+                            <button class="btn-primary" onclick="adicionarMateria()"><i class="fa-solid fa-plus"></i> Criar Matéria</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Gerenciar Tópicos por Matéria (A partir de 00)</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Selecione a Matéria</label>
+                            <select id="select-materia-topico" onchange="renderTopicosLista()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Título do Tópico (Ex: Tópico 00 - Introdução)</label>
+                            <input type="text" id="novo-topico-nome" placeholder="Nome do tópico">
+                        </div>
+                        <div class="form-group" style="justify-content: flex-end;">
+                            <label>&nbsp;</label>
+                            <button class="btn-primary" onclick="adicionarTopico()"><i class="fa-solid fa-plus"></i> Adicionar Tópico</button>
+                        </div>
+                    </div>
+                    <div id="lista-topicos-container" style="margin-top: 1.5rem;">
+                        <!-- Lista de tópicos cadastrados -->
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 5. Progresso e Estatísticas (Informações mantendo o layout original) -->
+        <!-- 5. Plano de Estudos Semanal (Domingo a Segunda) -->
+        <section id="plano-semanal" class="tab-content">
+            <div class="inner-container">
+                <h2>Plano de Estudos Semanal</h2>
+                <div class="card">
+                    <h3>Configuração dos Dias da Semana (Domingo a Segunda)</h3>
+                    <p>Defina o foco ou carga de matérias para cada dia da semana.</p>
+                    <div id="plano-semanal-container" style="margin-top: 1rem;">
+                        <!-- Gerado via JS -->
+                    </div>
+                    <button class="btn-primary" style="margin-top: 1rem;" onclick="salvarPlanoSemanal()">Salvar Plano Semanal</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Metas de Estudo (Quantas matérias/tópicos e questões por dia) -->
+        <section id="config-metas" class="tab-content">
+            <div class="inner-container">
+                <h2>Configuração de Metas Diárias</h2>
+                <div class="card">
+                    <h3>Parâmetros de Execução</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tópicos de Estudo Novo por Dia</label>
+                            <input type="number" id="meta-topicos-dia" value="2" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Meta de Questões por Tópico</label>
+                            <input type="number" id="meta-questoes-topico" value="25" min="5" max="100">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="salvarMetasDiarias()">Salvar Metas Diárias</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Progresso e Estatísticas -->
         <section id="progresso" class="tab-content">
             <div class="inner-container">
-                <h2>Progresso e Estatísticas</h2>
-                
+                <h2>Progresso e Estatísticas Completas</h2>
                 <div class="card">
-                    <h3>Resumo Geral do Curso</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h4>Percentual Geral Concluído</h4>
-                            <div class="value">68%</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Total de Matérias</h4>
-                            <div class="value">10</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Matérias Concluídas</h4>
-                            <div class="value">6</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Total de Tópicos</h4>
-                            <div class="value">150</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Tópicos Concluídos</h4>
-                            <div class="value">102</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Tópicos Restantes</h4>
-                            <div class="value">48</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Questões Respondidas</h4>
-                            <div class="value">1.420</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Revisões Realizadas</h4>
-                            <div class="value">35</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3>Progresso por Matéria</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Matéria</th>
-                                <th>Tópicos (Concluídos / Total)</th>
-                                <th>Restantes</th>
-                                <th>Progresso</th>
-                                <th>Revisões</th>
-                                <th>Último Estudo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Direito Constitucional</strong></td>
-                                <td>18 / 20</td>
-                                <td>2</td>
-                                <td>
-                                    90%
-                                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 90%;"></div></div>
-                                </td>
-                                <td>6</td>
-                                <td>Ontem</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Português</strong></td>
-                                <td>15 / 15</td>
-                                <td>0</td>
-                                <td>
-                                    100%
-                                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 100%;"></div></div>
-                                </td>
-                                <td>8</td>
-                                <td>Hoje</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Informática</strong></td>
-                                <td>8 / 12</td>
-                                <td>4</td>
-                                <td>
-                                    66%
-                                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 66%;"></div></div>
-                                </td>
-                                <td>3</td>
-                                <td>Há 3 dias</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="card">
-                    <h3>Estatísticas Gerais de Desempenho</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h4>Total de Sessões de Estudo</h4>
-                            <div class="value">45</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Média Diária de Estudos</h4>
-                            <div class="value">3h 15m</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Média de Questões por Sessão</h4>
-                            <div class="value">31</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Sequência de Dias Estudando</h4>
-                            <div class="value">12 dias</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Melhor Dia de Desempenho</h4>
-                            <div class="value">Quarta-feira</div>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Tempo Total de Estudo</h4>
-                            <div class="value">145h 30m</div>
-                        </div>
+                    <h3>Progresso Detalhado por Matéria</h3>
+                    <div id="progresso-materias-container">
+                        <!-- Gerado via JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 6. Calendário -->
+        <!-- 8. Calendário Inteligente -->
         <section id="calendario" class="tab-content">
             <div class="inner-container">
-                <h2>Calendário</h2>
+                <h2>Calendário Inteligente e Sincronizado</h2>
                 <div class="card">
-                    <h3>Agenda de Prazos e Revisões</h3>
-                    <p>Visualize seus compromissos e datas importantes programadas no calendário.</p>
+                    <h3>Agenda de Revisões e Metas Agendadas</h3>
+                    <p>Visualização automática das datas de lei seca, questões e estudos futuros.</p>
+                    <div id="calendario-eventos-list" style="margin-top: 1rem;">
+                        <!-- Sincronizado via JS -->
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 7. Coach -->
-        <section id="coach" class="tab-content">
-            <div class="inner-container">
-                <h2>Coach</h2>
-                <div class="card">
-                    <h3>Orientação Estratégica</h3>
-                    <p>Dicas e direcionamento personalizado para otimizar sua preparação e desempenho.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 8. Meu Perfil -->
+        <!-- 9. Meu Perfil -->
         <section id="perfil" class="tab-content">
             <div class="inner-container">
                 <h2>Meu Perfil</h2>
                 <div class="card">
                     <h3>Informações Cadastrais</h3>
-                    <div class="profile-form">
+                    <div class="form-grid">
                         <div class="form-group">
-                            <label for="nome">Nome completo</label>
-                            <input type="text" id="nome" value="Arlan Souza de Ramos">
+                            <label>Nome completo</label>
+                            <input type="text" id="perfil-nome" value="Arlan Souza de Ramos">
                         </div>
                         <div class="form-group">
-                            <label for="idade">Idade</label>
-                            <input type="number" id="idade" value="27">
+                            <label>Idade</label>
+                            <input type="number" id="perfil-idade" value="27">
                         </div>
                         <div class="form-group">
-                            <label for="nascimento">Data de nascimento</label>
-                            <input type="date" id="nascimento" value="1998-11-04">
+                            <label>Data de nascimento</label>
+                            <input type="date" id="perfil-nasc" value="1998-11-04">
                         </div>
                         <div class="form-group">
-                            <label for="cidade">Cidade</label>
-                            <input type="text" id="cidade" value="Goiânia">
+                            <label>Cidade</label>
+                            <input type="text" id="perfil-cidade" value="Goiânia">
                         </div>
                         <div class="form-group">
-                            <label for="estado">Estado</label>
-                            <input type="text" id="estado" value="Goiás">
+                            <label>Estado</label>
+                            <input type="text" id="perfil-estado" value="Goiás">
                         </div>
                         <div class="form-group">
-                            <label for="concurso">Concurso almejado atual</label>
-                            <input type="text" id="concurso" value="Auditor Fiscal / Tribunais">
+                            <label>Concurso Almejado</label>
+                            <input type="text" id="perfil-concurso" value="Auditor Fiscal / Tribunais">
                         </div>
                     </div>
-                    <button class="btn-save" onclick="alert('Informações salvas com sucesso!')">Salvar Alterações</button>
+                    <button class="btn-primary" onclick="alert('Perfil salvo com sucesso!')">Salvar Alterações</button>
                 </div>
             </div>
         </section>
 
-        <!-- 9. Configurações -->
+        <!-- 10. Configurações -->
         <section id="configuracoes" class="tab-content">
             <div class="inner-container">
-                <h2>Configurações</h2>
+                <h2>Configurações do Sistema</h2>
                 <div class="card">
-                    <h3>Configurações Gerais</h3>
-                    <p>Gerencie preferências do sistema, notificações e ajustes visuais da sua conta.</p>
+                    <h3>Dados e Armazenamento</h3>
+                    <p>O sistema realiza salvamento automático local. Você pode resetar os dados de demonstração caso precise.</p>
+                    <button class="btn-danger" style="margin-top: 1rem;" onclick="resetarDados()">Restaurar Dados Padrão</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Script de navegação, data e inteligência do sistema de revisões automáticas (R1 a R30) -->
+    <!-- Script de Inteligência e Sincronização Automática -->
     <script>
         function switchTab(tabId, element) {
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            if (element) {
-                element.classList.add('active');
-            }
+            if (element) element.classList.add('active');
+            atualizarTelas();
         }
 
-        // Exibir data atual formatada em português na tela inicial
+        // Data atual
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const today = new Date();
-        const dateString = today.toLocaleDateString('pt-BR', options);
-        document.getElementById('current-date').innerText = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+        document.getElementById('current-date').innerText = today.toLocaleDateString('pt-BR', options).replace(/^./, str => str.toUpperCase());
 
-        // Dados Dinâmicos sincronizados com o Plano de Estudos
-        let estudoInicialData = [
-            { id: 1, materia: "Direito Constitucional", topico: "Art. 5º - Direitos e Garantias Fundamentais", questoes: 25, concluido: false },
-            { id: 2, materia: "Português", topico: "Crase e Concordância Verbal", questoes: 30, concluido: false },
-            { id: 3, materia: "Informática", topico: "Segurança da Informação e Criptografia", questoes: 20, concluido: false }
-        ];
+        // Base de Dados Local (com salvamento automático)
+        let appData = JSON.parse(localStorage.getItem('arlan_estudos_data')) || {
+            materias: [
+                { id: 1, nome: "Direito Constitucional", topicos: [{id: 101, nome: "Tópico 00 - Introdução", concluido: false}, {id: 102, nome: "Tópico 01 - Direitos Fundamentais", concluido: false}] },
+                { id: 2, nome: "Português", topicos: [{id: 201, nome: "Tópico 00 - Fonética e Fonologia", concluido: true}] }
+            ],
+            revisoes: [
+                { id: 1, materia: "Português", topico: "Tópico 00 - Fonética e Fonologia", revNum: 1, questoes: 25, concluido: false, data: "Hoje" }
+            ],
+            planoSemanal: [
+                { dia: "Domingo", foco: "Revisão Geral e Simulados" },
+                { dia: "Segunda-feira", foco: "Direito Constitucional" },
+                { dia: "Terça-feira", foco: "Português" },
+                { dia: "Quarta-feira", foco: "Direito Administrativo" },
+                { dia: "Quinta-feira", foco: "Informática" },
+                { dia: "Sexta-feira", foco: "Raciocínio Lógico" },
+                { dia: "Sábado", foco: "Discursivas e Leis Secas" }
+            ],
+            configMetas: {
+                topicosDia: 2,
+                questoesTopico: 25
+            }
+        };
 
-        let revisoesProgramadasData = [
-            { id: 101, materia: "Direito Administrativo", topico: "Poderes Administrativos", revNum: 1, questoes: 15, concluido: false },
-            { id: 102, materia: "Direito Constitucional", topico: "Organização do Estado", revNum: 2, questoes: 20, concluido: false },
-            { id: 103, materia: "Português", topico: "Pontuação e Sintaxe", revNum: 5, questoes: 25, concluido: false }
-        ];
-
-        function renderMetasHoje() {
-            // Renderizar Estudo Inicial
-            const containerEstudo = document.getElementById('estudo-inicial-list');
-            containerEstudo.innerHTML = '';
-            estudoInicialData.forEach(item => {
-                containerEstudo.innerHTML += `
-                    <div class="goal-item">
-                        <div class="goal-header">
-                            <div class="goal-info">
-                                <h4>${item.materia}</h4>
-                                <p><strong>Tópico:</strong> ${item.topico}</p>
-                                <p style="margin-top: 0.25rem;"><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Estudo Teórico + <strong>${item.questoes} Questões</strong></p>
-                            </div>
-                            <span class="badge">Estudo Inicial</span>
-                        </div>
-                        <div class="goal-actions">
-                            <label class="checklist-label">
-                                <input type="checkbox" ${item.concluido ? 'checked' : ''} onchange="toggleEstudo(${item.id})">
-                                Marcar como concluído
-                            </label>
-                            <button class="btn-action ${item.concluido ? 'completed' : ''}" onclick="executarEstudo(${item.id})">
-                                <i class="fa-solid ${item.concluido ? 'fa-check' : 'fa-play'}"></i> ${item.concluido ? 'Concluído' : 'Iniciar Estudo'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Renderizar Revisões Programadas
-            const containerRevisoes = document.getElementById('revisoes-programadas-list');
-            containerRevisoes.innerHTML = '';
-            revisoesProgramadasData.forEach(item => {
-                containerRevisoes.innerHTML += `
-                    <div class="goal-item">
-                        <div class="goal-header">
-                            <div class="goal-info">
-                                <h4>${item.materia}</h4>
-                                <p><strong>Tópico exato:</strong> ${item.topico}</p>
-                                <p style="margin-top: 0.25rem;"><i class="fa-solid fa-book" style="color: var(--accent);"></i> Lei Seca + <strong>${item.questoes} Questões</strong> (Sem PDF/Aula)</p>
-                            </div>
-                            <span class="badge badge-rev">Revisão R${item.revNum}</span>
-                        </div>
-                        <div class="goal-actions">
-                            <label class="checklist-label">
-                                <input type="checkbox" ${item.concluido ? 'checked' : ''} onchange="toggleRevisao(${item.id})">
-                                Marcar revisão como feita
-                            </label>
-                            <button class="btn-action ${item.concluido ? 'completed' : ''}" onclick="executarRevisao(${item.id})">
-                                <i class="fa-solid ${item.concluido ? 'fa-check' : 'fa-play'}"></i> ${item.concluido ? 'Concluída' : 'Iniciar Revisão R' + item.revNum}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
+        function salvarDados() {
+            localStorage.setItem('arlan_estudos_data', JSON.stringify(appData));
+            atualizarTelas();
         }
 
-        function toggleEstudo(id) {
-            const item = estudoInicialData.find(x => x.id === id);
-            if (item) {
-                item.concluido = !item.concluido;
-                renderMetasHoje();
+        // Cadastro Livre
+        function adicionarMateria() {
+            const nome = document.getElementById('nova-materia-nome').value.trim();
+            if (!nome) return alert('Digite o nome da matéria.');
+            appData.materias.push({ id: Date.now(), nome: nome, topicos: [] });
+            document.getElementById('nova-materia-nome').value = '';
+            salvarDados();
+            carregarSelectMaterias();
+            alert('Matéria criada com sucesso!');
+        }
+
+        function carregarSelectMaterias() {
+            const select = document.getElementById('select-materia-topico');
+            select.innerHTML = '';
+            appData.materias.forEach(m => {
+                let opt = document.createElement('option');
+                opt.value = m.id;
+                opt.innerText = m.nome;
+                select.appendChild(opt);
+            });
+            renderTopicosLista();
+        }
+
+        function adicionarTopico() {
+            const materiaId = document.getElementById('select-materia-topico').value;
+            const nomeTopico = document.getElementById('novo-topico-nome').value.trim();
+            if (!nomeTopico) return alert('Digite o nome do tópico.');
+            const materia = appData.materias.find(m => m.id == materiaId);
+            if (materia) {
+                materia.topicos.push({ id: Date.now(), nome: nomeTopico, concluido: false });
+                document.getElementById('novo-topico-nome').value = '';
+                salvarDados();
+                renderTopicosLista();
             }
         }
 
-        function executarEstudo(id) {
-            const item = estudoInicialData.find(x => x.id === id);
-            if (item) {
-                item.concluido = true;
-                // Ao concluir estudo inicial, agenda automaticamente a primeira revisão (R1) nas revisões programadas
-                revisoesProgramadasData.push({
-                    id: Date.now(),
-                    materia: item.materia,
-                    topico: item.topico,
-                    revNum: 1,
-                    questoes: 20,
-                    concluido: false
+        function renderTopicosLista() {
+            const materiaId = document.getElementById('select-materia-topico').value;
+            const container = document.getElementById('lista-topicos-container');
+            container.innerHTML = '';
+            const materia = appData.materias.find(m => m.id == materiaId);
+            if (!materia) return;
+            
+            materia.topicos.forEach(t => {
+                container.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid var(--border-color);">
+                        <span>${t.nome} ${t.concluido ? '(Concluído)' : ''}</span>
+                        <button class="btn-danger" onclick="removerTopico(${materia.id}, ${t.id})">Excluir</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removerTopico(materiaId, topicoId) {
+            const materia = appData.materias.find(m => m.id == materiaId);
+            if (materia) {
+                materia.topicos = materia.topicos.filter(t => t.id != topicoId);
+                salvarDados();
+                renderTopicosLista();
+            }
+        }
+
+        // Plano Semanal
+        function renderPlanoSemanal() {
+            const container = document.getElementById('plano-semanal-container');
+            container.innerHTML = '';
+            appData.planoSemanal.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="form-grid" style="margin-bottom: 0.5rem;">
+                        <div class="form-group"><label>${p.dia}</label><input type="text" id="plano-dia-${idx}" value="${p.foco}"></div>
+                    </div>
+                `;
+            });
+        }
+
+        function salvarPlanoSemanal() {
+            appData.planoSemanal.forEach((p, idx) => {
+                const val = document.getElementById(`plano-dia-${idx}`).value;
+                p.foco = val;
+            });
+            salvarDados();
+            alert('Plano semanal atualizado!');
+        }
+
+        // Metas Diárias
+        function salvarMetasDiarias() {
+            appData.configMetas.topicosDia = parseInt(document.getElementById('meta-topicos-dia').value) || 2;
+            appData.configMetas.questoesTopico = parseInt(document.getElementById('meta-questoes-topico').value) || 25;
+            salvarDados();
+            alert('Metas diárias atualizadas!');
+        }
+
+        // Metas de Hoje (Revisões primeiro, depois Estudos)
+        function renderMetasHoje() {
+            const revContainer = document.getElementById('revisoes-hoje-list');
+            revContainer.innerHTML = '';
+            if (appData.revisoes.length === 0) {
+                revContainer.innerHTML = `<p>Nenhuma revisão pendente para hoje. Excelente trabalho!</p>`;
+            } else {
+                appData.revisoes.forEach(r => {
+                    revContainer.innerHTML += `
+                        <div class="goal-item">
+                            <div class="goal-header">
+                                <div class="goal-info">
+                                    <h4>${r.materia}</h4>
+                                    <p><strong>Tópico:</strong> ${r.topico}</p>
+                                    <p><i class="fa-solid fa-book" style="color: var(--accent);"></i> Lei Seca + <strong>${r.questoes} Questões</strong></p>
+                                </div>
+                                <span class="badge badge-rev">Revisão R${r.revNum}</span>
+                            </div>
+                            <div class="goal-actions">
+                                <label class="checklist-label"><input type="checkbox" ${r.concluido ? 'checked' : ''} onchange="toggleRevisao(${r.id})"> Concluído</label>
+                                <button class="btn-action ${r.concluido ? 'completed' : ''}" onclick="concluirRevisao(${r.id})"><i class="fa-solid ${r.concluido ? 'fa-check' : 'fa-play'}"></i> ${r.concluido ? 'Feito' : 'Iniciar Revisão'}</button>
+                            </div>
+                        </div>
+                    `;
                 });
-                alert(`Estudo de "${item.materia}" concluído!\nRevisão R1 agendada automaticamente com sucesso na seção de Revisões Programadas.`);
-                renderMetasHoje();
+            }
+
+            const estudoContainer = document.getElementById('estudo-hoje-list');
+            estudoContainer.innerHTML = '';
+            let count = 0;
+            appData.materias.forEach(m => {
+                m.topicos.filter(t => !t.concluido).forEach(t => {
+                    if (count < appData.configMetas.topicosDia) {
+                        estudoContainer.innerHTML += `
+                            <div class="goal-item">
+                                <div class="goal-header">
+                                    <div class="goal-info">
+                                        <h4>${m.nome}</h4>
+                                        <p><strong>Tópico:</strong> ${t.nome}</p>
+                                        <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + <strong>${appData.configMetas.questoesTopico} Questões</strong></p>
+                                    </div>
+                                    <span class="badge">Estudo Novo</span>
+                                </div>
+                                <div class="goal-actions">
+                                    <label class="checklist-label"><input type="checkbox" ${t.concluido ? 'checked' : ''} onchange="toggleEstudo(${m.id}, ${t.id})"> Concluído</label>
+                                    <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Iniciar Estudo</button>
+                                </div>
+                            </div>
+                        `;
+                        count++;
+                    }
+                });
+            });
+            if (count === 0) {
+                estudoContainer.innerHTML = `<p>Todos os tópicos cadastrados foram concluídos! Cadastre mais tópicos para continuar.</p>`;
             }
         }
 
         function toggleRevisao(id) {
-            const item = revisoesProgramadasData.find(x => x.id === id);
-            if (item) {
-                item.concluido = !item.concluido;
-                renderMetasHoje();
-            }
+            const r = appData.revisoes.find(x => x.id == id);
+            if (r) { r.concluido = !r.concluido; salvarDados(); }
         }
 
-        function executarRevisao(id) {
-            const item = revisoesProgramadasData.find(x => x.id === id);
-            if (item) {
-                item.concluido = true;
-                if (item.revNum < 30) {
-                    item.revNum += 1;
-                    item.concluido = false;
-                    alert(`Revisão R${item.revNum - 1} de "${item.materia}" concluída!\nPróxima revisão (R${item.revNum}) agendada automaticamente.`);
-                } else {
-                    alert(`Parabéns! Ciclo completo de revisões (R30) concluído para este tópico.`);
+        function concluirRevisao(id) {
+            const r = appData.revisoes.find(x => x.id == id);
+            if (r) {
+                r.concluido = true;
+                if (r.revNum < 30) {
+                    appData.revisoes.push({ id: Date.now(), materia: r.materia, topico: r.topico, revNum: r.revNum + 1, questoes: r.questoes, concluido: false, data: "Futuro" });
                 }
-                renderMetasHoje();
+                alert('Revisão concluída! Próxima revisão agendada automaticamente.');
+                salvarDados();
             }
         }
 
-        // Inicializar renderização ao carregar
-        renderMetasHoje();
+        function toggleEstudo(materiaId, topicoId) {
+            const m = appData.materias.find(x => x.id == materiaId);
+            if (m) {
+                const t = m.topicos.find(x => x.id == topicoId);
+                if (t) { t.concluido = !t.concluido; salvarDados(); }
+            }
+        }
+
+        function concluirEstudo(materiaId, topicoId) {
+            const m = appData.materias.find(x => x.id == materiaId);
+            if (m) {
+                const t = m.topicos.find(x => x.id == topicoId);
+                if (t) {
+                    t.concluido = true;
+                    // Agenda R1 automaticamente
+                    appData.revisoes.push({ id: Date.now(), materia: m.nome, topico: t.nome, revNum: 1, questoes: appData.configMetas.questoesTopico, concluido: false, data: "Hoje" });
+                    alert(`Estudo de "${t.nome}" concluído! Revisão R1 agendada com sucesso.`);
+                    salvarDados();
+                }
+            }
+        }
+
+        // Progresso e Estatísticas
+        function atualizarProgresso() {
+            let totalTopicos = 0;
+            let concluidosTopicos = 0;
+            let container = document.getElementById('progresso-materias-container');
+            container.innerHTML = '';
+
+            appData.materias.forEach(m => {
+                let mTotal = m.topicos.length;
+                let mConc = m.topicos.filter(t => t.concluido).length;
+                totalTopicos += mTotal;
+                concluidosTopicos += mConc;
+                let perc = mTotal > 0 ? Math.round((mConc / mTotal) * 100) : 0;
+
+                container.innerHTML += `
+                    <div style="margin-bottom: 1rem;">
+                        <strong>${m.nome}</strong> (${mConc}/${mTotal} tópicos - ${perc}%)
+                        <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${perc}%;"></div></div>
+                    </div>
+                `;
+            });
+
+            let geralPerc = totalTopicos > 0 ? Math.round((concluidosTopicos / totalTopicos) * 100) : 0;
+            document.getElementById('dash-perc').innerText = geralPerc + '%';
+            document.getElementById('dash-topicos').innerText = `${concluidosTopicos} / ${totalTopicos}`;
+            document.getElementById('dash-questoes').innerText = concluidosTopicos * appData.configMetas.questoesTopico;
+        }
+
+        // Calendário
+        function atualizarCalendario() {
+            const container = document.getElementById('calendario-eventos-list');
+            container.innerHTML = '';
+            appData.revisoes.forEach(r => {
+                container.innerHTML += `<p><i class="fa-solid fa-calendar-check" style="color: var(--accent);"></i> <strong>Revisão R${r.revNum}</strong> - ${r.materia} (${r.topico})</p>`;
+            });
+            if(appData.revisoes.length === 0) container.innerHTML = `<p>Nenhum evento agendado no momento.</p>`;
+        }
+
+        function atualizarTelas() {
+            renderMetasHoje();
+            atualizarProgresso();
+            atualizarCalendario();
+            renderPlanoSemanal();
+        }
+
+        function resetarDados() {
+            if(confirm('Deseja restaurar os dados padrão?')) {
+                localStorage.removeItem('arlan_estudos_data');
+                location.reload();
+            }
+        }
+
+        // Inicialização
+        carregarSelectMaterias();
+        atualizarTelas();
     </script>
 </body>
 </html>
