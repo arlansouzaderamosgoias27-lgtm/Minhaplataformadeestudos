@@ -169,7 +169,7 @@
             flex-direction: column;
         }
 
-        /* Tela Inicial (Atualizada: Foguete maior, data maior, botão maior e espaçamento harmônico) */
+        /* Tela Inicial (Atualizada: Foguete significativamente maior, proporcional e perfeitamente harmônico) */
         .home-fullscreen {
             flex: 1;
             display: flex;
@@ -183,9 +183,10 @@
         }
 
         .home-rocket {
-            font-size: 6rem;
+            font-size: 8.5rem;
             color: var(--accent);
-            margin-bottom: 2rem;
+            margin-bottom: 2.25rem;
+            line-height: 1;
         }
 
         [data-anim="enabled"] .home-rocket {
@@ -194,7 +195,7 @@
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-18px); }
         }
 
         .home-phrase {
@@ -353,21 +354,6 @@
             gap: 1rem;
         }
 
-        .checklist-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            color: var(--text-main);
-        }
-
-        .checklist-label input[type="checkbox"] {
-            width: 1.2rem;
-            height: 1.2rem;
-            accent-color: var(--success);
-            cursor: pointer;
-        }
-
         .questoes-input-container {
             display: flex;
             align-items: center;
@@ -401,10 +387,6 @@
 
         .btn-action:hover {
             background-color: var(--primary-hover);
-        }
-
-        .btn-action.completed {
-            background-color: var(--success);
         }
 
         /* Formulários e Tabelas */
@@ -556,6 +538,9 @@
             nav {
                 gap: 0.4rem;
             }
+            .home-rocket {
+                font-size: 6.5rem;
+            }
         }
     </style>
 </head>
@@ -580,7 +565,7 @@
             <div class="home-fullscreen">
                 <div class="home-rocket"><i class="fa-solid fa-rocket"></i></div>
                 <div class="home-phrase">Foco, Disciplina e Execução</div>
-                <div class="home-date" id="current-date">Segunda-feira, 3 de agosto de 2026</div>
+                <div class="home-date" id="current-date">Terça-feira, 4 de agosto de 2026</div>
                 <button class="btn-iniciar-estudos" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(2)'))">
                     Iniciar Estudos
                 </button>
