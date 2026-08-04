@@ -195,6 +195,110 @@
             line-height: 1.5;
         }
 
+        /* Estilos específicos para Metas de Hoje com as duas seções */
+        .goals-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .goal-item {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .goal-info h4 {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .goal-info p {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-rev {
+            background-color: var(--accent);
+            color: #0f172a;
+        }
+
+        .goal-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checklist-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .checklist-label input[type="checkbox"] {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+
+        .btn-action {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-action.completed {
+            background-color: var(--success);
+        }
+
         /* Melhoria na Tela Progresso e Estatísticas (Mantendo layout original) */
         .stats-grid {
             display: grid;
@@ -362,13 +466,29 @@
             </div>
         </section>
 
-        <!-- 3. Metas de Hoje -->
+        <!-- 3. Metas de Hoje (Com seções separadas de Estudo Inicial e Revisões Programadas) -->
         <section id="metas-hoje" class="tab-content">
             <div class="inner-container">
                 <h2>Metas de Hoje</h2>
+                
+                <!-- Seção 1: Estudo Inicial -->
                 <div class="card">
-                    <h3>Tarefas do Dia</h3>
-                    <p>Lista de conteúdos, ciclos e questões programadas para cumprir hoje.</p>
+                    <div class="goals-section-title">
+                        <i class="fa-solid fa-book-open" style="color: var(--primary);"></i> Estudo Inicial
+                    </div>
+                    <div id="estudo-inicial-list">
+                        <!-- Itens injetados via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Seção 2: Revisões Programadas (R1 a R30) -->
+                <div class="card">
+                    <div class="goals-section-title">
+                        <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões Programadas (Lei Seca + Questões)
+                    </div>
+                    <div id="revisoes-programadas-list">
+                        <!-- Itens injetados via JavaScript -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -384,7 +504,7 @@
             </div>
         </section>
 
-        <!-- 5. Progresso e Estatísticas (Informações adicionadas mantendo o layout original) -->
+        <!-- 5. Progresso e Estatísticas (Informações mantendo o layout original) -->
         <section id="progresso" class="tab-content">
             <div class="inner-container">
                 <h2>Progresso e Estatísticas</h2>
@@ -532,7 +652,7 @@
             </div>
         </section>
 
-        <!-- 8. Meu Perfil (Simplificado estritamente com os 6 campos solicitados) -->
+        <!-- 8. Meu Perfil -->
         <section id="perfil" class="tab-content">
             <div class="inner-container">
                 <h2>Meu Perfil</h2>
@@ -581,7 +701,7 @@
         </section>
     </main>
 
-    <!-- Script de navegação e exibição de data atual -->
+    <!-- Script de navegação, data e inteligência do sistema de revisões automáticas (R1 a R30) -->
     <script>
         function switchTab(tabId, element) {
             const contents = document.querySelectorAll('.tab-content');
@@ -601,6 +721,127 @@
         const today = new Date();
         const dateString = today.toLocaleDateString('pt-BR', options);
         document.getElementById('current-date').innerText = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+
+        // Dados Dinâmicos sincronizados com o Plano de Estudos
+        let estudoInicialData = [
+            { id: 1, materia: "Direito Constitucional", topico: "Art. 5º - Direitos e Garantias Fundamentais", questoes: 25, concluido: false },
+            { id: 2, materia: "Português", topico: "Crase e Concordância Verbal", questoes: 30, concluido: false },
+            { id: 3, materia: "Informática", topico: "Segurança da Informação e Criptografia", questoes: 20, concluido: false }
+        ];
+
+        let revisoesProgramadasData = [
+            { id: 101, materia: "Direito Administrativo", topico: "Poderes Administrativos", revNum: 1, questoes: 15, concluido: false },
+            { id: 102, materia: "Direito Constitucional", topico: "Organização do Estado", revNum: 2, questoes: 20, concluido: false },
+            { id: 103, materia: "Português", topico: "Pontuação e Sintaxe", revNum: 5, questoes: 25, concluido: false }
+        ];
+
+        function renderMetasHoje() {
+            // Renderizar Estudo Inicial
+            const containerEstudo = document.getElementById('estudo-inicial-list');
+            containerEstudo.innerHTML = '';
+            estudoInicialData.forEach(item => {
+                containerEstudo.innerHTML += `
+                    <div class="goal-item">
+                        <div class="goal-header">
+                            <div class="goal-info">
+                                <h4>${item.materia}</h4>
+                                <p><strong>Tópico:</strong> ${item.topico}</p>
+                                <p style="margin-top: 0.25rem;"><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Estudo Teórico + <strong>${item.questoes} Questões</strong></p>
+                            </div>
+                            <span class="badge">Estudo Inicial</span>
+                        </div>
+                        <div class="goal-actions">
+                            <label class="checklist-label">
+                                <input type="checkbox" ${item.concluido ? 'checked' : ''} onchange="toggleEstudo(${item.id})">
+                                Marcar como concluído
+                            </label>
+                            <button class="btn-action ${item.concluido ? 'completed' : ''}" onclick="executarEstudo(${item.id})">
+                                <i class="fa-solid ${item.concluido ? 'fa-check' : 'fa-play'}"></i> ${item.concluido ? 'Concluído' : 'Iniciar Estudo'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Renderizar Revisões Programadas
+            const containerRevisoes = document.getElementById('revisoes-programadas-list');
+            containerRevisoes.innerHTML = '';
+            revisoesProgramadasData.forEach(item => {
+                containerRevisoes.innerHTML += `
+                    <div class="goal-item">
+                        <div class="goal-header">
+                            <div class="goal-info">
+                                <h4>${item.materia}</h4>
+                                <p><strong>Tópico exato:</strong> ${item.topico}</p>
+                                <p style="margin-top: 0.25rem;"><i class="fa-solid fa-book" style="color: var(--accent);"></i> Lei Seca + <strong>${item.questoes} Questões</strong> (Sem PDF/Aula)</p>
+                            </div>
+                            <span class="badge badge-rev">Revisão R${item.revNum}</span>
+                        </div>
+                        <div class="goal-actions">
+                            <label class="checklist-label">
+                                <input type="checkbox" ${item.concluido ? 'checked' : ''} onchange="toggleRevisao(${item.id})">
+                                Marcar revisão como feita
+                            </label>
+                            <button class="btn-action ${item.concluido ? 'completed' : ''}" onclick="executarRevisao(${item.id})">
+                                <i class="fa-solid ${item.concluido ? 'fa-check' : 'fa-play'}"></i> ${item.concluido ? 'Concluída' : 'Iniciar Revisão R' + item.revNum}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleEstudo(id) {
+            const item = estudoInicialData.find(x => x.id === id);
+            if (item) {
+                item.concluido = !item.concluido;
+                renderMetasHoje();
+            }
+        }
+
+        function executarEstudo(id) {
+            const item = estudoInicialData.find(x => x.id === id);
+            if (item) {
+                item.concluido = true;
+                // Ao concluir estudo inicial, agenda automaticamente a primeira revisão (R1) nas revisões programadas
+                revisoesProgramadasData.push({
+                    id: Date.now(),
+                    materia: item.materia,
+                    topico: item.topico,
+                    revNum: 1,
+                    questoes: 20,
+                    concluido: false
+                });
+                alert(`Estudo de "${item.materia}" concluído!\nRevisão R1 agendada automaticamente com sucesso na seção de Revisões Programadas.`);
+                renderMetasHoje();
+            }
+        }
+
+        function toggleRevisao(id) {
+            const item = revisoesProgramadasData.find(x => x.id === id);
+            if (item) {
+                item.concluido = !item.concluido;
+                renderMetasHoje();
+            }
+        }
+
+        function executarRevisao(id) {
+            const item = revisoesProgramadasData.find(x => x.id === id);
+            if (item) {
+                item.concluido = true;
+                if (item.revNum < 30) {
+                    item.revNum += 1;
+                    item.concluido = false;
+                    alert(`Revisão R${item.revNum - 1} de "${item.materia}" concluída!\nPróxima revisão (R${item.revNum}) agendada automaticamente.`);
+                } else {
+                    alert(`Parabéns! Ciclo completo de revisões (R30) concluído para este tópico.`);
+                }
+                renderMetasHoje();
+            }
+        }
+
+        // Inicializar renderização ao carregar
+        renderMetasHoje();
     </script>
 </body>
 </html>
