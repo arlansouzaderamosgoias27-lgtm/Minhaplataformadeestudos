@@ -7,7 +7,7 @@
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Temas de Cores */
+        /* Temas de Cores Globais e Variáveis Dinâmicas */
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
@@ -32,7 +32,7 @@
             --border-color: #e2e8f0;
         }
 
-        /* Cores Primárias */
+        /* Cores Primárias Predefinidas */
         [data-primary="indigo"] { --primary: #4f46e5; --primary-hover: #4338ca; }
         [data-primary="emerald"] { --primary: #059669; --primary-hover: #047857; }
         [data-primary="violet"] { --primary: #7c3aed; --primary-hover: #6d28d9; }
@@ -169,7 +169,7 @@
             flex-direction: column;
         }
 
-        /* Tela Inicial (Atualizada: Foguete significativamente maior, proporcional e perfeitamente harmônico) */
+        /* Tela Inicial */
         .home-fullscreen {
             flex: 1;
             display: flex;
@@ -418,6 +418,22 @@
             border-radius: 0.375rem;
         }
 
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .color-picker-group input[type="color"] {
+            width: 50px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            background: none;
+        }
+
         .btn-primary {
             background-color: var(--primary);
             color: white;
@@ -584,7 +600,7 @@
                 </div>
 
                 <!-- Seção Dinâmica de Revisões (Só aparece se houver revisões no dia) -->
-                <div id="wrapper-revisoes-hoje">
+                <div id="wrapper-revisoes-hoje" style="display: none;">
                     <div class="card">
                         <div class="goals-section-title">
                             <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões de Hoje (R1 a R20 - 40 Questões)
@@ -603,7 +619,7 @@
             </div>
         </section>
 
-        <!-- 3. Cadastro Livre de Matérias e Tópicos (Gera automaticamente tudo sincronizado) -->
+        <!-- 3. Cadastro Livre de Matérias e Tópicos -->
         <section id="cadastro" class="tab-content">
             <div class="inner-container">
                 <h2>Cadastro Livre de Matérias e Tópicos</h2>
@@ -633,19 +649,19 @@
             </div>
         </section>
 
-        <!-- 4. Plano Semanal (Com botão Adicionar + e sincronizado) -->
+        <!-- 4. Plano Semanal -->
         <section id="plano-semanal" class="tab-content">
             <div class="inner-container">
                 <h2>Plano Semanal (Segunda a Domingo)</h2>
                 <div class="card">
                     <h3>Gerenciamento e Sincronização do Plano Semanal</h3>
-                    <p>Adicione tópicos/focos específicos para cada dia da semana. Tudo sincroniza com as metas e revisões.</p>
+                    <p>Adicione tópicos/focos específicos para cada dia da semana. Tudo sincroniza com as metas diárias.</p>
                     <div id="plano-semanal-container" style="margin-top: 1.5rem;"></div>
                 </div>
             </div>
         </section>
 
-        <!-- 5. Progresso e Estatísticas (Tudo Centralizado) -->
+        <!-- 5. Progresso e Estatísticas -->
         <section id="progresso" class="tab-content">
             <div class="inner-container">
                 <h2>Progresso e Estatísticas</h2>
@@ -674,29 +690,88 @@
             </div>
         </section>
 
-        <!-- 6. Configurações Completas (Com botão Limpar todos os dados) -->
+        <!-- 6. Configurações e Aparência -->
         <section id="configuracoes" class="tab-content">
             <div class="inner-container">
                 <h2>Configurações do Sistema</h2>
+                
+                <!-- Aparência e Cores -->
                 <div class="card">
-                    <h3>Personalização Completa</h3>
-                    <div class="form-grid">
+                    <h3>Aparência e Cores Customizadas</h3>
+                    <p style="margin-bottom: 1.25rem;">Escolha temas prontos ou customize cada detalhe de cor da plataforma livremente.</p>
+                    
+                    <div class="form-grid" style="margin-bottom: 1.5rem;">
                         <div class="form-group">
-                            <label>Tema da Plataforma</label>
+                            <label>Temas Prontos</label>
+                            <select id="config-preset-tema" onchange="aplicarTemaPronto(this.value)">
+                                <option value="custom">Personalizado (Livre)</option>
+                                <option value="indigo">Padrão (Índigo)</option>
+                                <option value="emerald">Esmeralda (Verde)</option>
+                                <option value="violet">Violeta Neon</option>
+                                <option value="blue">Azul Profundo</option>
+                                <option value="sunset">Sunset Amber</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Modo de Exibição</label>
                             <select id="config-theme" onchange="aplicarConfiguracoes()">
                                 <option value="dark">Escuro (Dark)</option>
                                 <option value="light">Claro (Light)</option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Seletor Livre de Cores Detalhado -->
+                    <div class="form-grid">
                         <div class="form-group">
-                            <label>Cor Principal</label>
-                            <select id="config-primary" onchange="aplicarConfiguracoes()">
-                                <option value="indigo">Índigo</option>
-                                <option value="emerald">Esmeralda (Verde)</option>
-                                <option value="violet">Violeta</option>
-                                <option value="blue">Azul</option>
-                            </select>
+                            <label>Cor Principal / Botões / Ícones</label>
+                            <div class="color-picker-group">
+                                <input type="color" id="picker-primary" value="#4f46e5" oninput="aplicarConfiguracoes()">
+                                <span id="val-primary" style="font-size: 0.85rem; color: var(--text-muted);">#4f46e5</span>
+                            </div>
                         </div>
+                        <div class="form-group">
+                            <label>Cor de Destaque / Acentos / R-Revisões</label>
+                            <div class="color-picker-group">
+                                <input type="color" id="picker-accent" value="#f59e0b" oninput="aplicarConfiguracoes()">
+                                <span id="val-accent" style="font-size: 0.85rem; color: var(--text-muted);">#f59e0b</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fundo da Página (Body)</label>
+                            <div class="color-picker-group">
+                                <input type="color" id="picker-bg" value="#0f172a" oninput="aplicarConfiguracoes()">
+                                <span id="val-bg" style="font-size: 0.85rem; color: var(--text-muted);">#0f172a</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fundo dos Cartões e Menus</label>
+                            <div class="color-picker-group">
+                                <input type="color" id="picker-card" value="#1e293b" oninput="aplicarConfiguracoes()">
+                                <span id="val-card" style="font-size: 0.85rem; color: var(--text-muted);">#1e293b</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Barras de Progresso / Sucesso</label>
+                            <div class="color-picker-group">
+                                <input type="color" id="picker-success" value="#10b981" oninput="aplicarConfiguracoes()">
+                                <span id="val-success" style="font-size: 0.85rem; color: var(--text-muted);">#10b981</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bordas e Divisorias</label>
+                            <div class="color-picker-group">
+                                <input type="color" id="picker-border" value="#334155" oninput="aplicarConfiguracoes()">
+                                <span id="val-border" style="font-size: 0.85rem; color: var(--text-muted);">#334155</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demais Configurações -->
+                <div class="card">
+                    <h3>Tipografia e Ajustes Gerais</h3>
+                    <div class="form-grid">
                         <div class="form-group">
                             <label>Família de Fonte</label>
                             <select id="config-font" onchange="aplicarConfiguracoes()">
@@ -738,7 +813,7 @@
         </section>
     </main>
 
-    <!-- Sistema Inteligente com Sincronização Total Automática -->
+    <!-- Script da Aplicação Sincronizada e Automática -->
     <script>
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -757,12 +832,16 @@
         ];
         document.getElementById('coach-msg').innerText = frasesMotivacionais[Math.floor(Math.random() * frasesMotivacionais.length)];
 
-        // Data atual formatada
+        // Data atual formatada (segunda a domingo mapeamento)
+        const diasSemanaMap = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        const dataHojeObj = new Date();
+        const diaSemanaHojeNome = diasSemanaMap[dataHojeObj.getDay()];
+        
         const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', optionsDate).replace(/^./, str => str.toUpperCase());
+        document.getElementById('current-date').innerText = dataHojeObj.toLocaleDateString('pt-BR', optionsDate).replace(/^./, str => str.toUpperCase());
 
-        // Base de dados local (Inicia vazia 0% por padrão, conforme solicitado)
-        let appData = JSON.parse(localStorage.getItem('arlan_estudos_v3')) || {
+        // Base de dados local (Inicia completamente limpa, vazia por padrão)
+        let appData = JSON.parse(localStorage.getItem('arlan_estudos_v4')) || {
             materias: [],
             revisoes: [],
             planoSemanal: [
@@ -779,7 +858,13 @@
             },
             config: {
                 theme: "dark",
-                primary: "indigo",
+                preset: "custom",
+                primary: "#4f46e5",
+                accent: "#f59e0b",
+                bgColor: "#0f172a",
+                cardBg: "#1e293b",
+                success: "#10b981",
+                border: "#334155",
                 font: "segoe",
                 fontsize: "medium",
                 iconsize: "medium",
@@ -788,11 +873,11 @@
         };
 
         function salvarDados() {
-            localStorage.setItem('arlan_estudos_v3', JSON.stringify(appData));
+            localStorage.setItem('arlan_estudos_v4', JSON.stringify(appData));
             atualizarTelas();
         }
 
-        // Cadastro de Matérias com Tópicos Automáticos (Gera tudo sincronizado)
+        // Cadastro de Matérias com Geração Automática de Tópicos e Plano Semanal para o dia de hoje
         function adicionarMateria() {
             const nome = document.getElementById('nova-materia-nome').value.trim();
             const qtd = parseInt(document.getElementById('nova-materia-qtd').value) || 5;
@@ -808,14 +893,13 @@
                     concluido: false
                 });
 
-                // Sincroniza automaticamente gerando a R1 inicial para cada tópico criado
+                // Sincroniza gerando R1 inicial
                 appData.revisoes.push({
-                    id: Date.now() + i + 1000,
+                    id: Date.now() + i + 2000,
                     materia: nome,
                     topico: nomeTopico,
                     revNum: 1,
                     questoes: 40,
-                    questoesInformadas: 40,
                     concluido: false
                 });
             }
@@ -828,12 +912,15 @@
 
             appData.materias.push(novaMateriaObj);
 
-            // Sincroniza automaticamente adicionando ao plano semanal (na Segunda-feira por padrão se vazio)
-            appData.planoSemanal[0].itens.push(`Estudar ${nome}`);
+            // Sincroniza automaticamente adicionando ao plano semanal do dia atual para aparecer nas metas de hoje
+            let planoDia = appData.planoSemanal.find(p => p.dia === diaSemanaHojeNome);
+            if (planoDia) {
+                planoDia.itens.push(`Estudar ${nome}`);
+            }
 
             document.getElementById('nova-materia-nome').value = '';
             salvarDados();
-            alert('Matéria, tópicos, plano semanal e revisões (R1 a R20) gerados e sincronizados com sucesso!');
+            alert('Matéria, tópicos, plano semanal de hoje e revisões (R1 a R20) gerados e sincronizados!');
         }
 
         function renderGerenciadorMaterias() {
@@ -868,7 +955,7 @@
             salvarDados();
         }
 
-        // Plano Semanal com botão Adicionar (+) e salvamento automático
+        // Plano Semanal Interativo
         function renderPlanoSemanal() {
             const container = document.getElementById('plano-semanal-container');
             container.innerHTML = '';
@@ -911,7 +998,7 @@
             salvarDados();
         }
 
-        // Metas de Hoje (Condicional: Se tiver revisão, mostra 'Revisões de Hoje' primeiro; se não tiver, oculta)
+        // Metas de Hoje estritamente baseadas no dia da semana atual e no Plano Semanal
         function renderMetasHoje() {
             const revWrapper = document.getElementById('wrapper-revisoes-hoje');
             const revContainer = document.getElementById('revisoes-hoje-list');
@@ -948,37 +1035,52 @@
 
             const estudoContainer = document.getElementById('estudo-hoje-list');
             estudoContainer.innerHTML = '';
+            
+            // Filtra o plano semanal do dia atual
+            let planoHojeObj = appData.planoSemanal.find(p => p.dia === diaSemanaHojeNome);
+            let itensHojePlano = planoHojeObj ? planoHojeObj.itens : [];
+
             let count = 0;
             appData.materias.forEach(m => {
-                m.topicos.filter(t => !t.concluido).forEach(t => {
-                    if (count < 2) {
-                        estudoContainer.innerHTML += `
-                            <div class="goal-item">
-                                <div class="goal-header">
-                                    <div class="goal-info">
-                                        <h4>${m.nome}</h4>
-                                        <p><strong>Tópico:</strong> ${t.nome}</p>
-                                        <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
+                // Verifica se a matéria faz parte do plano de hoje ou se o nome bate com os itens planejados para hoje
+                let estaNoPlanoHoje = itensHojePlano.some(item => item.toLowerCase().includes(m.nome.toLowerCase()));
+                
+                if (estaNoPlanoHoje) {
+                    m.topicos.filter(t => !t.concluido).forEach(t => {
+                        if (count < 2) {
+                            estudoContainer.innerHTML += `
+                                <div class="goal-item">
+                                    <div class="goal-header">
+                                        <div class="goal-info">
+                                            <h4>${m.nome}</h4>
+                                            <p><strong>Tópico:</strong> ${t.nome}</p>
+                                            <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
+                                        </div>
+                                        <span class="badge">Meta de Hoje (${diaSemanaHojeNome})</span>
                                     </div>
-                                    <span class="badge">Estudo Novo</span>
-                                </div>
-                                <div class="goal-actions">
-                                    <div class="questoes-input-container">
-                                        <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
-                                        <input type="number" id="input-q-est-${m.id}-${t.id}" value="40" min="1" max="200">
+                                    <div class="goal-actions">
+                                        <div class="questoes-input-container">
+                                            <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
+                                            <input type="number" id="input-q-est-${m.id}-${t.id}" value="40" min="1" max="200">
+                                        </div>
+                                        <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Concluir Estudo</button>
                                     </div>
-                                    <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Concluir Estudo</button>
                                 </div>
-                            </div>
-                        `;
-                        count++;
-                    }
-                });
+                            `;
+                            count++;
+                        }
+                    });
+                }
             });
+
             if (count === 0 && revisoesPendentes.length === 0) {
-                estudoContainer.innerHTML = `<p>Parabéns! Todas as metas e revisões cadastradas foram concluídas.</p>`;
+                if (appData.materias.length === 0) {
+                    estudoContainer.innerHTML = `<p>Nenhuma matéria cadastrada ainda. Cadastre matérias na aba "Cadastro Livre" e adicione itens no "Plano Semanal" para gerar suas metas de hoje.</p>`;
+                } else {
+                    estudoContainer.innerHTML = `<p>Nenhuma meta nova programada especificamente para hoje (${diaSemanaHojeNome}) no Plano Semanal. Adicione atividades na aba Plano Semanal para este dia ou conclua suas revisões.</p>`;
+                }
             } else if (count === 0) {
-                estudoContainer.innerHTML = `<p>Nenhum estudo novo pendente no momento.</p>`;
+                estudoContainer.innerHTML = `<p>Nenhum estudo novo pendente para hoje no plano semanal.</p>`;
             }
         }
 
@@ -992,7 +1094,6 @@
                 appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
 
                 if (r.revNum < 20) {
-                    // Agenda automaticamente a próxima revisão (R1 até R20) com 40 questões
                     appData.revisoes.push({
                         id: Date.now() + Math.random(),
                         materia: r.materia,
@@ -1002,7 +1103,7 @@
                         concluido: false
                     });
                 }
-                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões! Próxima revisão agendada automaticamente.`);
+                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões! Estatísticas atualizadas e próxima revisão agendada.`);
                 salvarDados();
             }
         }
@@ -1018,7 +1119,7 @@
                     t.concluido = true;
                     appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
 
-                    // Agenda R1 automaticamente (até R20) com 40 questões
+                    // Agenda R1 automaticamente
                     appData.revisoes.push({
                         id: Date.now() + Math.random(),
                         materia: m.nome,
@@ -1027,13 +1128,13 @@
                         questoes: 40,
                         concluido: false
                     });
-                    alert(`Estudo de "${t.nome}" concluído com ${qRespondidas} questões! Revisão R1 agendada automaticamente.`);
+                    alert(`Estudo de "${t.nome}" concluído com ${qRespondidas} questões! Progresso atualizado e Revisão R1 agendada.`);
                     salvarDados();
                 }
             }
         }
 
-        // Progresso e Estatísticas Centralizadas
+        // Progresso e Estatísticas
         function atualizarProgresso() {
             let totalTopicos = 0;
             let concluidosTopicos = 0;
@@ -1041,7 +1142,7 @@
             container.innerHTML = '';
 
             if (appData.materias.length === 0) {
-                container.innerHTML = `<p>Nenhum dado de progresso disponível.</p>`;
+                container.innerHTML = `<p>Nenhum dado de progresso disponível. Comece cadastrando matérias.</p>`;
             }
 
             appData.materias.forEach(m => {
@@ -1068,41 +1169,101 @@
             document.getElementById('dash-questoes').innerText = appData.estatisticas.questoesResolvidas || 0;
         }
 
-        // Configurações e Customização
+        // Customização de Cores e Temas Imediata
+        function aplicarTemaPronto(preset) {
+            const cfg = appData.config;
+            cfg.preset = preset;
+            if (preset === 'indigo') {
+                cfg.primary = '#4f46e5';
+                cfg.accent = '#f59e0b';
+                cfg.success = '#10b981';
+            } else if (preset === 'emerald') {
+                cfg.primary = '#059669';
+                cfg.accent = '#f59e0b';
+                cfg.success = '#10b981';
+            } else if (preset === 'violet') {
+                cfg.primary = '#7c3aed';
+                cfg.accent = '#ec4899';
+                cfg.success = '#10b981';
+            } else if (preset === 'blue') {
+                cfg.primary = '#2563eb';
+                cfg.accent = '#38bdf8';
+                cfg.success = '#10b981';
+            } else if (preset === 'sunset') {
+                cfg.primary = '#ea580c';
+                cfg.accent = '#facc15';
+                cfg.success = '#10b981';
+            }
+            
+            if (preset !== 'custom') {
+                document.getElementById('picker-primary').value = cfg.primary;
+                document.getElementById('picker-accent').value = cfg.accent;
+                document.getElementById('picker-success').value = cfg.success;
+            }
+            aplicarConfiguracoes();
+        }
+
         function aplicarConfiguracoes() {
             const cfg = appData.config;
             cfg.theme = document.getElementById('config-theme').value;
-            cfg.primary = document.getElementById('config-primary').value;
             cfg.font = document.getElementById('config-font').value;
             cfg.fontsize = document.getElementById('config-fontsize').value;
             cfg.iconsize = document.getElementById('config-iconsize').value;
             cfg.anim = document.getElementById('config-anim').value;
 
-            document.documentElement.setAttribute('data-theme', cfg.theme);
-            document.documentElement.setAttribute('data-primary', cfg.primary);
-            document.documentElement.setAttribute('data-font', cfg.font);
-            document.documentElement.setAttribute('data-fontsize', cfg.fontsize);
-            document.documentElement.setAttribute('data-iconsize', cfg.iconsize);
-            document.documentElement.setAttribute('data-anim', cfg.anim);
+            // Cores livres dos pickers
+            cfg.primary = document.getElementById('picker-primary').value;
+            cfg.accent = document.getElementById('picker-accent').value;
+            cfg.bgColor = document.getElementById('picker-bg').value;
+            cfg.cardBg = document.getElementById('picker-card').value;
+            cfg.success = document.getElementById('picker-success').value;
+            cfg.border = document.getElementById('picker-border').value;
+
+            // Atualiza span de texto dos códigos de cor
+            document.getElementById('val-primary').innerText = cfg.primary;
+            document.getElementById('val-accent').innerText = cfg.accent;
+            document.getElementById('val-bg').innerText = cfg.bgColor;
+            document.getElementById('val-card').innerText = cfg.cardBg;
+            document.getElementById('val-success').innerText = cfg.success;
+            document.getElementById('val-border').innerText = cfg.border;
+
+            // Aplica atributos e variáveis CSS inline imediatamente no root
+            const root = document.documentElement;
+            root.setAttribute('data-theme', cfg.theme);
+            root.setAttribute('data-font', cfg.font);
+            root.setAttribute('data-fontsize', cfg.fontsize);
+            root.setAttribute('data-iconsize', cfg.iconsize);
+            root.setAttribute('data-anim', cfg.anim);
+
+            root.style.setProperty('--primary', cfg.primary);
+            root.style.setProperty('--accent', cfg.accent);
+            root.style.setProperty('--bg-color', cfg.bgColor);
+            root.style.setProperty('--card-bg', cfg.cardBg);
+            root.style.setProperty('--success', cfg.success);
+            root.style.setProperty('--border-color', cfg.border);
 
             salvarDados();
         }
 
         function carregarConfiguracoesNaTela() {
             const cfg = appData.config;
-            document.getElementById('config-theme').value = cfg.theme;
-            document.getElementById('config-primary').value = cfg.primary;
-            document.getElementById('config-font').value = cfg.font;
-            document.getElementById('config-fontsize').value = cfg.fontsize;
-            document.getElementById('config-iconsize').value = cfg.iconsize;
-            document.getElementById('config-anim').value = cfg.anim;
+            if (!cfg) return;
 
-            document.documentElement.setAttribute('data-theme', cfg.theme);
-            document.documentElement.setAttribute('data-primary', cfg.primary);
-            document.documentElement.setAttribute('data-font', cfg.font);
-            document.documentElement.setAttribute('data-fontsize', cfg.fontsize);
-            document.documentElement.setAttribute('data-iconsize', cfg.iconsize);
-            document.documentElement.setAttribute('data-anim', cfg.anim);
+            document.getElementById('config-theme').value = cfg.theme || 'dark';
+            document.getElementById('config-font').value = cfg.font || 'segoe';
+            document.getElementById('config-fontsize').value = cfg.fontsize || 'medium';
+            document.getElementById('config-iconsize').value = cfg.iconsize || 'medium';
+            document.getElementById('config-anim').value = cfg.anim || 'enabled';
+            document.getElementById('config-preset-tema').value = cfg.preset || 'custom';
+
+            if (cfg.primary) document.getElementById('picker-primary').value = cfg.primary;
+            if (cfg.accent) document.getElementById('picker-accent').value = cfg.accent;
+            if (cfg.bgColor) document.getElementById('picker-bg').value = cfg.bgColor;
+            if (cfg.cardBg) document.getElementById('picker-card').value = cfg.cardBg;
+            if (cfg.success) document.getElementById('picker-success').value = cfg.success;
+            if (cfg.border) document.getElementById('picker-border').value = cfg.border;
+
+            aplicarConfiguracoes();
         }
 
         function atualizarTelas() {
@@ -1113,28 +1274,20 @@
         }
 
         function resetarDados() {
-            if (confirm('Deseja realmente restaurar as configurações padrão?')) {
-                appData.config = {
-                    theme: "dark",
-                    primary: "indigo",
-                    font: "segoe",
-                    fontsize: "medium",
-                    iconsize: "medium",
-                    anim: "enabled"
-                };
-                salvarDados();
-                carregarConfiguracoesNaTela();
+            if (confirm('Deseja realmente restaurar as configurações padrão de aparência?')) {
+                localStorage.removeItem('arlan_estudos_v4');
+                location.reload();
             }
         }
 
         function limparTodosDados() {
             if (confirm('ATENÇÃO: Deseja realmente apagar TODOS os dados (matérias, tópicos, revisões, plano semanal e estatísticas) para começar do zero?')) {
-                localStorage.removeItem('arlan_estudos_v3');
+                localStorage.removeItem('arlan_estudos_v4');
                 location.reload();
             }
         }
 
-        // Inicialização automática ao carregar
+        // Inicialização automática
         carregarConfiguracoesNaTela();
         atualizarTelas();
     </script>
