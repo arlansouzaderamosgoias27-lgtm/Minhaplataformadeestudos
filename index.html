@@ -599,11 +599,11 @@
                     </div>
                 </div>
 
-                <!-- Seção Dinâmica de Revisões (Só aparece se houver revisões no dia) -->
+                <!-- Seção 9: Revisões Programadas em seção própria acima das metas -->
                 <div id="wrapper-revisoes-hoje" style="display: none;">
                     <div class="card">
                         <div class="goals-section-title">
-                            <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões de Hoje (R1 a R20 - 40 Questões)
+                            <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões Programadas (Lembrete Ativo)
                         </div>
                         <div id="revisoes-hoje-list"></div>
                     </div>
@@ -622,28 +622,28 @@
         <!-- 3. Cadastro Livre de Matérias e Tópicos -->
         <section id="cadastro" class="tab-content">
             <div class="inner-container">
-                <h2>Cadastro Livre de Matérias e Tópicos</h2>
+                <h2>Cadastro de Matérias e Tópicos</h2>
+                
+                <!-- Cadastro de Matérias (Sem quantidade de tópicos) -->
                 <div class="card">
-                    <h3>Adicionar Matéria com Tópicos Automáticos</h3>
-                    <p style="margin-bottom: 1rem;">Ao cadastrar, o sistema gera automaticamente os tópicos, o plano semanal, as metas e o calendário de revisões (R1 a R20).</p>
+                    <h3>Adicionar Nova Matéria</h3>
+                    <p style="margin-bottom: 1rem;">Cadastre o nome da matéria para depois gerenciar e adicionar seus tópicos manualmente.</p>
                     <div class="form-grid">
-                        <div class="form-group">
+                        <div class="form-group" style="grid-column: span 2;">
                             <label>Nome da Matéria</label>
                             <input type="text" id="nova-materia-nome" placeholder="Ex: Direito Constitucional">
                         </div>
-                        <div class="form-group">
-                            <label>Quantidade de Tópicos (00 ao N)</label>
-                            <input type="number" id="nova-materia-qtd" value="5" min="1" max="50">
-                        </div>
                         <div class="form-group" style="justify-content: flex-end;">
                             <label>&nbsp;</label>
-                            <button class="btn-primary" onclick="adicionarMateria()"><i class="fa-solid fa-plus"></i> Criar Matéria e Tópicos</button>
+                            <button class="btn-primary" onclick="adicionarMateria()"><i class="fa-solid fa-plus"></i> Cadastrar Matéria</button>
                         </div>
                     </div>
                 </div>
 
+                <!-- Cadastro Manual de Tópicos (Iniciando em 00, sem limite, com edição e reorganização) -->
                 <div class="card">
-                    <h3>Matérias e Tópicos Cadastrados</h3>
+                    <h3>Gerenciamento de Tópicos e Matérias</h3>
+                    <p style="margin-bottom: 1rem;">Adicione tópicos manualmente para cada matéria (iniciando em 00). Você pode editar, excluir ou reorganizar quando quiser.</p>
                     <div id="materias-gerenciador-container"></div>
                 </div>
             </div>
@@ -654,9 +654,12 @@
             <div class="inner-container">
                 <h2>Plano Semanal (Segunda a Domingo)</h2>
                 <div class="card">
-                    <h3>Gerenciamento e Sincronização do Plano Semanal</h3>
-                    <p>Adicione tópicos/focos específicos para cada dia da semana. Tudo sincroniza com as metas diárias.</p>
+                    <h3>Configuração do Cronograma Semanal</h3>
+                    <p>Adicione matérias para cada dia da semana. As metas do dia e o calendário sincronizam automaticamente.</p>
                     <div id="plano-semanal-container" style="margin-top: 1.5rem;"></div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn-primary" onclick="salvarPlanoSemanalManual()"><i class="fa-solid fa-floppy-disk"></i> Salvar Plano Semanal</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -684,6 +687,8 @@
                     </div>
                 </div>
                 <div class="card">
+                    <h3>Calendário e Acompanhamento Integrado</h3>
+                    <div id="calendario-integrado-container" style="margin-bottom: 1.5rem;"></div>
                     <h3>Progresso Detalhado por Matéria</h3>
                     <div id="progresso-materias-container"></div>
                 </div>
@@ -695,10 +700,10 @@
             <div class="inner-container">
                 <h2>Configurações do Sistema</h2>
                 
-                <!-- Aparência e Cores -->
+                <!-- Aparência e Cores (Item 10) -->
                 <div class="card">
                     <h3>Aparência e Cores Customizadas</h3>
-                    <p style="margin-bottom: 1.25rem;">Escolha temas prontos ou customize cada detalhe de cor da plataforma livremente.</p>
+                    <p style="margin-bottom: 1.25rem;">Escolha temas prontos ou customize cada detalhe de cor da plataforma livremente com salvamento automático.</p>
                     
                     <div class="form-grid" style="margin-bottom: 1.5rem;">
                         <div class="form-group">
@@ -806,7 +811,7 @@
                     </div>
                     <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
                         <button class="btn-danger" onclick="resetarDados()">Restaurar Padrão</button>
-                        <button class="btn-danger" style="background-color: #b91c1c;" onclick="limparTodosDados()">Limpar todos os dados (Zerar)</button>
+                        <button class="btn-danger" style="background-color: #b91c1c;" onclick="limparTodosDados()">Zerar Todos os Dados</button>
                     </div>
                 </div>
             </div>
@@ -840,18 +845,18 @@
         const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('current-date').innerText = dataHojeObj.toLocaleDateString('pt-BR', optionsDate).replace(/^./, str => str.toUpperCase());
 
-        // Base de dados local (Inicia completamente limpa, vazia por padrão)
-        let appData = JSON.parse(localStorage.getItem('arlan_estudos_v4')) || {
+        // Base de dados local (Item 1: Começa completamente zerada se não houver dados salvos)
+        let appData = JSON.parse(localStorage.getItem('arlan_estudos_v5')) || {
             materias: [],
             revisoes: [],
             planoSemanal: [
-                { dia: "Segunda-feira", itens: [] },
-                { dia: "Terça-feira", itens: [] },
-                { dia: "Quarta-feira", itens: [] },
-                { dia: "Quinta-feira", itens: [] },
-                { dia: "Sexta-feira", itens: [] },
-                { dia: "Sábado", itens: [] },
-                { dia: "Domingo", itens: [] }
+                { dia: "Segunda-feira", materias: [] },
+                { dia: "Terça-feira", materias: [] },
+                { dia: "Quarta-feira", materias: [] },
+                { dia: "Quinta-feira", materias: [] },
+                { dia: "Sexta-feira", materias: [] },
+                { dia: "Sábado", materias: [] },
+                { dia: "Domingo", materias: [] }
             ],
             estatisticas: {
                 questoesResolvidas: 0
@@ -873,54 +878,97 @@
         };
 
         function salvarDados() {
-            localStorage.setItem('arlan_estudos_v4', JSON.stringify(appData));
+            localStorage.setItem('arlan_estudos_v5', JSON.stringify(appData));
             atualizarTelas();
         }
 
-        // Cadastro de Matérias com Geração Automática de Tópicos e Plano Semanal para o dia de hoje
+        // Item 2: Cadastro de matérias sem campo de quantidade de tópicos
         function adicionarMateria() {
             const nome = document.getElementById('nova-materia-nome').value.trim();
-            const qtd = parseInt(document.getElementById('nova-materia-qtd').value) || 5;
             if (!nome) return alert('Digite o nome da matéria.');
 
-            let topicos = [];
-            for (let i = 0; i < qtd; i++) {
-                let numStr = i < 10 ? '0' + i : i;
-                let nomeTopico = `Tópico ${numStr} - Conteúdo ${i}`;
-                topicos.push({
-                    id: Date.now() + i,
-                    nome: nomeTopico,
-                    concluido: false
-                });
-
-                // Sincroniza gerando R1 inicial
-                appData.revisoes.push({
-                    id: Date.now() + i + 2000,
-                    materia: nome,
-                    topico: nomeTopico,
-                    revNum: 1,
-                    questoes: 40,
-                    concluido: false
-                });
+            // Verifica duplicada
+            if (appData.materias.some(m => m.nome.toLowerCase() === nome.toLowerCase())) {
+                return alert('Esta matéria já está cadastrada.');
             }
 
             let novaMateriaObj = {
                 id: Date.now(),
                 nome: nome,
-                topicos: topicos
+                topicos: []
             };
 
             appData.materias.push(novaMateriaObj);
-
-            // Sincroniza automaticamente adicionando ao plano semanal do dia atual para aparecer nas metas de hoje
-            let planoDia = appData.planoSemanal.find(p => p.dia === diaSemanaHojeNome);
-            if (planoDia) {
-                planoDia.itens.push(`Estudar ${nome}`);
-            }
-
             document.getElementById('nova-materia-nome').value = '';
             salvarDados();
-            alert('Matéria, tópicos, plano semanal de hoje e revisões (R1 a R20) gerados e sincronizados!');
+            alert('Matéria cadastrada com sucesso! Agora você pode adicionar os tópicos manualmente.');
+        }
+
+        // Item 3: Cadastro manual de tópicos iniciando em 00, sem limite, com edição e reorganização
+        function adicionarTopicoManual(materiaId) {
+            let m = appData.materias.find(x => x.id === materiaId);
+            if (!m) return;
+
+            let proximoNum = m.topicos.length;
+            let numFormatado = proximoNum < 10 ? '0' + proximoNum : proximoNum;
+            let nomeSugerido = `Tópico ${numFormatado} - Novo Conteúdo`;
+
+            let nomeTopico = prompt(`Adicionar tópico para ${m.nome} (Iniciando em 00):`, nomeSugerido);
+            if (nomeTopico && nomeTopico.trim() !== '') {
+                m.topicos.push({
+                    id: Date.now() + Math.random(),
+                    nome: nomeTopico.trim(),
+                    concluido: false
+                });
+                salvarDados();
+            }
+        }
+
+        function editarTopico(materiaId, topicoId) {
+            let m = appData.materias.find(x => x.id === materiaId);
+            if (!m) return;
+            let t = m.topicos.find(x => x.id === topicoId);
+            if (!t) return;
+
+            let novoNome = prompt('Editar nome do tópico:', t.nome);
+            if (novoNome && novoNome.trim() !== '') {
+                t.nome = novoNome.trim();
+                salvarDados();
+            }
+        }
+
+        function excluirTopico(materiaId, topicoId) {
+            let m = appData.materias.find(x => x.id === materiaId);
+            if (!m) return;
+            m.topicos = m.topicos.filter(t => t.id !== topicoId);
+            salvarDados();
+        }
+
+        function moverTopico(materiaId, index, direcao) {
+            let m = appData.materias.find(x => x.id === materiaId);
+            if (!m) return;
+            let novoIndex = index + direcao;
+            if (novoIndex < 0 || novoIndex >= m.topicos.length) return;
+
+            let temp = m.topicos[index];
+            m.topicos[index] = m.topicos[novoIndex];
+            m.topicos[novoIndex] = temp;
+            salvarDados();
+        }
+
+        function removerMateria(id) {
+            let m = appData.materias.find(x => x.id == id);
+            if (m) {
+                appData.revisoes = appData.revisoes.filter(r => r.materia !== m.nome);
+            }
+            appData.materias = appData.materias.filter(m => m.id != id);
+            
+            // Remove também dos planos semanais
+            appData.planoSemanal.forEach(p => {
+                p.materias = p.materias.filter(matId => matId !== id);
+            });
+
+            salvarDados();
         }
 
         function renderGerenciadorMaterias() {
@@ -931,14 +979,33 @@
                 return;
             }
             appData.materias.forEach(m => {
-                let topicosHtml = m.topicos.map(t => `<div>- ${t.nome} ${t.concluido ? '(Concluído)' : ''}</div>`).join('');
-                container.innerHTML += `
-                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <strong>${m.nome} (${m.topicos.length} tópicos)</strong>
-                            <button class="btn-danger" onclick="removerMateria(${m.id})">Excluir Matéria</button>
+                let topicosHtml = '';
+                if (m.topicos.length === 0) {
+                    topicosHtml = `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nenhum tópico cadastrado ainda. Clique em "Adicionar Tópico" abaixo.</p>`;
+                } else {
+                    topicosHtml = m.topicos.map((t, idx) => `
+                        <div class="semana-item-row" style="margin-bottom: 0.4rem;">
+                            <span><strong>#${idx < 10 ? '0' + idx : idx}</strong> - ${t.nome} ${t.concluido ? '(Concluído)' : ''}</span>
+                            <div style="display: flex; gap: 0.3rem;">
+                                <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="moverTopico(${m.id}, ${idx}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                                <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="moverTopico(${m.id}, ${idx}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                                <button class="btn-primary" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="editarTopico(${m.id}, ${t.id})">Editar</button>
+                                <button class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="excluirTopico(${m.id}, ${t.id})">Excluir</button>
+                            </div>
                         </div>
-                        <div style="font-size: calc(var(--font-size) * 0.9); color: var(--text-muted); max-height: 100px; overflow-y: auto;">
+                    `).join('');
+                }
+
+                container.innerHTML += `
+                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.375rem; margin-bottom: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <strong>${m.nome} (${m.topicos.length} tópicos)</strong>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn-add-item" onclick="adicionarTopicoManual(${m.id})"><i class="fa-solid fa-plus"></i> Adicionar Tópico</button>
+                                <button class="btn-danger" onclick="removerMateria(${m.id})">Excluir Matéria</button>
+                            </div>
+                        </div>
+                        <div style="max-height: 250px; overflow-y: auto;">
                             ${topicosHtml}
                         </div>
                     </div>
@@ -946,64 +1013,63 @@
             });
         }
 
-        function removerMateria(id) {
-            let m = appData.materias.find(x => x.id == id);
-            if (m) {
-                appData.revisoes = appData.revisoes.filter(r => r.materia !== m.nome);
-            }
-            appData.materias = appData.materias.filter(m => m.id != id);
-            salvarDados();
-        }
-
-        // Plano Semanal Interativo
+        // Item 4 & 5: Plano Semanal com botão Salvar Plano Semanal e Sincronização Automática
         function renderPlanoSemanal() {
             const container = document.getElementById('plano-semanal-container');
             container.innerHTML = '';
-            appData.planoSemanal.forEach((p, idx) => {
-                let itensHtml = p.itens.map((item, itemIdx) => `
-                    <div class="semana-item-row">
-                        <span>${item}</span>
-                        <button class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="removerItemPlano(${idx}, ${itemIdx})">Remover</button>
-                    </div>
-                `).join('');
 
-                if (p.itens.length === 0) {
-                    itensHtml = `<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhum foco adicionado para este dia.</p>`;
+            appData.planoSemanal.forEach((p, idx) => {
+                let checkboxesHtml = '';
+                if (appData.materias.length === 0) {
+                    checkboxesHtml = `<p style="font-size: 0.85rem; color: var(--text-muted);">Cadastre matérias primeiro para selecioná-las aqui.</p>`;
+                } else {
+                    checkboxesHtml = appData.materias.map(m => {
+                        let isChecked = p.materias.includes(m.id) ? 'checked' : '';
+                        return `
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: var(--text-main);">
+                                <input type="checkbox" value="${m.id}" ${isChecked} onchange="atualizarPlanoDiaMemoria(${idx}, ${m.id}, this.checked)">
+                                ${m.nome}
+                            </label>
+                        `;
+                    }).join('');
                 }
 
                 container.innerHTML += `
                     <div class="semana-card-item">
                         <div class="semana-card-header">
                             <strong>${p.dia}</strong>
-                            <button class="btn-add-item" onclick="adicionarItemPlano(${idx})"><i class="fa-solid fa-plus"></i> Adicionar</button>
                         </div>
-                        <div class="semana-itens-list">
-                            ${itensHtml}
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem;">
+                            ${checkboxesHtml}
                         </div>
                     </div>
                 `;
             });
         }
 
-        function adicionarItemPlano(diaIdx) {
-            let itemTexto = prompt(`Digite o foco ou atividade para ${appData.planoSemanal[diaIdx].dia}:`);
-            if (itemTexto && itemTexto.trim() !== '') {
-                appData.planoSemanal[diaIdx].itens.push(itemTexto.trim());
-                salvarDados();
+        function atualizarPlanoDiaMemoria(diaIdx, materiaId, isChecked) {
+            let planoDia = appData.planoSemanal[diaIdx];
+            if (isChecked) {
+                if (!planoDia.materias.includes(materiaId)) {
+                    planoDia.materias.push(materiaId);
+                }
+            } else {
+                planoDia.materias = planoDia.materias.filter(id => id !== materiaId);
             }
         }
 
-        function removerItemPlano(diaIdx, itemIdx) {
-            appData.planoSemanal[diaIdx].itens.splice(itemIdx, 1);
+        function salvarPlanoSemanalManual() {
             salvarDados();
+            alert('Plano Semanal salvo e sincronizado com sucesso com as Metas de Hoje, Calendário e Coach!');
         }
 
-        // Metas de Hoje estritamente baseadas no dia da semana atual e no Plano Semanal
+        // Item 5, 6, 7, 8, 9, 11, 12: Metas de Hoje e Sincronização Automática Completa
         function renderMetasHoje() {
             const revWrapper = document.getElementById('wrapper-revisoes-hoje');
             const revContainer = document.getElementById('revisoes-hoje-list');
             revContainer.innerHTML = '';
 
+            // Item 9: Revisões Programadas em seção própria acima das metas
             let revisoesPendentes = appData.revisoes.filter(r => !r.concluido);
 
             if (revisoesPendentes.length === 0) {
@@ -1012,12 +1078,12 @@
                 revWrapper.style.display = 'block';
                 revisoesPendentes.forEach(r => {
                     revContainer.innerHTML += `
-                        <div class="goal-item">
+                        <div class="goal-item" style="border-left: 4px solid var(--accent);">
                             <div class="goal-header">
                                 <div class="goal-info">
                                     <h4>${r.materia}</h4>
-                                    <p><strong>Tópico:</strong> ${r.topico}</p>
-                                    <p><i class="fa-solid fa-book" style="color: var(--accent);"></i> Lei Seca + Questões</p>
+                                    <p><strong>Revisar Tópico:</strong> ${r.topico}</p>
+                                    <p><i class="fa-solid fa-bell" style="color: var(--accent);"></i> <strong>Lembrete:</strong> Revisão Programada Ativa (Lei Seca + 40 Questões)</p>
                                 </div>
                                 <span class="badge badge-rev">Revisão R${r.revNum} (Até R20)</span>
                             </div>
@@ -1026,7 +1092,7 @@
                                     <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
                                     <input type="number" id="input-q-rev-${r.id}" value="${r.questoes || 40}" min="1" max="200">
                                 </div>
-                                <button class="btn-action" onclick="concluirRevisao(${r.id})"><i class="fa-solid fa-play"></i> Concluir Revisão</button>
+                                <button class="btn-action" onclick="concluirRevisao(${r.id})"><i class="fa-solid fa-check"></i> Concluir Revisão</button>
                             </div>
                         </div>
                     `;
@@ -1036,54 +1102,65 @@
             const estudoContainer = document.getElementById('estudo-hoje-list');
             estudoContainer.innerHTML = '';
             
-            // Filtra o plano semanal do dia atual
+            // Item 6: Metas do dia mostram as matérias do dia automaticamente, mesmo sem tópicos cadastrados
             let planoHojeObj = appData.planoSemanal.find(p => p.dia === diaSemanaHojeNome);
-            let itensHojePlano = planoHojeObj ? planoHojeObj.itens : [];
+            let materiasIdsHoje = planoHojeObj ? planoHojeObj.materias : [];
 
             let count = 0;
-            appData.materias.forEach(m => {
-                // Verifica se a matéria faz parte do plano de hoje ou se o nome bate com os itens planejados para hoje
-                let estaNoPlanoHoje = itensHojePlano.some(item => item.toLowerCase().includes(m.nome.toLowerCase()));
-                
-                if (estaNoPlanoHoje) {
-                    m.topicos.filter(t => !t.concluido).forEach(t => {
-                        if (count < 2) {
-                            estudoContainer.innerHTML += `
-                                <div class="goal-item">
-                                    <div class="goal-header">
-                                        <div class="goal-info">
-                                            <h4>${m.nome}</h4>
-                                            <p><strong>Tópico:</strong> ${t.nome}</p>
-                                            <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
-                                        </div>
-                                        <span class="badge">Meta de Hoje (${diaSemanaHojeNome})</span>
+            materiasIdsHoje.forEach(matId => {
+                let m = appData.materias.find(x => x.id === matId);
+                if (m) {
+                    // Item 7: Quando tópicos forem cadastrados, atualizar automaticamente as metas com os próximos tópicos pendentes
+                    let proximoTopicoPendente = m.topicos.find(t => !t.concluido);
+
+                    if (proximoTopicoPendente) {
+                        estudoContainer.innerHTML += `
+                            <div class="goal-item">
+                                <div class="goal-header">
+                                    <div class="goal-info">
+                                        <h4>${m.nome}</h4>
+                                        <p><strong>Próximo Tópico Pendente:</strong> ${proximoTopicoPendente.nome}</p>
+                                        <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
                                     </div>
-                                    <div class="goal-actions">
-                                        <div class="questoes-input-container">
-                                            <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
-                                            <input type="number" id="input-q-est-${m.id}-${t.id}" value="40" min="1" max="200">
-                                        </div>
-                                        <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Concluir Estudo</button>
-                                    </div>
+                                    <span class="badge">Meta de Hoje (${diaSemanaHojeNome})</span>
                                 </div>
-                            `;
-                            count++;
-                        }
-                    });
+                                <div class="goal-actions">
+                                    <div class="questoes-input-container">
+                                        <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
+                                        <input type="number" id="input-q-est-${m.id}-${proximoTopicoPendente.id}" value="40" min="1" max="200">
+                                    </div>
+                                    <button class="btn-action" onclick="concluirEstudo(${m.id}, ${proximoTopicoPendente.id})"><i class="fa-solid fa-play"></i> Concluir Tópico</button>
+                                </div>
+                            </div>
+                        `;
+                        count++;
+                    } else {
+                        // Matéria programada para hoje, mas sem tópicos cadastrados ainda ou todos concluídos
+                        let statusMsg = m.topicos.length === 0 ? "Nenhum tópico cadastrado ainda para esta matéria." : "Todos os tópicos desta matéria já foram concluídos!";
+                        estudoContainer.innerHTML += `
+                            <div class="goal-item" style="opacity: 0.8;">
+                                <div class="goal-header">
+                                    <div class="goal-info">
+                                        <h4>${m.nome}</h4>
+                                        <p style="color: var(--accent);"><strong>Aviso:</strong> ${statusMsg}</p>
+                                    </div>
+                                    <span class="badge" style="background-color: var(--text-muted);">Matéria do Dia</span>
+                                </div>
+                            </div>
+                        `;
+                        count++;
+                    }
                 }
             });
 
-            if (count === 0 && revisoesPendentes.length === 0) {
-                if (appData.materias.length === 0) {
-                    estudoContainer.innerHTML = `<p>Nenhuma matéria cadastrada ainda. Cadastre matérias na aba "Cadastro Livre" e adicione itens no "Plano Semanal" para gerar suas metas de hoje.</p>`;
-                } else {
-                    estudoContainer.innerHTML = `<p>Nenhuma meta nova programada especificamente para hoje (${diaSemanaHojeNome}) no Plano Semanal. Adicione atividades na aba Plano Semanal para este dia ou conclua suas revisões.</p>`;
-                }
-            } else if (count === 0) {
-                estudoContainer.innerHTML = `<p>Nenhum estudo novo pendente para hoje no plano semanal.</p>`;
+            if (materiasIdsHoje.length === 0 && revisoesPendentes.length === 0) {
+                estudoContainer.innerHTML = `<p>Nenhuma matéria programada para hoje (${diaSemanaHojeNome}) no Plano Semanal. Configure seu plano na aba "Plano Semanal" para gerar as metas automáticas.</p>`;
+            } else if (count === 0 && revisoesPendentes.length === 0) {
+                estudoContainer.innerHTML = `<p>Nenhuma meta nova pendente para hoje. Parabéns!</p>`;
             }
         }
 
+        // Item 8 & 9: Ao concluir, atualizar progresso, calendário, estatísticas e programar revisão automática
         function concluirRevisao(id) {
             let r = appData.revisoes.find(x => x.id == id);
             let inputQ = document.getElementById(`input-q-rev-${id}`);
@@ -1103,7 +1180,7 @@
                         concluido: false
                     });
                 }
-                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões! Estatísticas atualizadas e próxima revisão agendada.`);
+                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões! Estatísticas, calendário e próxima revisão atualizados.`);
                 salvarDados();
             }
         }
@@ -1128,13 +1205,13 @@
                         questoes: 40,
                         concluido: false
                     });
-                    alert(`Estudo de "${t.nome}" concluído com ${qRespondidas} questões! Progresso atualizado e Revisão R1 agendada.`);
+                    alert(`Tópico "${t.nome}" concluído com ${qRespondidas} questões! Progresso, calendário e Revisão R1 agendada automaticamente.`);
                     salvarDados();
                 }
             }
         }
 
-        // Progresso e Estatísticas
+        // Progresso, Estatísticas e Calendário Integrado
         function atualizarProgresso() {
             let totalTopicos = 0;
             let concluidosTopicos = 0;
@@ -1142,7 +1219,7 @@
             container.innerHTML = '';
 
             if (appData.materias.length === 0) {
-                container.innerHTML = `<p>Nenhum dado de progresso disponível. Comece cadastrando matérias.</p>`;
+                container.innerHTML = `<p>Nenhum dado de progresso disponível. Comece cadastrando matérias e tópicos.</p>`;
             }
 
             appData.materias.forEach(m => {
@@ -1167,9 +1244,31 @@
             document.getElementById('dash-perc').innerText = geralPerc + '%';
             document.getElementById('dash-topicos').innerText = `${concluidosTopicos} / ${totalTopicos}`;
             document.getElementById('dash-questoes').innerText = appData.estatisticas.questoesResolvidas || 0;
+
+            // Renderiza o Calendário Integrado da semana
+            const calContainer = document.getElementById('calendario-integrado-container');
+            calContainer.innerHTML = '';
+            
+            let calGrid = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;">`;
+            appData.planoSemanal.forEach(p => {
+                let isToday = p.dia === diaSemanaHojeNome;
+                let matsNomes = p.materias.map(id => {
+                    let mat = appData.materias.find(x => x.id === id);
+                    return mat ? mat.nome : '';
+                }).filter(Boolean).join(', ') || 'Nenhuma matéria';
+
+                calGrid += `
+                    <div style="background: var(--bg-color); border: 1px solid ${isToday ? 'var(--primary)' : 'var(--border-color)'}; padding: 0.85rem; border-radius: 0.375rem;">
+                        <strong style="font-size: 0.85rem; color: ${isToday ? 'var(--primary)' : 'var(--text-main)'};">${p.dia} ${isToday ? '(Hoje)' : ''}</strong>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${matsNomes}</p>
+                    </div>
+                `;
+            });
+            calGrid += `</div>`;
+            calContainer.innerHTML = calGrid;
         }
 
-        // Customização de Cores e Temas Imediata
+        // Item 10: Customização de Cores e Temas Imediata com salvamento no navegador
         function aplicarTemaPronto(preset) {
             const cfg = appData.config;
             cfg.preset = preset;
@@ -1275,14 +1374,14 @@
 
         function resetarDados() {
             if (confirm('Deseja realmente restaurar as configurações padrão de aparência?')) {
-                localStorage.removeItem('arlan_estudos_v4');
+                localStorage.removeItem('arlan_estudos_v5');
                 location.reload();
             }
         }
 
         function limparTodosDados() {
-            if (confirm('ATENÇÃO: Deseja realmente apagar TODOS os dados (matérias, tópicos, revisões, plano semanal e estatísticas) para começar do zero?')) {
-                localStorage.removeItem('arlan_estudos_v4');
+            if (confirm('ATENÇÃO: Deseja realmente zerar todos os dados da plataforma (matérias, tópicos, plano e estatísticas) para começar do zero?')) {
+                localStorage.removeItem('arlan_estudos_v5');
                 location.reload();
             }
         }
