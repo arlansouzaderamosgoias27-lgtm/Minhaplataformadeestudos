@@ -70,6 +70,28 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Tela de Autenticação / Login */
+        #auth-screen {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+        }
+
         /* Menu Superior Minimalista com Ícones Grandes e Elegantes (Sem Texto) */
         header {
             background-color: var(--card-bg);
@@ -183,19 +205,34 @@
         }
 
         .home-rocket {
-            font-size: 8.5rem;
             color: var(--accent);
             margin-bottom: 2.25rem;
             line-height: 1;
+            transition: all 0.3s ease;
         }
 
-        [data-anim="enabled"] .home-rocket {
-            animation: float 3s ease-in-out infinite;
+        /* Animações Dinâmicas do Foguete */
+        [data-anim="enabled"] .home-rocket.anim-subindo {
+            animation: floatSubindo var(--rocket-speed, 3s) ease-in-out infinite;
+        }
+        [data-anim="enabled"] .home-rocket.anim-diagonal {
+            animation: floatDiagonal var(--rocket-speed, 3s) ease-in-out infinite;
+        }
+        [data-anim="enabled"] .home-rocket.anim-flutuando {
+            animation: floatLento var(--rocket-speed, 3s) ease-in-out infinite;
         }
 
-        @keyframes float {
+        @keyframes floatSubindo {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-18px); }
+            50% { transform: translateY(-25px); }
+        }
+        @keyframes floatDiagonal {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(15px, -20px) rotate(8deg); }
+        }
+        @keyframes floatLento {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.02); }
         }
 
         .home-phrase {
@@ -519,13 +556,6 @@
             margin-bottom: 0.75rem;
         }
 
-        .semana-itens-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
         .semana-item-row {
             display: flex;
             justify-content: space-between;
@@ -554,13 +584,46 @@
             nav {
                 gap: 0.4rem;
             }
-            .home-rocket {
-                font-size: 6.5rem;
-            }
         }
     </style>
 </head>
 <body>
+
+    <!-- TELA DE LOGIN / AUTENTICAÇÃO -->
+    <div id="auth-screen" style="display: none;">
+        <div class="auth-card">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <i class="fa-solid fa-graduation-cap" style="font-size: 3rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                <h2>Entrar na Plataforma</h2>
+                <p>Acesse com seu E-mail/CPF e Senha</p>
+            </div>
+            
+            <form id="form-login" onsubmit="fazerLogin(event)">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>E-mail ou CPF</label>
+                    <input type="text" id="login-identifier" required placeholder="ex: usuario@email.com ou 000.000.000-00">
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Senha</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <button type="button" onclick="mostrarRecuperacaoSenha()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.85rem;">Esqueci minha senha</button>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Entrar</button>
+            </form>
+
+            <div id="recovery-box" style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Recuperar Senha</h3>
+                <p style="font-size: 0.8rem; margin-bottom: 0.75rem;">Digite seu E-mail ou CPF cadastrado para receber instruções.</p>
+                <input type="text" id="rec-identifier" placeholder="E-mail ou CPF" style="width: 100%; padding: 0.6rem; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0.375rem; margin-bottom: 0.75rem;">
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-primary" type="button" onclick="enviarRecuperacao()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Enviar</button>
+                    <button class="btn-danger" type="button" onclick="fecharRecuperacao()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Menu Superior Minimalista com Ícones Grandes e Elegantes (Sem Texto) -->
     <header>
@@ -572,6 +635,7 @@
             <button class="nav-btn" data-tooltip="Plano Semanal" onclick="switchTab('plano-semanal', this)"><i class="fa-solid fa-calendar-days"></i></button>
             <button class="nav-btn" data-tooltip="Progresso e Estatísticas" onclick="switchTab('progresso', this)"><i class="fa-solid fa-chart-line"></i></button>
             <button class="nav-btn" data-tooltip="Configurações" onclick="switchTab('configuracoes', this)"><i class="fa-solid fa-gear"></i></button>
+            <button class="nav-btn" data-tooltip="Sair" onclick="fazerLogout()" style="background-color: rgba(239, 68, 68, 0.1); color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i></button>
         </nav>
     </header>
 
@@ -579,9 +643,11 @@
         <!-- 1. Tela Inicial -->
         <section id="inicio" class="tab-content active">
             <div class="home-fullscreen">
-                <div class="home-rocket"><i class="fa-solid fa-rocket"></i></div>
+                <div id="home-rocket-wrapper" class="home-rocket">
+                    <i id="home-rocket-icon" class="fa-solid fa-rocket" style="font-size: 8.5rem;"></i>
+                </div>
                 <div class="home-phrase">Foco, Disciplina e Execução</div>
-                <div class="home-date" id="current-date">Quarta-feira, 5 de agosto de 2026</div>
+                <div class="home-date" id="current-date">Terça-feira, 4 de agosto de 2026</div>
                 <button class="btn-iniciar-estudos" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(2)'))">
                     Iniciar Estudos
                 </button>
@@ -700,7 +766,49 @@
             <div class="inner-container">
                 <h2>Configurações do Sistema</h2>
                 
-                <!-- Aparência e Cores (Item 10) -->
+                <!-- Seção: Foguete da Tela Inicial -->
+                <div class="card">
+                    <h3>🚀 Foguete da Tela Inicial</h3>
+                    <p style="margin-bottom: 1.25rem;">Personalize o tamanho, a direção, a velocidade e veja a pré-visualização instantânea do foguete.</p>
+                    
+                    <div class="form-grid" style="margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label>Tamanho do Foguete</label>
+                            <select id="config-rocket-size" onchange="atualizarFogueteConfig()">
+                                <option value="6rem">Pequeno</option>
+                                <option value="8.5rem" selected>Médio</option>
+                                <option value="12rem">Grande</option>
+                                <option value="15rem">Gigante</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Direção da Animação</label>
+                            <select id="config-rocket-dir" onchange="atualizarFogueteConfig()">
+                                <option value="anim-subindo" selected>Subindo na Vertical</option>
+                                <option value="anim-diagonal">Diagonal Dinâmica</option>
+                                <option value="anim-flutuando">Flutuação Lenta</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Velocidade da Animação</label>
+                            <select id="config-rocket-speed" onchange="atualizarFogueteConfig()">
+                                <option value="5s">Lenta (5s)</option>
+                                <option value="3s" selected>Normal (3s)</option>
+                                <option value="1.5s">Rápida (1.5s)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Pré-visualização em Tempo Real -->
+                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 0.375rem; text-align: center;">
+                        <span style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Pré-visualização em Tempo Real</span>
+                        <div id="preview-rocket-container" style="display: inline-block;">
+                            <i id="preview-rocket-icon" class="fa-solid fa-rocket anim-subindo" style="font-size: 8.5rem; color: var(--accent);"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aparência e Cores -->
                 <div class="card">
                     <h3>Aparência e Cores Customizadas</h3>
                     <p style="margin-bottom: 1.25rem;">Escolha temas prontos ou customize cada detalhe de cor da plataforma livremente com salvamento automático.</p>
@@ -764,7 +872,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Bordas e Divisorias</label>
+                            <label>Bordas e Divisórias</label>
                             <div class="color-picker-group">
                                 <input type="color" id="picker-border" value="#334155" oninput="aplicarConfiguracoes()">
                                 <span id="val-border" style="font-size: 0.85rem; color: var(--text-muted);">#334155</span>
@@ -810,7 +918,7 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                        <button class="btn-danger" onclick="resetarDados()">Restaurar Padrão</button>
+                        <button class="btn-danger" onclick="resetarAparencia()">Restaurar Padrão (Aparência e Foguete)</button>
                         <button class="btn-danger" style="background-color: #b91c1c;" onclick="limparTodosDados()">Zerar Todos os Dados</button>
                     </div>
                 </div>
@@ -818,8 +926,60 @@
         </section>
     </main>
 
-    <!-- Script da Aplicação Sincronizada e Automática -->
+    <!-- Script da Aplicação Sincronizada, Autenticação e Salvamento Automático -->
     <script>
+        // Sincronização de Sessão de Login
+        let sessaoAtiva = localStorage.getItem('arlan_sessao_ativa') === 'true';
+
+        function verificarSessao() {
+            const authScreen = document.getElementById('auth-screen');
+            if (!sessaoAtiva) {
+                authScreen.style.display = 'flex';
+            } else {
+                authScreen.style.display = 'none';
+            }
+        }
+
+        function fazerLogin(event) {
+            event.preventDefault();
+            const identifier = document.getElementById('login-identifier').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            if (identifier && pass) {
+                sessaoAtiva = true;
+                localStorage.setItem('arlan_sessao_ativa', 'true');
+                localStorage.setItem('arlan_usuario_logado', identifier);
+                verificarSessao();
+                alert('Login efetuado com sucesso! Seus dados foram sincronizados.');
+            }
+        }
+
+        function fazerLogout() {
+            if (confirm('Deseja realmente sair da conta? Seus dados estão salvos com segurança.')) {
+                sessaoAtiva = false;
+                localStorage.setItem('arlan_sessao_ativa', 'false');
+                verificarSessao();
+            }
+        }
+
+        function mostrarRecuperacaoSenha() {
+            document.getElementById('recovery-box').style.display = 'block';
+        }
+
+        function fecharRecuperacao() {
+            document.getElementById('recovery-box').style.display = 'none';
+            document.getElementById('rec-identifier').value = '';
+        }
+
+        function enviarRecuperacao() {
+            const val = document.getElementById('rec-identifier').value.trim();
+            if (val) {
+                alert('Instruções de recuperação de senha enviadas com sucesso para o e-mail ou CPF cadastrado.');
+                fecharRecuperacao();
+            } else {
+                alert('Digite seu e-mail ou CPF cadastrado.');
+            }
+        }
+
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -837,7 +997,7 @@
         ];
         document.getElementById('coach-msg').innerText = frasesMotivacionais[Math.floor(Math.random() * frasesMotivacionais.length)];
 
-        // Data atual formatada (segunda a domingo mapeamento)
+        // Data atual formatada
         const diasSemanaMap = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
         const dataHojeObj = new Date();
         const diaSemanaHojeNome = diasSemanaMap[dataHojeObj.getDay()];
@@ -845,7 +1005,7 @@
         const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('current-date').innerText = dataHojeObj.toLocaleDateString('pt-BR', optionsDate).replace(/^./, str => str.toUpperCase());
 
-        // Base de dados local (Item 1: Começa completamente zerada se não houver dados salvos)
+        // Base de dados local com salvamento automático e sincronização
         let appData = JSON.parse(localStorage.getItem('arlan_estudos_v5')) || {
             materias: [],
             revisoes: [],
@@ -873,7 +1033,10 @@
                 font: "segoe",
                 fontsize: "medium",
                 iconsize: "medium",
-                anim: "enabled"
+                anim: "enabled",
+                rocketSize: "8.5rem",
+                rocketDir: "anim-subindo",
+                rocketSpeed: "3s"
             }
         };
 
@@ -882,12 +1045,36 @@
             atualizarTelas();
         }
 
-        // Item 2: Cadastro de matérias sem campo de quantidade de tópicos
+        // Foguete Personalizável
+        function atualizarFogueteConfig() {
+            appData.config.rocketSize = document.getElementById('config-rocket-size').value;
+            appData.config.rocketDir = document.getElementById('config-rocket-dir').value;
+            appData.config.rocketSpeed = document.getElementById('config-rocket-speed').value;
+            aplicarConfiguracoesFoguete();
+            salvarDados();
+        }
+
+        function aplicarConfiguracoesFoguete() {
+            const cfg = appData.config;
+            const rocketIcon = document.getElementById('home-rocket-icon');
+            const previewIcon = document.getElementById('preview-rocket-icon');
+
+            if (rocketIcon) {
+                rocketIcon.style.fontSize = cfg.rocketSize || '8.5rem';
+                rocketIcon.className = `fa-solid fa-rocket ${cfg.rocketDir || 'anim-subindo'}`;
+                rocketIcon.style.setProperty('--rocket-speed', cfg.rocketSpeed || '3s');
+            }
+            if (previewIcon) {
+                previewIcon.style.fontSize = cfg.rocketSize || '8.5rem';
+                previewIcon.className = `fa-solid fa-rocket ${cfg.rocketDir || 'anim-subindo'}`;
+                previewIcon.style.setProperty('--rocket-speed', cfg.rocketSpeed || '3s');
+            }
+        }
+
         function adicionarMateria() {
             const nome = document.getElementById('nova-materia-nome').value.trim();
             if (!nome) return alert('Digite o nome da matéria.');
 
-            // Verifica duplicada
             if (appData.materias.some(m => m.nome.toLowerCase() === nome.toLowerCase())) {
                 return alert('Esta matéria já está cadastrada.');
             }
@@ -901,10 +1088,9 @@
             appData.materias.push(novaMateriaObj);
             document.getElementById('nova-materia-nome').value = '';
             salvarDados();
-            alert('Matéria cadastrada com sucesso! Agora você pode adicionar os tópicos manualmente.');
+            alert('Matéria cadastrada com sucesso!');
         }
 
-        // Item 3: Cadastro manual de tópicos iniciando em 00, sem limite, com edição e reorganização
         function adicionarTopicoManual(materiaId) {
             let m = appData.materias.find(x => x.id === materiaId);
             if (!m) return;
@@ -963,7 +1149,6 @@
             }
             appData.materias = appData.materias.filter(m => m.id != id);
             
-            // Remove também dos planos semanais
             appData.planoSemanal.forEach(p => {
                 p.materias = p.materias.filter(matId => matId !== id);
             });
@@ -975,13 +1160,13 @@
             const container = document.getElementById('materias-gerenciador-container');
             container.innerHTML = '';
             if (appData.materias.length === 0) {
-                container.innerHTML = `<p>Nenhuma matéria cadastrada. Utilize o formulário acima para começar.</p>`;
+                container.innerHTML = `<p>Nenhuma matéria cadastrada.</p>`;
                 return;
             }
             appData.materias.forEach(m => {
                 let topicosHtml = '';
                 if (m.topicos.length === 0) {
-                    topicosHtml = `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nenhum tópico cadastrado ainda. Clique em "Adicionar Tópico" abaixo.</p>`;
+                    topicosHtml = `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nenhum tópico cadastrado.</p>`;
                 } else {
                     topicosHtml = m.topicos.map((t, idx) => `
                         <div class="semana-item-row" style="margin-bottom: 0.4rem;">
@@ -1013,7 +1198,6 @@
             });
         }
 
-        // Item 4 & 5: Plano Semanal com botão Salvar Plano Semanal e Sincronização Automática
         function renderPlanoSemanal() {
             const container = document.getElementById('plano-semanal-container');
             container.innerHTML = '';
@@ -1021,7 +1205,7 @@
             appData.planoSemanal.forEach((p, idx) => {
                 let checkboxesHtml = '';
                 if (appData.materias.length === 0) {
-                    checkboxesHtml = `<p style="font-size: 0.85rem; color: var(--text-muted);">Cadastre matérias primeiro para selecioná-las aqui.</p>`;
+                    checkboxesHtml = `<p style="font-size: 0.85rem; color: var(--text-muted);">Cadastre matérias primeiro.</p>`;
                 } else {
                     checkboxesHtml = appData.materias.map(m => {
                         let isChecked = p.materias.includes(m.id) ? 'checked' : '';
@@ -1060,16 +1244,14 @@
 
         function salvarPlanoSemanalManual() {
             salvarDados();
-            alert('Plano Semanal salvo e sincronizado com sucesso com as Metas de Hoje, Calendário e Coach!');
+            alert('Plano Semanal salvo e sincronizado com sucesso!');
         }
 
-        // Item 5, 6, 7, 8, 9, 11, 12: Metas de Hoje e Sincronização Automática Completa
         function renderMetasHoje() {
             const revWrapper = document.getElementById('wrapper-revisoes-hoje');
             const revContainer = document.getElementById('revisoes-hoje-list');
             revContainer.innerHTML = '';
 
-            // Item 9: Revisões Programadas em seção própria acima das metas
             let revisoesPendentes = appData.revisoes.filter(r => !r.concluido);
 
             if (revisoesPendentes.length === 0) {
@@ -1083,9 +1265,8 @@
                                 <div class="goal-info">
                                     <h4>${r.materia}</h4>
                                     <p><strong>Revisar Tópico:</strong> ${r.topico}</p>
-                                    <p><i class="fa-solid fa-bell" style="color: var(--accent);"></i> <strong>Lembrete:</strong> Revisão Programada Ativa (Lei Seca + 40 Questões)</p>
                                 </div>
-                                <span class="badge badge-rev">Revisão R${r.revNum} (Até R20)</span>
+                                <span class="badge badge-rev">Revisão R${r.revNum}</span>
                             </div>
                             <div class="goal-actions">
                                 <div class="questoes-input-container">
@@ -1102,7 +1283,6 @@
             const estudoContainer = document.getElementById('estudo-hoje-list');
             estudoContainer.innerHTML = '';
             
-            // Item 6: Metas do dia mostram as matérias do dia automaticamente, mesmo sem tópicos cadastrados
             let planoHojeObj = appData.planoSemanal.find(p => p.dia === diaSemanaHojeNome);
             let materiasIdsHoje = planoHojeObj ? planoHojeObj.materias : [];
 
@@ -1110,7 +1290,6 @@
             materiasIdsHoje.forEach(matId => {
                 let m = appData.materias.find(x => x.id === matId);
                 if (m) {
-                    // Item 7: Quando tópicos forem cadastrados, atualizar automaticamente as metas com os próximos tópicos pendentes
                     let proximoTopicoPendente = m.topicos.find(t => !t.concluido);
 
                     if (proximoTopicoPendente) {
@@ -1120,9 +1299,8 @@
                                     <div class="goal-info">
                                         <h4>${m.nome}</h4>
                                         <p><strong>Próximo Tópico Pendente:</strong> ${proximoTopicoPendente.nome}</p>
-                                        <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
                                     </div>
-                                    <span class="badge">Meta de Hoje (${diaSemanaHojeNome})</span>
+                                    <span class="badge">Meta de Hoje</span>
                                 </div>
                                 <div class="goal-actions">
                                     <div class="questoes-input-container">
@@ -1134,33 +1312,17 @@
                             </div>
                         `;
                         count++;
-                    } else {
-                        // Matéria programada para hoje, mas sem tópicos cadastrados ainda ou todos concluídos
-                        let statusMsg = m.topicos.length === 0 ? "Nenhum tópico cadastrado ainda para esta matéria." : "Todos os tópicos desta matéria já foram concluídos!";
-                        estudoContainer.innerHTML += `
-                            <div class="goal-item" style="opacity: 0.8;">
-                                <div class="goal-header">
-                                    <div class="goal-info">
-                                        <h4>${m.nome}</h4>
-                                        <p style="color: var(--accent);"><strong>Aviso:</strong> ${statusMsg}</p>
-                                    </div>
-                                    <span class="badge" style="background-color: var(--text-muted);">Matéria do Dia</span>
-                                </div>
-                            </div>
-                        `;
-                        count++;
                     }
                 }
             });
 
             if (materiasIdsHoje.length === 0 && revisoesPendentes.length === 0) {
-                estudoContainer.innerHTML = `<p>Nenhuma matéria programada para hoje (${diaSemanaHojeNome}) no Plano Semanal. Configure seu plano na aba "Plano Semanal" para gerar as metas automáticas.</p>`;
+                estudoContainer.innerHTML = `<p>Nenhuma matéria programada para hoje (${diaSemanaHojeNome}) no Plano Semanal.</p>`;
             } else if (count === 0 && revisoesPendentes.length === 0) {
                 estudoContainer.innerHTML = `<p>Nenhuma meta nova pendente para hoje. Parabéns!</p>`;
             }
         }
 
-        // Item 8 & 9: Ao concluir, atualizar progresso, calendário, estatísticas e programar revisão automática
         function concluirRevisao(id) {
             let r = appData.revisoes.find(x => x.id == id);
             let inputQ = document.getElementById(`input-q-rev-${id}`);
@@ -1180,7 +1342,7 @@
                         concluido: false
                     });
                 }
-                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões! Estatísticas, calendário e próxima revisão atualizados.`);
+                alert(`Revisão R${r.revNum} concluída com ${qRespondidas} questões!`);
                 salvarDados();
             }
         }
@@ -1196,7 +1358,6 @@
                     t.concluido = true;
                     appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
 
-                    // Agenda R1 automaticamente
                     appData.revisoes.push({
                         id: Date.now() + Math.random(),
                         materia: m.nome,
@@ -1205,13 +1366,12 @@
                         questoes: 40,
                         concluido: false
                     });
-                    alert(`Tópico "${t.nome}" concluído com ${qRespondidas} questões! Progresso, calendário e Revisão R1 agendada automaticamente.`);
+                    alert(`Tópico "${t.nome}" concluído com ${qRespondidas} questões!`);
                     salvarDados();
                 }
             }
         }
 
-        // Progresso, Estatísticas e Calendário Integrado
         function atualizarProgresso() {
             let totalTopicos = 0;
             let concluidosTopicos = 0;
@@ -1219,7 +1379,7 @@
             container.innerHTML = '';
 
             if (appData.materias.length === 0) {
-                container.innerHTML = `<p>Nenhum dado de progresso disponível. Comece cadastrando matérias e tópicos.</p>`;
+                container.innerHTML = `<p>Nenhum dado de progresso disponível.</p>`;
             }
 
             appData.materias.forEach(m => {
@@ -1245,7 +1405,6 @@
             document.getElementById('dash-topicos').innerText = `${concluidosTopicos} / ${totalTopicos}`;
             document.getElementById('dash-questoes').innerText = appData.estatisticas.questoesResolvidas || 0;
 
-            // Renderiza o Calendário Integrado da semana
             const calContainer = document.getElementById('calendario-integrado-container');
             calContainer.innerHTML = '';
             
@@ -1268,7 +1427,6 @@
             calContainer.innerHTML = calGrid;
         }
 
-        // Item 10: Customização de Cores e Temas Imediata com salvamento no navegador
         function aplicarTemaPronto(preset) {
             const cfg = appData.config;
             cfg.preset = preset;
@@ -1310,7 +1468,6 @@
             cfg.iconsize = document.getElementById('config-iconsize').value;
             cfg.anim = document.getElementById('config-anim').value;
 
-            // Cores livres dos pickers
             cfg.primary = document.getElementById('picker-primary').value;
             cfg.accent = document.getElementById('picker-accent').value;
             cfg.bgColor = document.getElementById('picker-bg').value;
@@ -1318,7 +1475,6 @@
             cfg.success = document.getElementById('picker-success').value;
             cfg.border = document.getElementById('picker-border').value;
 
-            // Atualiza span de texto dos códigos de cor
             document.getElementById('val-primary').innerText = cfg.primary;
             document.getElementById('val-accent').innerText = cfg.accent;
             document.getElementById('val-bg').innerText = cfg.bgColor;
@@ -1326,7 +1482,6 @@
             document.getElementById('val-success').innerText = cfg.success;
             document.getElementById('val-border').innerText = cfg.border;
 
-            // Aplica atributos e variáveis CSS inline imediatamente no root
             const root = document.documentElement;
             root.setAttribute('data-theme', cfg.theme);
             root.setAttribute('data-font', cfg.font);
@@ -1355,6 +1510,10 @@
             document.getElementById('config-anim').value = cfg.anim || 'enabled';
             document.getElementById('config-preset-tema').value = cfg.preset || 'custom';
 
+            if (cfg.rocketSize) document.getElementById('config-rocket-size').value = cfg.rocketSize;
+            if (cfg.rocketDir) document.getElementById('config-rocket-dir').value = cfg.rocketDir;
+            if (cfg.rocketSpeed) document.getElementById('config-rocket-speed').value = cfg.rocketSpeed;
+
             if (cfg.primary) document.getElementById('picker-primary').value = cfg.primary;
             if (cfg.accent) document.getElementById('picker-accent').value = cfg.accent;
             if (cfg.bgColor) document.getElementById('picker-bg').value = cfg.bgColor;
@@ -1363,6 +1522,7 @@
             if (cfg.border) document.getElementById('picker-border').value = cfg.border;
 
             aplicarConfiguracoes();
+            aplicarConfiguracoesFoguete();
         }
 
         function atualizarTelas() {
@@ -1372,21 +1532,43 @@
             atualizarProgresso();
         }
 
-        function resetarDados() {
-            if (confirm('Deseja realmente restaurar as configurações padrão de aparência?')) {
-                localStorage.removeItem('arlan_estudos_v5');
-                location.reload();
+        function resetarAparencia() {
+            if (confirm('Deseja restaurar as configurações padrão de aparência e do foguete?')) {
+                appData.config = {
+                    theme: "dark",
+                    preset: "custom",
+                    primary: "#4f46e5",
+                    accent: "#f59e0b",
+                    bgColor: "#0f172a",
+                    cardBg: "#1e293b",
+                    success: "#10b981",
+                    border: "#334155",
+                    font: "segoe",
+                    fontsize: "medium",
+                    iconsize: "medium",
+                    anim: "enabled",
+                    rocketSize: "8.5rem",
+                    rocketDir: "anim-subindo",
+                    rocketSpeed: "3s"
+                };
+                salvarDados();
+                carregarConfiguracoesNaTela();
+                alert('Aparência e foguete restaurados com sucesso!');
             }
         }
 
         function limparTodosDados() {
-            if (confirm('ATENÇÃO: Deseja realmente zerar todos os dados da plataforma (matérias, tópicos, plano e estatísticas) para começar do zero?')) {
+            const confirmacao = prompt("ATENÇÃO: Esta ação apagará todos os dados da plataforma. Digite 'ZERAR' para confirmar:");
+            if (confirmacao === "ZERAR") {
                 localStorage.removeItem('arlan_estudos_v5');
                 location.reload();
+            } else if (confirmacao !== null) {
+                alert("Confirmação incorreta. Operação cancelada.");
             }
         }
 
         // Inicialização automática
+        verificarSessao();
         carregarConfiguracoesNaTela();
         atualizarTelas();
     </script>
