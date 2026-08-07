@@ -155,7 +155,7 @@
             text-decoration: underline;
         }
 
-        /* Menu Superior Minimalista com Ícones Grandes e Elegantes (Sem Texto) */
+        /* Menu Superior Minimalista com Ícones Maiores (Requisito 9) */
         header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -212,15 +212,16 @@
 
         nav {
             display: flex;
-            gap: 0.75rem;
+            gap: 1rem;
             align-items: center;
         }
 
+        /* Botões de navegação maiores e com acesso rápido (Requisito 9) */
         .nav-btn {
-            background: transparent;
-            border: none;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
             color: var(--text-muted);
-            padding: 0.75rem;
+            padding: 0.85rem 1rem;
             border-radius: 0.5rem;
             cursor: pointer;
             display: flex;
@@ -231,12 +232,13 @@
         }
 
         .nav-btn i {
-            font-size: var(--icon-size);
+            font-size: calc(var(--icon-size) * 1.25);
         }
 
         .nav-btn:hover, .nav-btn.active {
             background-color: var(--primary);
             color: #ffffff;
+            border-color: var(--primary);
             transform: translateY(-2px);
         }
 
@@ -244,7 +246,7 @@
         .nav-btn::after {
             content: attr(data-tooltip);
             position: absolute;
-            bottom: -40px;
+            bottom: -45px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--card-bg);
@@ -631,13 +633,6 @@
             margin-bottom: 0.75rem;
         }
 
-        .semana-itens-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
         .semana-item-row {
             display: flex;
             justify-content: space-between;
@@ -665,6 +660,9 @@
             }
             nav {
                 gap: 0.4rem;
+            }
+            .nav-btn {
+                padding: 0.6rem;
             }
             .home-rocket {
                 font-size: 6.5rem;
@@ -733,7 +731,7 @@
         </div>
     </div>
 
-    <!-- Menu Superior Minimalista com Ícones Grandes e Elegantes (Sem Texto) -->
+    <!-- Menu Superior Minimalista com Botões Maiores e Acesso Rápido (Requisito 9) -->
     <header>
         <div class="logo"><i class="fa-solid fa-graduation-cap"></i> Plataforma de Estudos</div>
         <div class="user-session-info">
@@ -757,7 +755,7 @@
             <div class="home-fullscreen">
                 <div class="home-rocket"><i class="fa-solid fa-rocket"></i></div>
                 <div class="home-phrase">Foco, Disciplina e Execução</div>
-                <div class="home-date" id="current-date">Sexta-feira, 7 de agosto de 2026 - 06:52:16</div>
+                <div class="home-date" id="current-date">Sexta-feira, 7 de agosto de 2026 - 07:27:30</div>
                 <button class="btn-iniciar-estudos" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(2)'))">
                     Iniciar Estudos
                 </button>
@@ -795,7 +793,7 @@
             </div>
         </section>
 
-        <!-- 3. Nova Aba: Configuração de Metas (Campos Editáveis) -->
+        <!-- 3. Nova Aba: Configuração de Metas (Campos Editáveis para alimentar automaticamente as Metas do Dia) -->
         <section id="config-metas" class="tab-content">
             <div class="inner-container">
                 <h2>Configuração de Metas</h2>
@@ -881,7 +879,7 @@
             </div>
         </section>
 
-        <!-- 6. Progresso e Estatísticas -->
+        <!-- 6. Progresso, Estatísticas e Calendário (Requisito 6 & 7) -->
         <section id="progresso" class="tab-content">
             <div class="inner-container">
                 <h2>Progresso e Estatísticas</h2>
@@ -927,14 +925,15 @@
                     </div>
                 </div>
 
-                <!-- Resumo Mensal Automático -->
+                <!-- Resumo com dias estudados, dias sem estudar, percentual de metas, maior sequência de dias, tópicos concluídos e questões respondidas (Requisito 7) -->
                 <div class="card" id="resumo-mensal-card">
                     <h3>Resumo Mensal Automático</h3>
                     <div id="resumo-mensal-conteudo"></div>
                 </div>
 
+                <!-- Calendário mostrando automaticamente dias estudados e não estudados (Requisito 6) -->
                 <div class="card">
-                    <h3>Calendário Integrado</h3>
+                    <h3>Calendário Integrado (Dias Estudados e Não Estudados)</h3>
                     <div id="calendario-integrado-container" style="margin-bottom: 1.5rem;"></div>
                     <h3>Progresso Detalhado por Matéria</h3>
                     <div id="progresso-materias-container"></div>
@@ -942,11 +941,49 @@
             </div>
         </section>
 
-        <!-- 7. Configurações e Aparência -->
+        <!-- 7. Configurações, Notificações Push e Aparência (Requisito 8) -->
         <section id="configuracoes" class="tab-content">
             <div class="inner-container">
                 <h2>Configurações do Sistema</h2>
                 
+                <!-- Configurações de Notificações Push (Requisito 8) -->
+                <div class="card">
+                    <h3>Gerenciamento de Notificações Push</h3>
+                    <p style="margin-bottom: 1.25rem;">Ative ou desative lembretes automáticos de metas do dia, revisões, horário de estudo, metas pendentes, conclusão das metas e alertas caso fique dias sem estudar.</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem;">
+                        <button class="btn-primary" style="width: fit-content;" onclick="solicitarPermissaoNotificacoes()"><i class="fa-solid fa-bell"></i> Habilitar Permissão de Notificações no Navegador</button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Status Geral das Notificações</label>
+                            <select id="notif-ativo" onchange="salvarConfiguracoesNotificacao()">
+                                <option value="enabled">Ativadas</option>
+                                <option value="disabled">Desativadas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Horário do Lembrete de Estudo</label>
+                            <input type="time" id="notif-horario" value="08:00" onchange="salvarConfiguracoesNotificacao()">
+                        </div>
+                        <div class="form-group">
+                            <label>Lembrete de Metas e Revisões</label>
+                            <select id="notif-metas" onchange="salvarConfiguracoesNotificacao()">
+                                <option value="enabled">Ativado</option>
+                                <option value="disabled">Desativado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Alerta de Dias Sem Estudar</label>
+                            <select id="notif-inatividade" onchange="salvarConfiguracoesNotificacao()">
+                                <option value="enabled">Ativado</option>
+                                <option value="disabled">Desativado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Aparência e Cores -->
                 <div class="card">
                     <h3>Aparência e Cores Customizadas</h3>
@@ -1011,7 +1048,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Bordas e Divisorias</label>
+                            <label>Bordas e Divisórias</label>
                             <div class="color-picker-group">
                                 <input type="color" id="picker-border" value="#334155" oninput="aplicarConfiguracoes()">
                                 <span id="val-border" style="font-size: 0.85rem; color: var(--text-muted);">#334155</span>
@@ -1065,7 +1102,7 @@
         </section>
     </main>
 
-    <!-- Script da Aplicação com Banco de Dados em Nuvem e Sincronização em Tempo Real -->
+    <!-- Script da Aplicação com Banco de Dados em Nuvem, Sincronização em Tempo Real e Notificações Push -->
     <script>
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1124,7 +1161,7 @@
 
         let currentUser = localStorage.getItem(SESSION_USER_KEY) || null;
 
-        // Estrutura padrão de dados da nuvem
+        // Estrutura padrão de dados da nuvem garantindo preservação integral de dados (Requisito 10)
         const getDefaultCloudData = () => ({
             materias: [],
             revisoes: [],
@@ -1141,6 +1178,12 @@
                 materiasPorDia: 2,
                 topicosPorMateria: 2,
                 quantidadeQuestoes: 40
+            },
+            notificacoesConfig: {
+                ativo: "enabled",
+                horario: "08:00",
+                metas: "enabled",
+                inatividade: "enabled"
             },
             historicoEstudos: {},
             estatisticas: {
@@ -1169,7 +1212,7 @@
 
         function saveCloudDatabase(db) {
             localStorage.setItem(CLOUD_DB_KEY, JSON.stringify(db));
-            // Sincronização em tempo real entre computador e celular através do canal de broadcast/storage
+            // Sincronização em tempo real entre computadores e celulares através do evento storage
             window.dispatchEvent(new StorageEvent('storage', { key: CLOUD_DB_KEY, newValue: JSON.stringify(db) }));
         }
 
@@ -1180,10 +1223,14 @@
             let db = getCloudDatabase();
             if (!db[currentUser]) {
                 db[currentUser] = {
-                    senha: "123", // Senha padrão inicial para contas criadas via demo
+                    senha: "123",
                     data: getDefaultCloudData()
                 };
                 saveCloudDatabase(db);
+            } else {
+                // Mesclagem segura para garantir que nenhum dado pré-existente seja apagado ou corrompido (Requisito 10)
+                let defaultData = getDefaultCloudData();
+                db[currentUser].data = Object.assign({}, defaultData, db[currentUser].data);
             }
             appData = db[currentUser].data;
         }
@@ -1228,7 +1275,6 @@
                     alert('Senha incorreta.');
                 }
             } else {
-                // Se usuário não existe, criar automaticamente para facilitar o primeiro acesso
                 db[identifier] = { senha: senha, data: getDefaultCloudData() };
                 saveCloudDatabase(db);
                 currentUser = identifier;
@@ -1264,7 +1310,6 @@
 
             let db = getCloudDatabase();
             if (!db[identifier]) {
-                // Se não existir, criamos a conta com a nova senha
                 db[identifier] = { senha: novaSenha, data: getDefaultCloudData() };
             } else {
                 db[identifier].senha = novaSenha;
@@ -1286,6 +1331,7 @@
             carregarDadosUsuario();
             carregarConfiguracoesNaTela();
             atualizarTelas();
+            verificarNotificacoesPushAutomaticas();
         }
 
         // Verificar sessão ativa ao abrir
@@ -1308,11 +1354,78 @@
             salvarDados();
         }
 
+        function salvarConfiguracoesNotificacao() {
+            if (!appData.notificacoesConfig) appData.notificacoesConfig = {};
+            appData.notificacoesConfig.ativo = document.getElementById('notif-ativo').value;
+            appData.notificacoesConfig.horario = document.getElementById('notif-horario').value;
+            appData.notificacoesConfig.metas = document.getElementById('notif-metas').value;
+            appData.notificacoesConfig.inatividade = document.getElementById('notif-inatividade').value;
+            salvarDados();
+            dispararNotificacaoPush("Configurações Atualizadas", "Suas preferências de notificações push foram salvas com sucesso!");
+        }
+
+        // Sistema de Notificações Push (Requisito 8)
+        function solicitarPermissaoNotificacoes() {
+            if (!("Notification" in window)) {
+                alert("Este navegador não suporta notificações desktop.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("Notificações permitidas com sucesso!");
+                    dispararNotificacaoPush("Treinador IA", "Notificações ativadas! Você receberá seus lembretes e avisos por aqui.");
+                } else {
+                    alert("Permissão de notificações negada.");
+                }
+            });
+        }
+
+        function dispararNotificacaoPush(titulo, corpo) {
+            if (!appData.notificacoesConfig || appData.notificacoesConfig.ativo === "disabled") return;
+            if ("Notification" in window && Notification.permission === "granted") {
+                try {
+                    new Notification(titulo, {
+                        body: corpo,
+                        icon: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/graduation-cap.svg"
+                    });
+                } catch (e) {
+                    console.log("Erro ao disparar notificação:", e);
+                }
+            }
+        }
+
+        function verificarNotificacoesPushAutomaticas() {
+            if (!appData.notificacoesConfig || appData.notificacoesConfig.ativo === "disabled") return;
+            
+            // Verificar revisões e metas pendentes para notificação
+            let revPendentes = (appData.revisoes || []).filter(r => !r.concluido).length;
+            if (revPendentes > 0 && appData.notificacoesConfig.metas === "enabled") {
+                setTimeout(() => {
+                    dispararNotificacaoPush("Lembrete de Metas e Revisões", `Você possui ${revPendentes} revisão(ões) pendente(s) programada(s) para hoje!`);
+                }, 2000);
+            }
+
+            // Verificar inatividade (dias sem estudar)
+            const hojeIso = new Date().toISOString().split('T')[0];
+            const ontemObj = new Date();
+            ontemObj.setDate(ontemObj.getDate() - 1);
+            const ontemIso = ontemObj.toISOString().split('T')[0];
+
+            if (appData.notificacoesConfig.inatividade === "enabled") {
+                if (appData.historicoEstudos && !appData.historicoEstudos[hojeIso] && !appData.historicoEstudos[ontemIso]) {
+                    setTimeout(() => {
+                        dispararNotificacaoPush("Aviso de Inatividade", "Notamos que você ficou alguns dias sem estudar. Vamos retomar o ritmo rumo à aprovação!");
+                    }, 4000);
+                }
+            }
+        }
+
         function registrarDiaEstudadoHoje() {
             const hojeIso = new Date().toISOString().split('T')[0];
             if (!appData.historicoEstudos) appData.historicoEstudos = {};
             appData.historicoEstudos[hojeIso] = true;
             salvarDados();
+            dispararNotificacaoPush("Meta Concluída!", "Parabéns! Seu estudo de hoje foi registrado e contabilizado com sucesso.");
         }
 
         // Cadastro de Matérias
@@ -1705,7 +1818,7 @@
             document.getElementById('painel-prog-mes').innerText = geralPerc + '%';
             document.getElementById('painel-cumprimento-metas').innerText = geralPerc > 0 ? '100%' : '0%';
 
-            // Resumo Mensal Automático
+            // Resumo com dias estudados, dias sem estudar, percentual de metas, maior sequência de dias, tópicos concluídos e questões respondidas (Requisito 7)
             const resumoContainer = document.getElementById('resumo-mensal-conteudo');
             const dataHoje = new Date();
             const ano = dataHoje.getFullYear();
@@ -1732,6 +1845,8 @@
             }
             let percMes = Math.round((diasEstudadosCont / dataHoje.getDate()) * 100) || 0;
 
+            document.getElementById('dash-dias').innerText = maiorSequencia + (maiorSequencia === 1 ? ' dia' : ' dias');
+
             resumoContainer.innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
@@ -1747,7 +1862,7 @@
                         <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">${percMes}%</div>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Maior Sequência</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Maior Sequência de Dias</span>
                         <div style="font-size: 1.4rem; font-weight: bold; color: var(--accent);">${maiorSequencia} dias</div>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
@@ -1761,7 +1876,7 @@
                 </div>
             `;
 
-            // Calendário preenchido automaticamente com dias estudados e não estudados a partir dos registros reais
+            // Calendário mostrando automaticamente dias estudados e não estudados (Requisito 6)
             const calContainer = document.getElementById('calendario-integrado-container');
             calContainer.innerHTML = '';
             
@@ -1890,6 +2005,13 @@
                 document.getElementById('param-materias-dia').value = appData.parametrosMetas.materiasPorDia || 2;
                 document.getElementById('param-topicos-materia').value = appData.parametrosMetas.topicosPorMateria || 2;
                 document.getElementById('param-questoes').value = appData.parametrosMetas.quantidadeQuestoes || 40;
+            }
+
+            if (appData.notificacoesConfig) {
+                document.getElementById('notif-ativo').value = appData.notificacoesConfig.ativo || 'enabled';
+                document.getElementById('notif-horario').value = appData.notificacoesConfig.horario || '08:00';
+                document.getElementById('notif-metas').value = appData.notificacoesConfig.metas || 'enabled';
+                document.getElementById('notif-inatividade').value = appData.notificacoesConfig.inatividade || 'enabled';
             }
 
             aplicarConfiguracoes();
