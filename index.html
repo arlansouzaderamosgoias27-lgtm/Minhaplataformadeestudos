@@ -6,9 +6,9 @@
     <title>Plataforma de Estudos Avançada</title>
     <style>
         :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --bg-input: #0f172a;
+            --bg-main: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-input: #0b0f19;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent: #3b82f6;
@@ -16,14 +16,13 @@
             --danger: #ef4444;
             --success: #22c55e;
             --warning: #f59e0b;
-            --border: #334155;
-            --sidebar-width: 260px;
+            --border: #1e293b;
         }
 
         [data-theme="light"] {
-            --bg-main: #f8fafc;
+            --bg-main: #f1f5f9;
             --bg-card: #ffffff;
-            --bg-input: #f1f5f9;
+            --bg-input: #f8fafc;
             --text-main: #0f172a;
             --text-muted: #64748b;
             --accent: #2563eb;
@@ -31,7 +30,7 @@
             --danger: #dc2626;
             --success: #16a34a;
             --warning: #d97706;
-            --border: #cbd5e1;
+            --border: #e2e8f0;
         }
 
         * {
@@ -47,7 +46,7 @@
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
-            overflow-x: hidden;
+            flex-direction: column;
         }
 
         /* Utilitários */
@@ -72,6 +71,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 1rem;
         }
 
         .auth-card {
@@ -153,71 +153,12 @@
         }
         .auth-links a:hover { text-decoration: underline; }
 
-        /* Layout Principal */
+        /* Layout Principal sem Menu Lateral */
         #app-container {
             display: flex;
+            flex-direction: column;
             width: 100vw;
-            height: 100vh;
-        }
-
-        aside {
-            width: var(--sidebar-width);
-            background: var(--bg-card);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1.5rem 1rem;
-            z-index: 10;
-        }
-
-        .sidebar-brand {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--accent);
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            margin-top: 1.5rem;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-        }
-
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .sidebar-footer {
-            border-top: 1px solid var(--border);
-            padding-top: 1rem;
-        }
-
-        /* Conteúdo Principal */
-        main {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         header {
@@ -228,6 +169,9 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .header-title h1 {
@@ -262,11 +206,76 @@
             border-radius: 50%;
         }
 
+        /* Container de Navegação Superior (Atalhos/Cards Grandes - Redesign Visual Moderno) */
+        .tools-nav-container {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.15);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tool-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.25rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            background: rgba(59, 130, 246, 0.08);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+        }
+
+        .tool-card.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 8px 20px -4px rgba(59, 130, 246, 0.4);
+        }
+
+        .tool-card.active .tool-label {
+            color: white;
+        }
+
+        .tool-icon {
+            font-size: 2.25rem;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .tool-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 0.01em;
+        }
+
         .content-area {
             flex-grow: 1;
-            overflow-y: auto;
             padding: 2rem;
             background: var(--bg-main);
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         .view-section {
@@ -277,7 +286,7 @@
             display: block;
         }
 
-        /* Cards e Grid */
+        /* Cards e Grid Padrão */
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -288,7 +297,7 @@
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             padding: 1.5rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
@@ -323,7 +332,7 @@
             gap: 0.5rem;
         }
 
-        /* Notificações Modal / Dropdown */
+        /* Notificações Dropdown */
         #notification-dropdown {
             position: absolute;
             top: 70px;
@@ -331,9 +340,9 @@
             width: 320px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-            z-index: 100;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            z-index: 200;
             padding: 1rem;
         }
 
@@ -366,7 +375,7 @@
         .calendar-day {
             background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: 0.3rem;
+            border-radius: 0.5rem;
             min-height: 80px;
             padding: 0.4rem;
             font-size: 0.875rem;
@@ -378,6 +387,21 @@
         .calendar-day.today {
             border-color: var(--accent);
             background: rgba(59, 130, 246, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            header {
+                padding: 0 1rem;
+            }
+            .tools-nav-container {
+                padding: 1rem;
+            }
+            .content-area {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -446,178 +470,196 @@
 
     <!-- APLICAÇÃO PRINCIPAL -->
     <div id="app-container" class="hidden">
-        <!-- BARRA LATERAL -->
-        <aside>
-            <div>
-                <div class="sidebar-brand">EstudosPro</div>
-                <ul class="sidebar-menu">
-                    <li><a onclick="mudarView('dashboard')" class="active" id="nav-dashboard">📊 Dashboard</a></li>
-                    <li><a onclick="mudarView('materias')" id="nav-materias">📚 Matérias & Tópicos</a></li>
-                    <li><a onclick="mudarView('plano')" id="nav-plano">📅 Plano Semanal</a></li>
-                    <li><a onclick="mudarView('metas')" id="nav-metas">🎯 Metas Diárias</a></li>
-                    <li><a onclick="mudarView('revisoes')" id="nav-revisoes">🔄 Revisões</a></li>
-                    <li><a onclick="mudarView('estatisticas')" id="nav-estatisticas">📈 Estatísticas</a></li>
-                    <li><a onclick="mudarView('calendario')" id="nav-calendario">🗓️ Calendário</a></li>
-                    <li><a onclick="mudarView('configuracoes')" id="nav-configuracoes">⚙️ Configurações</a></li>
-                </ul>
+        <!-- CABEÇALHO -->
+        <header>
+            <div class="header-title">
+                <h1 id="page-title">Início</h1>
             </div>
-            <div class="sidebar-footer">
-                <button onclick="logout()" class="btn btn-secondary w-full">Sair</button>
+            <div class="header-actions">
+                <div class="notification-bell" onclick="toggleNotificacoes()">
+                    🔔
+                    <span id="notif-badge" class="notification-badge hidden">0</span>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">Sair</button>
             </div>
-        </aside>
+        </header>
+
+        <!-- MENU DE FERRAMENTAS SUPERIOR (CARDS GRANDES) -->
+        <nav class="tools-nav-container">
+            <div class="tools-grid">
+                <div class="tool-card active" onclick="mudarView('dashboard')" id="nav-dashboard">
+                    <span class="tool-icon">🏠</span>
+                    <span class="tool-label">Início</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('materias')" id="nav-materias">
+                    <span class="tool-icon">📚</span>
+                    <span class="tool-label">Matérias</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('plano')" id="nav-plano">
+                    <span class="tool-icon">📅</span>
+                    <span class="tool-label">Planos</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('metas')" id="nav-metas">
+                    <span class="tool-icon">🎯</span>
+                    <span class="tool-label">Metas</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('revisoes')" id="nav-revisoes">
+                    <span class="tool-icon">🔄</span>
+                    <span class="tool-label">Revisões</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('estatisticas')" id="nav-estatisticas">
+                    <span class="tool-icon">📊</span>
+                    <span class="tool-label">Progresso</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('calendario')" id="nav-calendario">
+                    <span class="tool-icon">🗓️</span>
+                    <span class="tool-label">Calendário</span>
+                </div>
+                <div class="tool-card" onclick="mudarView('configuracoes')" id="nav-configuracoes">
+                    <span class="tool-icon">⚙️</span>
+                    <span class="tool-label">Configurações</span>
+                </div>
+            </div>
+        </nav>
+
+        <div id="notification-dropdown" class="hidden">
+            <h3>Notificações</h3>
+            <ul id="lista-notificacoes"></ul>
+        </div>
 
         <!-- CONTEÚDO -->
-        <main>
-            <header>
-                <div class="header-title">
-                    <h1 id="page-title">Dashboard</h1>
-                </div>
-                <div class="header-actions">
-                    <div class="notification-bell" onclick="toggleNotificacoes()">
-                        🔔
-                        <span id="notif-badge" class="notification-badge hidden">0</span>
-                    </div>
-                </div>
-            </header>
-
-            <div id="notification-dropdown" class="hidden">
-                <h3>Notificações</h3>
-                <ul id="lista-notificacoes"></ul>
-            </div>
-
-            <div class="content-area">
-                <!-- SEÇÃO: DASHBOARD -->
-                <section id="view-dashboard" class="view-section active">
-                    <div class="grid-2">
-                        <div class="card">
-                            <h3>Progresso Geral</h3>
-                            <p id="dash-resumo-materias">Total de matérias: 0</p>
-                            <p id="dash-resumo-metas">Metas cumpridas hoje: 0/0</p>
-                        </div>
-                        <div class="card">
-                            <h3>Atividade Recente</h3>
-                            <ul id="dash-atividade" class="item-list">
-                                <li>Nenhuma atividade recente registrada.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SEÇÃO: MATÉRIAS E TÓPICOS -->
-                <section id="view-materias" class="view-section">
-                    <div class="grid-2">
-                        <div class="card">
-                            <h3>Cadastrar Matéria</h3>
-                            <form id="form-cadastrar-materia">
-                                <div class="form-group">
-                                    <label for="nova-materia-nome">Nome da Matéria</label>
-                                    <input type="text" id="nova-materia-nome" class="form-control" placeholder="Ex: Matemática" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Cadastrar Matéria</button>
-                            </form>
-                        </div>
-                        <div class="card">
-                            <h3>Cadastrar Tópico</h3>
-                            <form id="form-cadastrar-topico">
-                                <div class="form-group">
-                                    <label for="topico-materia-id">Selecione a Matéria</label>
-                                    <select id="topico-materia-id" class="form-control" required></select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="novo-topico-nome">Nome do Tópico</label>
-                                    <input type="text" id="novo-topico-nome" class="form-control" placeholder="Ex: Frações" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Cadastrar Tópico</button>
-                            </form>
-                        </div>
+        <main class="content-area">
+            <!-- SEÇÃO: DASHBOARD -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Progresso Geral</h3>
+                        <p id="dash-resumo-materias">Total de matérias: 0</p>
+                        <p id="dash-resumo-metas">Metas cumpridas hoje: 0/0</p>
                     </div>
                     <div class="card">
-                        <h3>Lista de Matérias e Tópicos</h3>
-                        <div id="container-materias-topicos"></div>
+                        <h3>Atividade Recente</h3>
+                        <ul id="dash-atividade" class="item-list">
+                            <li>Nenhuma atividade recente registrada.</li>
+                        </ul>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- SEÇÃO: PLANO SEMANAL -->
-                <section id="view-plano" class="view-section">
+            <!-- SEÇÃO: MATÉRIAS E TÓPICOS -->
+            <section id="view-materias" class="view-section">
+                <div class="grid-2">
                     <div class="card">
-                        <h3>Plano de Estudos Semanal</h3>
-                        <form id="form-plano-semanal" class="grid-2">
+                        <h3>Cadastrar Matéria</h3>
+                        <form id="form-cadastrar-materia">
                             <div class="form-group">
-                                <label for="plano-dia">Dia da Semana</label>
-                                <select id="plano-dia" class="form-control">
-                                    <option value="Segunda">Segunda-feira</option>
-                                    <option value="Terça">Terça-feira</option>
-                                    <option value="Quarta">Quarta-feira</option>
-                                    <option value="Quinta">Quinta-feira</option>
-                                    <option value="Sexta">Sexta-feira</option>
-                                    <option value="Sábado">Sábado</option>
-                                    <option value="Domingo">Domingo</option>
-                                </select>
+                                <label for="nova-materia-nome">Nome da Matéria</label>
+                                <input type="text" id="nova-materia-nome" class="form-control" placeholder="Ex: Matemática" required>
                             </div>
-                            <div class="form-group">
-                                <label for="plano-descricao">Estudo Programado</label>
-                                <input type="text" id="plano-descricao" class="form-control" placeholder="Ex: Ler capítulo 1" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary" style="grid-column: span 2;">Adicionar ao Plano</button>
+                            <button type="submit" class="btn btn-primary">Cadastrar Matéria</button>
                         </form>
-                        <div id="lista-plano-semanal" class="item-list" style="margin-top: 1.5rem;"></div>
                     </div>
-                </section>
-
-                <!-- SEÇÃO: METAS DIÁRIAS -->
-                <section id="view-metas" class="view-section">
                     <div class="card">
-                        <h3>Metas Diárias</h3>
-                        <div style="margin-bottom: 1rem;">
-                            <button onclick="gerarMetasAutomaticas()" class="btn btn-secondary">Gerar Metas Automáticas</button>
-                        </div>
-                        <div id="lista-metas-diarias" class="item-list"></div>
+                        <h3>Cadastrar Tópico</h3>
+                        <form id="form-cadastrar-topico">
+                            <div class="form-group">
+                                <label for="topico-materia-id">Selecione a Matéria</label>
+                                <select id="topico-materia-id" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="novo-topico-nome">Nome do Tópico</label>
+                                <input type="text" id="novo-topico-nome" class="form-control" placeholder="Ex: Frações" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cadastrar Tópico</button>
+                        </form>
                     </div>
-                </section>
+                </div>
+                <div class="card">
+                    <h3>Lista de Matérias e Tópicos</h3>
+                    <div id="container-materias-topicos"></div>
+                </div>
+            </section>
 
-                <!-- SEÇÃO: REVISÕES -->
-                <section id="view-revisoes" class="view-section">
-                    <div class="card">
-                        <h3>Agenda de Revisões Pendentes</h3>
-                        <div id="lista-revisoes" class="item-list"></div>
-                    </div>
-                </section>
-
-                <!-- SEÇÃO: ESTATÍSTICAS -->
-                <section id="view-estatisticas" class="view-section">
-                    <div class="card">
-                        <h3>Métricas de Desempenho</h3>
-                        <p id="stat-total-materias">Matérias cadastradas: 0</p>
-                        <p id="stat-total-topicos">Tópicos cadastrados: 0</p>
-                        <p id="stat-metas-concluidas">Taxa de conclusão de metas: 0%</p>
-                    </div>
-                </section>
-
-                <!-- SEÇÃO: CALENDÁRIO -->
-                <section id="view-calendario" class="view-section">
-                    <div class="card">
-                        <h3>Calendário de Estudos</h3>
-                        <div id="calendario-container" class="calendar-grid" style="margin-top: 1rem;"></div>
-                    </div>
-                </section>
-
-                <!-- SEÇÃO: CONFIGURAÇÕES -->
-                <section id="view-configuracoes" class="view-section">
-                    <div class="card">
-                        <h3>Ajustes da Plataforma</h3>
+            <!-- SEÇÃO: PLANO SEMANAL -->
+            <section id="view-plano" class="view-section">
+                <div class="card">
+                    <h3>Plano de Estudos Semanal</h3>
+                    <form id="form-plano-semanal" class="grid-2">
                         <div class="form-group">
-                            <label for="select-tema">Tema da Aplicação</label>
-                            <select id="select-tema" class="form-control" onchange="mudarTema(this.value)">
-                                <option value="dark">Escuro (Dark)</option>
-                                <option value="light">Claro (Light)</option>
+                            <label for="plano-dia">Dia da Semana</label>
+                            <select id="plano-dia" class="form-control">
+                                <option value="Segunda">Segunda-feira</option>
+                                <option value="Terça">Terça-feira</option>
+                                <option value="Quarta">Quarta-feira</option>
+                                <option value="Quinta">Quinta-feira</option>
+                                <option value="Sexta">Sexta-feira</option>
+                                <option value="Sábado">Sábado</option>
+                                <option value="Domingo">Domingo</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <button onclick="sincronizarDados()" class="btn btn-secondary w-full">Sincronizar com Nuvem / LocalStorage</button>
+                            <label for="plano-descricao">Estudo Programado</label>
+                            <input type="text" id="plano-descricao" class="form-control" placeholder="Ex: Ler capítulo 1" required>
                         </div>
+                        <button type="submit" class="btn btn-primary" style="grid-column: span 2;">Adicionar ao Plano</button>
+                    </form>
+                    <div id="lista-plano-semanal" class="item-list" style="margin-top: 1.5rem;"></div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: METAS DIÁRIAS -->
+            <section id="view-metas" class="view-section">
+                <div class="card">
+                    <h3>Metas Diárias</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <button onclick="gerarMetasAutomaticas()" class="btn btn-secondary">Gerar Metas Automáticas</button>
                     </div>
-                </section>
-            </div>
+                    <div id="lista-metas-diarias" class="item-list"></div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: REVISÕES -->
+            <section id="view-revisoes" class="view-section">
+                <div class="card">
+                    <h3>Agenda de Revisões Pendentes</h3>
+                    <div id="lista-revisoes" class="item-list"></div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: ESTATÍSTICAS -->
+            <section id="view-estatisticas" class="view-section">
+                <div class="card">
+                    <h3>Métricas de Desempenho</h3>
+                    <p id="stat-total-materias">Matérias cadastradas: 0</p>
+                    <p id="stat-total-topicos">Tópicos cadastrados: 0</p>
+                    <p id="stat-metas-concluidas">Taxa de conclusão de metas: 0%</p>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: CALENDÁRIO -->
+            <section id="view-calendario" class="view-section">
+                <div class="card">
+                    <h3>Calendário de Estudos</h3>
+                    <div id="calendario-container" class="calendar-grid" style="margin-top: 1rem;"></div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: CONFIGURAÇÕES -->
+            <section id="view-configuracoes" class="view-section">
+                <div class="card">
+                    <h3>Ajustes da Plataforma</h3>
+                    <div class="form-group">
+                        <label for="select-tema">Tema da Aplicação</label>
+                        <select id="select-tema" class="form-control" onchange="mudarTema(this.value)">
+                            <option value="dark">Escuro (Dark)</option>
+                            <option value="light">Claro (Light)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button onclick="sincronizarDados()" class="btn btn-secondary w-full">Sincronizar com Nuvem / LocalStorage</button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -695,7 +737,7 @@
         // Navegação Interna
         function mudarView(viewId) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            document.querySelectorAll('.tool-card').forEach(card => card.classList.remove('active'));
 
             const targetView = document.getElementById(`view-${viewId}`);
             const targetNav = document.getElementById(`nav-${viewId}`);
@@ -704,12 +746,12 @@
             if (targetNav) targetNav.classList.add('active');
 
             const titulos = {
-                dashboard: 'Dashboard',
-                materias: 'Matérias & Tópicos',
-                plano: 'Plano Semanal',
-                metas: 'Metas Diárias',
-                revisoes: 'Revisões Pendentes',
-                estatisticas: 'Estatísticas',
+                dashboard: 'Início',
+                materias: 'Matérias',
+                plano: 'Planos',
+                metas: 'Metas',
+                revisoes: 'Revisões',
+                estatisticas: 'Progresso',
                 calendario: 'Calendário',
                 configuracoes: 'Configurações'
             };
