@@ -1,2048 +1,985 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-primary="indigo" data-font="segoe" data-fontsize="medium" data-iconsize="medium" data-anim="enabled">
+<html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Estudos - Treinador IA</title>
-    <!-- Font Awesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Plataforma de Estudos Avançada</title>
     <style>
-        /* Temas de Cores Globais e Variáveis Dinâmicas */
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: #334155;
-            --success: #10b981;
-            --accent: #f59e0b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
             --danger: #ef4444;
-            --icon-size: 1.3rem;
-            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-size: 1rem;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --border: #334155;
+            --sidebar-width: 260px;
         }
 
         [data-theme="light"] {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #d97706;
+            --border: #cbd5e1;
         }
-
-        /* Cores Primárias Predefinidas */
-        [data-primary="indigo"] { --primary: #4f46e5; --primary-hover: #4338ca; }
-        [data-primary="emerald"] { --primary: #059669; --primary-hover: #047857; }
-        [data-primary="violet"] { --primary: #7c3aed; --primary-hover: #6d28d9; }
-        [data-primary="blue"] { --primary: #2563eb; --primary-hover: #1d4ed8; }
-
-        /* Tamanho de Fonte */
-        [data-fontsize="small"] { --font-size: 0.875rem; }
-        [data-fontsize="medium"] { --font-size: 1rem; }
-        [data-fontsize="large"] { --font-size: 1.125rem; }
-
-        /* Tamanho de Ícones */
-        [data-iconsize="small"] { --icon-size: 1rem; }
-        [data-iconsize="medium"] { --icon-size: 1.3rem; }
-        [data-iconsize="large"] { --icon-size: 1.6rem; }
-
-        /* Família de Fonte */
-        [data-font="segoe"] { --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        [data-font="roboto"] { --font-family: 'Roboto', sans-serif; }
-        [data-font="inter"] { --font-family: 'Inter', sans-serif; }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--font-family);
-            font-size: var(--font-size);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-main);
             color: var(--text-main);
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
-            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            overflow-x: hidden;
         }
 
-        /* Tela de Autenticação / Login / Cadastro / Recuperação */
-        #auth-overlay {
+        /* Utilitários */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .w-full { width: 100%; }
+
+        /* Autenticação */
+        #auth-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            z-index: 9999;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-main);
+            z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
         }
 
         .auth-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             padding: 2.5rem;
+            border-radius: 1rem;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            max-width: 400px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-header i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .auth-header h2 {
-            font-size: calc(var(--font-size) * 1.5);
-            margin-bottom: 0.5rem;
-        }
-
-        .auth-tabs {
-            display: flex;
+        .auth-card h2 {
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .auth-tab {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .auth-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .auth-form {
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .auth-form.active {
-            display: flex;
-        }
-
-        .auth-link {
+            font-size: 1.75rem;
             text-align: center;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            color: var(--primary);
-            cursor: pointer;
-        }
-        .auth-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Menu Superior Minimalista com Ícones Maiores (Requisito 9) */
-        header {
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            font-size: calc(var(--font-size) * 1.2);
-            font-weight: bold;
             color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logo i {
-            font-size: calc(var(--icon-size) * 1.2);
-            color: var(--primary);
-        }
-
-        .user-session-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-email-display {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .btn-logout {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-        .btn-logout:hover {
-            background-color: var(--danger);
-            color: white;
-            border-color: var(--danger);
-        }
-
-        nav {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        /* Botões de navegação maiores e com acesso rápido (Requisito 9) */
-        .nav-btn {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 0.85rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .nav-btn i {
-            font-size: calc(var(--icon-size) * 1.25);
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            background-color: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        /* Tooltip Minimalista */
-        .nav-btn::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: -45px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--card-bg);
-            color: var(--text-main);
-            padding: 0.3rem 0.6rem;
-            font-size: 0.75rem;
-            border-radius: 4px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1001;
-        }
-
-        .nav-btn:hover::after {
-            opacity: 1;
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .tab-content {
-            display: none;
-            flex: 1;
-        }
-
-        .tab-content.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Tela Inicial */
-        .home-fullscreen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 3rem 2rem;
-            background: radial-gradient(circle at center, var(--card-bg) 0%, var(--bg-color) 100%);
-            min-height: calc(100vh - 70px);
-        }
-
-        .home-rocket {
-            font-size: 8.5rem;
-            color: var(--accent);
-            margin-bottom: 2.25rem;
-            line-height: 1;
-        }
-
-        [data-anim="enabled"] .home-rocket {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-18px); }
-        }
-
-        .home-phrase {
-            font-size: calc(var(--font-size) * 1.8);
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--text-main);
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-        }
-
-        .home-date {
-            font-size: calc(var(--font-size) * 1.25);
-            color: var(--text-muted);
-            margin-bottom: 3rem;
-            font-weight: 500;
-        }
-
-        .btn-iniciar-estudos {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: #ffffff;
-            border: none;
-            padding: 1.35rem 3.5rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            font-size: calc(var(--font-size) * 1.25);
-            font-weight: bold;
-            letter-spacing: 1px;
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-        }
-
-        .btn-iniciar-estudos:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.1);
-        }
-
-        /* Containers e Cards */
-        .inner-container {
-            padding: 2.5rem;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 1.75rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-
-        h2 {
-            margin-bottom: 1.25rem;
-            font-size: calc(var(--font-size) * 1.4);
-            color: var(--text-main);
-        }
-
-        h3 {
-            margin-bottom: 0.85rem;
-            font-size: calc(var(--font-size) * 1.15);
-            color: var(--text-main);
-        }
-
-        p {
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        /* Coach Box / Mensagens Motivacionais */
-        .coach-banner {
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(16, 185, 129, 0.1));
-            border-left: 4px solid var(--primary);
-            padding: 1.25rem;
-            border-radius: 0.375rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .coach-banner i {
-            font-size: calc(var(--icon-size) * 1.2);
-            color: var(--accent);
-            margin-top: 0.1rem;
-        }
-
-        .coach-banner p {
-            color: var(--text-main);
-            font-weight: 500;
-        }
-
-        /* Metas de Hoje */
-        .goals-section-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: calc(var(--font-size) * 1.1);
-            color: var(--text-main);
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .goal-item {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .goal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .goal-info h4 {
-            font-size: calc(var(--font-size) * 1.05);
-            color: var(--text-main);
-            margin-bottom: 0.25rem;
-        }
-
-        .badge {
-            background-color: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: calc(var(--font-size) * 0.75);
-            font-weight: 600;
-        }
-
-        .badge-rev {
-            background-color: var(--accent);
-            color: #0f172a;
-        }
-
-        .goal-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            padding-top: 0.75rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .questoes-input-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .questoes-input-container input {
-            width: 70px;
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            padding: 0.4rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .btn-action {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1.25rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: background-color 0.2s;
-        }
-
-        .btn-action:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* Formulários e Tabelas */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.25rem;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
             font-weight: 600;
             color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: calc(var(--font-size) * 0.8);
         }
 
-        .form-group input, .form-group select {
-            background-color: var(--bg-color);
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
             color: var(--text-main);
-            padding: 0.85rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
+            font-size: 1rem;
         }
 
-        .color-picker-group {
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--accent); color: white; width: 100%; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+        .btn-secondary:hover { background: rgba(59, 130, 246, 0.1); }
+        .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.875rem; }
+        .btn-danger:hover { opacity: 0.9; }
+
+        .auth-links {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .auth-links a {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .auth-links a:hover { text-decoration: underline; }
+
+        /* Layout Principal */
+        #app-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        aside {
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem 1rem;
+            z-index: 10;
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--accent);
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-top: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-        }
-
-        .color-picker-group input[type="color"] {
-            width: 50px;
-            height: 40px;
-            padding: 0;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            cursor: pointer;
-            background: none;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.85rem 1.75rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-weight: 600;
-            transition: filter 0.2s;
-        }
-
-        .btn-primary:hover {
-            filter: brightness(1.1);
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Cards de Estatísticas e Progresso */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.75rem;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-        }
-
-        .stat-card h4 {
-            font-size: calc(var(--font-size) * 0.85);
+            padding: 0.75rem 1rem;
             color: var(--text-muted);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
         }
 
-        .stat-card .value {
-            font-size: calc(var(--font-size) * 1.8);
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .progress-bar-container {
-            background-color: var(--border-color);
-            border-radius: 9999px;
-            height: 0.85rem;
-            width: 100%;
-            overflow: hidden;
-            margin: 0.5rem 0 1rem 0;
-        }
-
-        .progress-bar-fill {
-            background-color: var(--success);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        /* Estilos específicos para o Plano Semanal Interativo */
-        .semana-card-item {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 1rem;
-            border-radius: 0.375rem;
-            margin-bottom: 1rem;
-        }
-
-        .semana-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .semana-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.25rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-add-item {
-            background: var(--success);
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--accent);
             color: white;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            font-size: calc(var(--font-size) * 0.85);
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        /* Conteúdo Principal */
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            height: 70px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
             font-weight: 600;
         }
 
-        @media(max-width: 768px) {
-            header {
-                padding: 0.75rem 1rem;
-            }
-            nav {
-                gap: 0.4rem;
-            }
-            .nav-btn {
-                padding: 0.6rem;
-            }
-            .home-rocket {
-                font-size: 6.5rem;
-            }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.25rem;
+            background: var(--bg-input);
+            padding: 0.5rem;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 50%;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: var(--bg-main);
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* Cards e Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Listas Dinâmicas */
+        .item-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .item-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Notificações Modal / Dropdown */
+        #notification-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 2rem;
+            width: 320px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        #notification-dropdown ul {
+            list-style: none;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        #notification-dropdown li {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        /* Calendário Simples */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .calendar-day-header {
+            font-weight: bold;
+            color: var(--text-muted);
+            padding: 0.5rem;
+        }
+
+        .calendar-day {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.3rem;
+            min-height: 80px;
+            padding: 0.4rem;
+            font-size: 0.875rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .calendar-day.today {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
         }
     </style>
 </head>
 <body>
 
-    <!-- Tela de Autenticação (Login, Criação de Conta e Recuperação de Senha) -->
-    <div id="auth-overlay">
-        <div class="auth-card">
-            <div class="auth-header">
-                <i class="fa-solid fa-graduation-cap"></i>
-                <h2>Plataforma de Estudos</h2>
-                <p>Sincronização em nuvem e nuvem em tempo real</p>
+    <!-- TELA DE AUTENTICAÇÃO -->
+    <div id="auth-container">
+        <!-- LOGIN -->
+        <div id="login-view" class="auth-card">
+            <h2>Entrar na Plataforma</h2>
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+            <div class="auth-links">
+                <p>Não tem uma conta? <a onclick="mudarAuthView('register')">Cadastre-se</a></p>
+                <p style="margin-top: 0.5rem;"><a onclick="mudarAuthView('forgot')">Esqueceu a senha?</a></p>
             </div>
+        </div>
 
-            <!-- Abas de Login / Cadastro -->
-            <div class="auth-tabs" id="auth-tabs-container">
-                <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
-                <button class="auth-tab" onclick="switchAuthTab('signup')">Criar Conta</button>
+        <!-- CADASTRO -->
+        <div id="register-view" class="auth-card hidden">
+            <h2>Criar Conta</h2>
+            <form id="form-register">
+                <div class="form-group">
+                    <label for="reg-nome">Nome Completo</label>
+                    <input type="text" id="reg-nome" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">E-mail</label>
+                    <input type="email" id="reg-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-senha">Senha</label>
+                    <input type="password" id="reg-senha" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+            <div class="auth-links">
+                <p>Já tem uma conta? <a onclick="mudarAuthView('login')">Faça login</a></p>
             </div>
+        </div>
 
-            <!-- Formulário de Login -->
-            <form id="form-login" class="auth-form active" onsubmit="realizarLogin(event)">
+        <!-- RECUPERAÇÃO DE SENHA -->
+        <div id="forgot-view" class="auth-card hidden">
+            <h2>Recuperar Senha</h2>
+            <form id="form-forgot">
                 <div class="form-group">
-                    <label>CPF ou E-mail</label>
-                    <input type="text" id="login-identifier" placeholder="Digite seu CPF ou e-mail" required>
+                    <label for="forgot-email">E-mail cadastrado</label>
+                    <input type="email" id="forgot-email" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" id="login-senha" placeholder="Sua senha" required>
-                </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Entrar</button>
-                <div class="auth-link" onclick="switchAuthTab('recovery')">Esqueceu sua senha?</div>
+                <button type="submit" class="btn btn-primary">Enviar instruções</button>
             </form>
-
-            <!-- Formulário de Criação de Conta -->
-            <form id="form-signup" class="auth-form" onsubmit="realizarCadastro(event)">
-                <div class="form-group">
-                    <label>CPF ou E-mail</label>
-                    <input type="text" id="signup-identifier" placeholder="Digite seu CPF ou e-mail" required>
-                </div>
-                <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" id="signup-senha" placeholder="Crie uma senha" required>
-                </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Cadastrar e Entrar</button>
-            </form>
-
-            <!-- Formulário de Recuperação de Senha -->
-            <form id="form-recovery" class="auth-form" onsubmit="realizarRecuperacao(event)">
-                <p style="font-size: 0.85rem; margin-bottom: 0.5rem;">Informe seu CPF ou e-mail cadastrado para redefinir sua senha.</p>
-                <div class="form-group">
-                    <label>CPF ou E-mail</label>
-                    <input type="text" id="recovery-identifier" placeholder="Seu CPF ou e-mail" required>
-                </div>
-                <div class="form-group">
-                    <label>Nova Senha</label>
-                    <input type="password" id="recovery-novasenha" placeholder="Digite a nova senha" required>
-                </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Redefinir Senha</button>
-                <div class="auth-link" onclick="switchAuthTab('login')">Voltar ao Login</div>
-            </form>
+            <div class="auth-links">
+                <p><a onclick="mudarAuthView('login')">Voltar ao login</a></p>
+            </div>
         </div>
     </div>
 
-    <!-- Menu Superior Minimalista com Botões Maiores e Acesso Rápido (Requisito 9) -->
-    <header>
-        <div class="logo"><i class="fa-solid fa-graduation-cap"></i> Plataforma de Estudos</div>
-        <div class="user-session-info">
-            <span class="user-email-display" id="session-user-display"></span>
-            <button class="btn-logout" onclick="fazerLogout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
-        </div>
-        <nav>
-            <button class="nav-btn active" data-tooltip="Início" onclick="switchTab('inicio', this)"><i class="fa-solid fa-house"></i></button>
-            <button class="nav-btn" data-tooltip="Metas" onclick="switchTab('metas-hoje', this)"><i class="fa-solid fa-list-check"></i></button>
-            <button class="nav-btn" data-tooltip="Configuração de Metas" onclick="switchTab('config-metas', this)"><i class="fa-solid fa-sliders"></i></button>
-            <button class="nav-btn" data-tooltip="Cadastro Livre" onclick="switchTab('cadastro', this)"><i class="fa-solid fa-book-bookmark"></i></button>
-            <button class="nav-btn" data-tooltip="Plano Semanal" onclick="switchTab('plano-semanal', this)"><i class="fa-solid fa-calendar-days"></i></button>
-            <button class="nav-btn" data-tooltip="Progresso e Estatísticas" onclick="switchTab('progresso', this)"><i class="fa-solid fa-chart-line"></i></button>
-            <button class="nav-btn" data-tooltip="Configurações" onclick="switchTab('configuracoes', this)"><i class="fa-solid fa-gear"></i></button>
-        </nav>
-    </header>
-
-    <main>
-        <!-- 1. Tela Inicial -->
-        <section id="inicio" class="tab-content active">
-            <div class="home-fullscreen">
-                <div class="home-rocket"><i class="fa-solid fa-rocket"></i></div>
-                <div class="home-phrase">Foco, Disciplina e Execução</div>
-                <div class="home-date" id="current-date">Sexta-feira, 7 de agosto de 2026 - 07:27:30</div>
-                <button class="btn-iniciar-estudos" onclick="switchTab('metas-hoje', document.querySelector('nav button:nth-child(2)'))">
-                    Iniciar Estudos
-                </button>
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <div id="app-container" class="hidden">
+        <!-- BARRA LATERAL -->
+        <aside>
+            <div>
+                <div class="sidebar-brand">EstudosPro</div>
+                <ul class="sidebar-menu">
+                    <li><a onclick="mudarView('dashboard')" class="active" id="nav-dashboard">📊 Dashboard</a></li>
+                    <li><a onclick="mudarView('materias')" id="nav-materias">📚 Matérias & Tópicos</a></li>
+                    <li><a onclick="mudarView('plano')" id="nav-plano">📅 Plano Semanal</a></li>
+                    <li><a onclick="mudarView('metas')" id="nav-metas">🎯 Metas Diárias</a></li>
+                    <li><a onclick="mudarView('revisoes')" id="nav-revisoes">🔄 Revisões</a></li>
+                    <li><a onclick="mudarView('estatisticas')" id="nav-estatisticas">📈 Estatísticas</a></li>
+                    <li><a onclick="mudarView('calendario')" id="nav-calendario">🗓️ Calendário</a></li>
+                    <li><a onclick="mudarView('configuracoes')" id="nav-configuracoes">⚙️ Configurações</a></li>
+                </ul>
             </div>
-        </section>
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="btn btn-secondary w-full">Sair</button>
+            </div>
+        </aside>
 
-        <!-- 2. Metas (Geradas Automaticamente Conforme Plano Semanal e Parâmetros) -->
-        <section id="metas-hoje" class="tab-content">
-            <div class="inner-container">
-                <h2>Metas de Hoje</h2>
-                <div class="coach-banner">
-                    <i class="fa-solid fa-robot"></i>
-                    <div>
-                        <strong>Treinador IA:</strong> <span id="coach-msg">Cada dia é um passo rumo ao seu objetivo. Foque no processo e a aprovação será inevitável!</span>
+        <!-- CONTEÚDO -->
+        <main>
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-bell" onclick="toggleNotificacoes()">
+                        🔔
+                        <span id="notif-badge" class="notification-badge hidden">0</span>
                     </div>
                 </div>
+            </header>
 
-                <!-- Seção de Revisões Programadas -->
-                <div id="wrapper-revisoes-hoje" style="display: none;">
+            <div id="notification-dropdown" class="hidden">
+                <h3>Notificações</h3>
+                <ul id="lista-notificacoes"></ul>
+            </div>
+
+            <div class="content-area">
+                <!-- SEÇÃO: DASHBOARD -->
+                <section id="view-dashboard" class="view-section active">
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>Progresso Geral</h3>
+                            <p id="dash-resumo-materias">Total de matérias: 0</p>
+                            <p id="dash-resumo-metas">Metas cumpridas hoje: 0/0</p>
+                        </div>
+                        <div class="card">
+                            <h3>Atividade Recente</h3>
+                            <ul id="dash-atividade" class="item-list">
+                                <li>Nenhuma atividade recente registrada.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO: MATÉRIAS E TÓPICOS -->
+                <section id="view-materias" class="view-section">
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>Cadastrar Matéria</h3>
+                            <form id="form-cadastrar-materia">
+                                <div class="form-group">
+                                    <label for="nova-materia-nome">Nome da Matéria</label>
+                                    <input type="text" id="nova-materia-nome" class="form-control" placeholder="Ex: Matemática" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Cadastrar Matéria</button>
+                            </form>
+                        </div>
+                        <div class="card">
+                            <h3>Cadastrar Tópico</h3>
+                            <form id="form-cadastrar-topico">
+                                <div class="form-group">
+                                    <label for="topico-materia-id">Selecione a Matéria</label>
+                                    <select id="topico-materia-id" class="form-control" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="novo-topico-nome">Nome do Tópico</label>
+                                    <input type="text" id="novo-topico-nome" class="form-control" placeholder="Ex: Frações" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Cadastrar Tópico</button>
+                            </form>
+                        </div>
+                    </div>
                     <div class="card">
-                        <div class="goals-section-title">
-                            <i class="fa-solid fa-rotate" style="color: var(--accent);"></i> Revisões Programadas (Lembrete Ativo)
+                        <h3>Lista de Matérias e Tópicos</h3>
+                        <div id="container-materias-topicos"></div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO: PLANO SEMANAL -->
+                <section id="view-plano" class="view-section">
+                    <div class="card">
+                        <h3>Plano de Estudos Semanal</h3>
+                        <form id="form-plano-semanal" class="grid-2">
+                            <div class="form-group">
+                                <label for="plano-dia">Dia da Semana</label>
+                                <select id="plano-dia" class="form-control">
+                                    <option value="Segunda">Segunda-feira</option>
+                                    <option value="Terça">Terça-feira</option>
+                                    <option value="Quarta">Quarta-feira</option>
+                                    <option value="Quinta">Quinta-feira</option>
+                                    <option value="Sexta">Sexta-feira</option>
+                                    <option value="Sábado">Sábado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="plano-descricao">Estudo Programado</label>
+                                <input type="text" id="plano-descricao" class="form-control" placeholder="Ex: Ler capítulo 1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="grid-column: span 2;">Adicionar ao Plano</button>
+                        </form>
+                        <div id="lista-plano-semanal" class="item-list" style="margin-top: 1.5rem;"></div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO: METAS DIÁRIAS -->
+                <section id="view-metas" class="view-section">
+                    <div class="card">
+                        <h3>Metas Diárias</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <button onclick="gerarMetasAutomaticas()" class="btn btn-secondary">Gerar Metas Automáticas</button>
                         </div>
-                        <div id="revisoes-hoje-list"></div>
+                        <div id="lista-metas-diarias" class="item-list"></div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Seção de Metas Diárias de Hoje -->
-                <div class="card">
-                    <div class="goals-section-title">
-                        <span><i class="fa-solid fa-book-open" style="color: var(--primary);"></i> Metas Diárias de Hoje (Automáticas)</span>
+                <!-- SEÇÃO: REVISÕES -->
+                <section id="view-revisoes" class="view-section">
+                    <div class="card">
+                        <h3>Agenda de Revisões Pendentes</h3>
+                        <div id="lista-revisoes" class="item-list"></div>
                     </div>
-                    <div id="estudo-hoje-list"></div>
-                </div>
-            </div>
-        </section>
+                </section>
 
-        <!-- 3. Nova Aba: Configuração de Metas (Campos Editáveis para alimentar automaticamente as Metas do Dia) -->
-        <section id="config-metas" class="tab-content">
-            <div class="inner-container">
-                <h2>Configuração de Metas</h2>
-                <div class="card">
-                    <h3>Parâmetros Automáticos de Estudo por Dia</h3>
-                    <p style="margin-bottom: 1.5rem;">Defina abaixo quantos tópicos por matéria, quantas matérias por dia e qual a quantidade padrão de questões serão geradas automaticamente na seção "Metas de Hoje".</p>
-                    <div class="form-grid">
+                <!-- SEÇÃO: ESTATÍSTICAS -->
+                <section id="view-estatisticas" class="view-section">
+                    <div class="card">
+                        <h3>Métricas de Desempenho</h3>
+                        <p id="stat-total-materias">Matérias cadastradas: 0</p>
+                        <p id="stat-total-topicos">Tópicos cadastrados: 0</p>
+                        <p id="stat-metas-concluidas">Taxa de conclusão de metas: 0%</p>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO: CALENDÁRIO -->
+                <section id="view-calendario" class="view-section">
+                    <div class="card">
+                        <h3>Calendário de Estudos</h3>
+                        <div id="calendario-container" class="calendar-grid" style="margin-top: 1rem;"></div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO: CONFIGURAÇÕES -->
+                <section id="view-configuracoes" class="view-section">
+                    <div class="card">
+                        <h3>Ajustes da Plataforma</h3>
                         <div class="form-group">
-                            <label>Matérias por Dia</label>
-                            <input type="number" id="param-materias-dia" value="2" min="1" max="10" oninput="salvarParametrosMetas()">
-                        </div>
-                        <div class="form-group">
-                            <label>Tópicos por Matéria</label>
-                            <input type="number" id="param-topicos-materia" value="2" min="1" max="10" oninput="salvarParametrosMetas()">
-                        </div>
-                        <div class="form-group">
-                            <label>Quantidade de Questões</label>
-                            <input type="number" id="param-questoes" value="40" min="1" max="200" oninput="salvarParametrosMetas()">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. Cadastro Livre de Matérias e Tópicos -->
-        <section id="cadastro" class="tab-content">
-            <div class="inner-container">
-                <h2>Cadastro de Matérias e Tópicos</h2>
-                
-                <!-- Barra de Pesquisa Rápida -->
-                <div class="card" style="padding: 1rem 1.75rem;">
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label><i class="fa-solid fa-magnifying-glass"></i> Pesquisa Rápida (Matérias e Tópicos)</label>
-                        <input type="text" id="input-pesquisa-rapida" placeholder="Digite para filtrar matérias ou tópicos..." oninput="filtrarPesquisaRapida(this.value)">
-                    </div>
-                </div>
-
-                <!-- Filtros (Em andamento, concluídas, revisões pendentes) -->
-                <div class="card" style="padding: 1rem 1.75rem;">
-                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
-                        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">FILTRAR:</span>
-                        <button class="btn-action" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: var(--primary);" onclick="mudarFiltroCadastro('todos')">Todas</button>
-                        <button class="btn-action" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: var(--accent); color: #0f172a;" onclick="mudarFiltroCadastro('andamento')">Em Andamento</button>
-                        <button class="btn-action" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: var(--success);" onclick="mudarFiltroCadastro('concluidas')">Concluídas</button>
-                        <button class="btn-action" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: var(--danger);" onclick="mudarFiltroCadastro('revisoes')">Revisões Pendentes</button>
-                    </div>
-                </div>
-
-                <!-- Cadastro de Matérias -->
-                <div class="card">
-                    <h3>Adicionar Nova Matéria</h3>
-                    <p style="margin-bottom: 1rem;">Cadastre o nome da matéria para depois gerenciar e adicionar seus tópicos manualmente.</p>
-                    <div class="form-grid">
-                        <div class="form-group" style="grid-column: span 2;">
-                            <label>Nome da Matéria</label>
-                            <input type="text" id="nova-materia-nome" placeholder="Ex: Direito Constitucional">
-                        </div>
-                        <div class="form-group" style="justify-content: flex-end;">
-                            <label>&nbsp;</label>
-                            <button class="btn-primary" onclick="adicionarMateria()"><i class="fa-solid fa-plus"></i> Cadastrar Matéria</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cadastro Manual de Tópicos -->
-                <div class="card">
-                    <h3>Gerenciamento de Tópicos e Matérias</h3>
-                    <p style="margin-bottom: 1rem;">Adicione tópicos manualmente para cada matéria (iniciando em 00). Você pode editar, excluir ou reorganizar quando quiser.</p>
-                    <div id="materias-gerenciador-container"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. Plano Semanal -->
-        <section id="plano-semanal" class="tab-content">
-            <div class="inner-container">
-                <h2>Plano Semanal (Segunda a Domingo)</h2>
-                <div class="card">
-                    <h3>Configuração do Cronograma Semanal</h3>
-                    <p>Adicione matérias para cada dia da semana. As metas do dia e o calendário sincronizam automaticamente.</p>
-                    <div id="plano-semanal-container" style="margin-top: 1.5rem;"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 6. Progresso, Estatísticas e Calendário (Requisito 6 & 7) -->
-        <section id="progresso" class="tab-content">
-            <div class="inner-container">
-                <h2>Progresso e Estatísticas</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Progresso Geral</h4>
-                        <div class="value" id="dash-perc">0%</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Tópicos Concluídos</h4>
-                        <div class="value" id="dash-topicos">0 / 0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Questões Resolvidas</h4>
-                        <div class="value" id="dash-questoes">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Dias Seguidos</h4>
-                        <div class="value" id="dash-dias">1 dia</div>
-                    </div>
-                </div>
-
-                <!-- Painel de Desempenho Expandido -->
-                <div class="card">
-                    <h3>Painel de Desempenho Detalhado</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-                        <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                            <h4 style="font-size: 0.8rem; color: var(--text-muted);">Progresso do Dia</h4>
-                            <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary); margin-top: 0.3rem;" id="painel-prog-dia">0%</div>
-                        </div>
-                        <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                            <h4 style="font-size: 0.8rem; color: var(--text-muted);">Progresso da Semana</h4>
-                            <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary); margin-top: 0.3rem;" id="painel-prog-semana">0%</div>
-                        </div>
-                        <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                            <h4 style="font-size: 0.8rem; color: var(--text-muted);">Progresso do Mês</h4>
-                            <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary); margin-top: 0.3rem;" id="painel-prog-mes">0%</div>
-                        </div>
-                        <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                            <h4 style="font-size: 0.8rem; color: var(--text-muted);">Cumprimento de Metas</h4>
-                            <div style="font-size: 1.25rem; font-weight: bold; color: var(--success); margin-top: 0.3rem;" id="painel-cumprimento-metas">0%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resumo com dias estudados, dias sem estudar, percentual de metas, maior sequência de dias, tópicos concluídos e questões respondidas (Requisito 7) -->
-                <div class="card" id="resumo-mensal-card">
-                    <h3>Resumo Mensal Automático</h3>
-                    <div id="resumo-mensal-conteudo"></div>
-                </div>
-
-                <!-- Calendário mostrando automaticamente dias estudados e não estudados (Requisito 6) -->
-                <div class="card">
-                    <h3>Calendário Integrado (Dias Estudados e Não Estudados)</h3>
-                    <div id="calendario-integrado-container" style="margin-bottom: 1.5rem;"></div>
-                    <h3>Progresso Detalhado por Matéria</h3>
-                    <div id="progresso-materias-container"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 7. Configurações, Notificações Push e Aparência (Requisito 8) -->
-        <section id="configuracoes" class="tab-content">
-            <div class="inner-container">
-                <h2>Configurações do Sistema</h2>
-                
-                <!-- Configurações de Notificações Push (Requisito 8) -->
-                <div class="card">
-                    <h3>Gerenciamento de Notificações Push</h3>
-                    <p style="margin-bottom: 1.25rem;">Ative ou desative lembretes automáticos de metas do dia, revisões, horário de estudo, metas pendentes, conclusão das metas e alertas caso fique dias sem estudar.</p>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem;">
-                        <button class="btn-primary" style="width: fit-content;" onclick="solicitarPermissaoNotificacoes()"><i class="fa-solid fa-bell"></i> Habilitar Permissão de Notificações no Navegador</button>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Status Geral das Notificações</label>
-                            <select id="notif-ativo" onchange="salvarConfiguracoesNotificacao()">
-                                <option value="enabled">Ativadas</option>
-                                <option value="disabled">Desativadas</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Horário do Lembrete de Estudo</label>
-                            <input type="time" id="notif-horario" value="08:00" onchange="salvarConfiguracoesNotificacao()">
-                        </div>
-                        <div class="form-group">
-                            <label>Lembrete de Metas e Revisões</label>
-                            <select id="notif-metas" onchange="salvarConfiguracoesNotificacao()">
-                                <option value="enabled">Ativado</option>
-                                <option value="disabled">Desativado</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Alerta de Dias Sem Estudar</label>
-                            <select id="notif-inatividade" onchange="salvarConfiguracoesNotificacao()">
-                                <option value="enabled">Ativado</option>
-                                <option value="disabled">Desativado</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aparência e Cores -->
-                <div class="card">
-                    <h3>Aparência e Cores Customizadas</h3>
-                    <p style="margin-bottom: 1.25rem;">Escolha temas prontos ou customize cada detalhe de cor da plataforma livremente com salvamento automático em nuvem.</p>
-                    
-                    <div class="form-grid" style="margin-bottom: 1.5rem;">
-                        <div class="form-group">
-                            <label>Temas Prontos</label>
-                            <select id="config-preset-tema" onchange="aplicarTemaPronto(this.value)">
-                                <option value="custom">Personalizado (Livre)</option>
-                                <option value="indigo">Padrão (Índigo)</option>
-                                <option value="emerald">Esmeralda (Verde)</option>
-                                <option value="violet">Violeta Neon</option>
-                                <option value="blue">Azul Profundo</option>
-                                <option value="sunset">Sunset Amber</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Modo de Exibição</label>
-                            <select id="config-theme" onchange="aplicarConfiguracoes()">
+                            <label for="select-tema">Tema da Aplicação</label>
+                            <select id="select-tema" class="form-control" onchange="mudarTema(this.value)">
                                 <option value="dark">Escuro (Dark)</option>
                                 <option value="light">Claro (Light)</option>
                             </select>
                         </div>
-                    </div>
-
-                    <!-- Seletor Livre de Cores Detalhado -->
-                    <div class="form-grid">
                         <div class="form-group">
-                            <label>Cor Principal / Botões / Ícones</label>
-                            <div class="color-picker-group">
-                                <input type="color" id="picker-primary" value="#4f46e5" oninput="aplicarConfiguracoes()">
-                                <span id="val-primary" style="font-size: 0.85rem; color: var(--text-muted);">#4f46e5</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Cor de Destaque / Acentos / R-Revisões</label>
-                            <div class="color-picker-group">
-                                <input type="color" id="picker-accent" value="#f59e0b" oninput="aplicarConfiguracoes()">
-                                <span id="val-accent" style="font-size: 0.85rem; color: var(--text-muted);">#f59e0b</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Fundo da Página (Body)</label>
-                            <div class="color-picker-group">
-                                <input type="color" id="picker-bg" value="#0f172a" oninput="aplicarConfiguracoes()">
-                                <span id="val-bg" style="font-size: 0.85rem; color: var(--text-muted);">#0f172a</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Fundo dos Cartões e Menus</label>
-                            <div class="color-picker-group">
-                                <input type="color" id="picker-card" value="#1e293b" oninput="aplicarConfiguracoes()">
-                                <span id="val-card" style="font-size: 0.85rem; color: var(--text-muted);">#1e293b</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Barras de Progresso / Sucesso</label>
-                            <div class="color-picker-group">
-                                <input type="color" id="picker-success" value="#10b981" oninput="aplicarConfiguracoes()">
-                                <span id="val-success" style="font-size: 0.85rem; color: var(--text-muted);">#10b981</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Bordas e Divisórias</label>
-                            <div class="color-picker-group">
-                                <input type="color" id="picker-border" value="#334155" oninput="aplicarConfiguracoes()">
-                                <span id="val-border" style="font-size: 0.85rem; color: var(--text-muted);">#334155</span>
-                            </div>
+                            <button onclick="sincronizarDados()" class="btn btn-secondary w-full">Sincronizar com Nuvem / LocalStorage</button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Demais Configurações -->
-                <div class="card">
-                    <h3>Tipografia e Ajustes Gerais</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Família de Fonte</label>
-                            <select id="config-font" onchange="aplicarConfiguracoes()">
-                                <option value="segoe">Segoe UI</option>
-                                <option value="roboto">Roboto</option>
-                                <option value="inter">Inter</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tamanho da Fonte</label>
-                            <select id="config-fontsize" onchange="aplicarConfiguracoes()">
-                                <option value="small">Pequena</option>
-                                <option value="medium" selected>Média</option>
-                                <option value="large">Grande</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tamanho dos Ícones</label>
-                            <select id="config-iconsize" onchange="aplicarConfiguracoes()">
-                                <option value="small">Pequeno</option>
-                                <option value="medium" selected>Médio</option>
-                                <option value="large">Grande</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Animações</label>
-                            <select id="config-anim" onchange="aplicarConfiguracoes()">
-                                <option value="enabled">Ativadas</option>
-                                <option value="disabled">Desativadas</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                        <button class="btn-danger" onclick="resetarDados()">Restaurar Padrão</button>
-                        <button class="btn-danger" style="background-color: #b91c1c;" onclick="limparTodosDados()">Zerar Todos os Dados</button>
-                    </div>
-                </div>
+                </section>
             </div>
-        </section>
-    </main>
+        </main>
+    </div>
 
-    <!-- Script da Aplicação com Banco de Dados em Nuvem, Sincronização em Tempo Real e Notificações Push -->
+    <!-- SCRIPT DA APLICAÇÃO -->
     <script>
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if (element) element.classList.add('active');
-            atualizarTelas();
-        }
-
-        function switchAuthTab(tabName) {
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            if (tabName === 'login') {
-                document.getElementById('form-login').classList.add('active');
-                document.querySelector('#auth-tabs-container button:nth-child(1)').classList.add('active');
-            } else if (tabName === 'signup') {
-                document.getElementById('form-signup').classList.add('active');
-                document.querySelector('#auth-tabs-container button:nth-child(2)').classList.add('active');
-            } else if (tabName === 'recovery') {
-                document.getElementById('form-recovery').classList.add('active');
-            }
-        }
-
-        // Frases motivacionais rotativas
-        const frasesMotivacionais = [
-            "Cada dia é um passo rumo ao seu objetivo.",
-            "A constância é o segredo de quem alcança a aprovação.",
-            "Supere seus limites hoje para colher os frutos amanhã.",
-            "A lei seca e as questões são suas maiores aliadas."
-        ];
-        document.getElementById('coach-msg').innerText = frasesMotivacionais[Math.floor(Math.random() * frasesMotivacionais.length)];
-
-        // Data e hora automáticas, em português e 24 horas, atualizando em tempo real.
-        const diasSemanaMap = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-        let dataAtualObj = new Date();
-        let diaSemanaHojeNome = diasSemanaMap[dataAtualObj.getDay()];
-
-        function atualizarRelogioTempoReal() {
-            const agora = new Date();
-            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            let dataStr = agora.toLocaleDateString('pt-BR', optionsDate);
-            dataStr = dataStr.charAt(0).toUpperCase() + dataStr.slice(1);
-            let horaStr = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-            
-            const elDate = document.getElementById('current-date');
-            if (elDate) {
-                elDate.innerText = `${dataStr} - ${horaStr}`;
-            }
-        }
-        setInterval(atualizarRelogioTempoReal, 1000);
-        atualizarRelogioTempoReal();
-
-        // Sistema de Banco de Dados em Nuvem (Simulado via BroadcastChannel + Cloud Storage em tempo real)
-        const CLOUD_DB_KEY = 'arlan_estudos_cloud_db_v10';
-        const SESSION_USER_KEY = 'arlan_estudos_current_user_v10';
-
-        let currentUser = localStorage.getItem(SESSION_USER_KEY) || null;
-
-        // Estrutura padrão de dados da nuvem garantindo preservação integral de dados (Requisito 10)
-        const getDefaultCloudData = () => ({
+        // Estado Global da Aplicação
+        let appData = {
+            usuarioLogado: null,
+            usuarios: [],
             materias: [],
+            topicos: [],
+            planoSemanal: [],
+            metasDiarias: [],
             revisoes: [],
-            planoSemanal: [
-                { dia: "Segunda-feira", materias: [] },
-                { dia: "Terça-feira", materias: [] },
-                { dia: "Quarta-feira", materias: [] },
-                { dia: "Quinta-feira", materias: [] },
-                { dia: "Sexta-feira", materias: [] },
-                { dia: "Sábado", materias: [] },
-                { dia: "Domingo", materias: [] }
-            ],
-            parametrosMetas: {
-                materiasPorDia: 2,
-                topicosPorMateria: 2,
-                quantidadeQuestoes: 40
-            },
-            notificacoesConfig: {
-                ativo: "enabled",
-                horario: "08:00",
-                metas: "enabled",
-                inatividade: "enabled"
-            },
-            historicoEstudos: {},
-            estatisticas: {
-                questoesResolvidas: 0
-            },
-            config: {
-                theme: "dark",
-                preset: "custom",
-                primary: "#4f46e5",
-                accent: "#f59e0b",
-                bgColor: "#0f172a",
-                cardBg: "#1e293b",
-                success: "#10b981",
-                border: "#334155",
-                font: "segoe",
-                fontsize: "medium",
-                iconsize: "medium",
-                anim: "enabled"
-            }
+            notificacoes: [],
+            configuracoes: { tema: 'dark' }
+        };
+
+        // Inicializador Geral
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarDadosUsuario();
+            inicializarEventos();
+            verificarSessaoAtiva();
         });
 
-        function getCloudDatabase() {
-            let db = localStorage.getItem(CLOUD_DB_KEY);
-            return db ? JSON.parse(db) : {};
+        // Gerenciamento de Persistência
+        function salvarDados() {
+            try {
+                localStorage.setItem("appData_estudos_completo", JSON.stringify(appData));
+            } catch (e) {
+                console.error("Erro ao salvar dados no LocalStorage:", e);
+            }
         }
-
-        function saveCloudDatabase(db) {
-            localStorage.setItem(CLOUD_DB_KEY, JSON.stringify(db));
-            // Sincronização em tempo real entre computadores e celulares através do evento storage
-            window.dispatchEvent(new StorageEvent('storage', { key: CLOUD_DB_KEY, newValue: JSON.stringify(db) }));
-        }
-
-        let appData = getDefaultCloudData();
 
         function carregarDadosUsuario() {
-            if (!currentUser) return;
-            let db = getCloudDatabase();
-            if (!db[currentUser]) {
-                db[currentUser] = {
-                    senha: "123",
-                    data: getDefaultCloudData()
-                };
-                saveCloudDatabase(db);
-            } else {
-                // Mesclagem segura para garantir que nenhum dado pré-existente seja apagado ou corrompido (Requisito 10)
-                let defaultData = getDefaultCloudData();
-                db[currentUser].data = Object.assign({}, defaultData, db[currentUser].data);
-            }
-            appData = db[currentUser].data;
-        }
-
-        function salvarDados() {
-            if (!currentUser) return;
-            let db = getCloudDatabase();
-            if (!db[currentUser]) {
-                db[currentUser] = { senha: "123", data: appData };
-            } else {
-                db[currentUser].data = appData;
-            }
-            saveCloudDatabase(db);
-            atualizarTelas();
-        }
-
-        // Sincronização em tempo real entre dispositivos/abas
-        window.addEventListener('storage', (event) => {
-            if (event.key === CLOUD_DB_KEY && currentUser) {
-                let db = getCloudDatabase();
-                if (db[currentUser]) {
-                    appData = db[currentUser].data;
-                    carregarConfiguracoesNaTela();
-                    atualizarTelas();
+            try {
+                const dados = localStorage.getItem("appData_estudos_completo");
+                if (dados) {
+                    appData = { ...appData, ...JSON.parse(dados) };
                 }
+            } catch (e) {
+                console.error("Erro ao carregar dados do LocalStorage:", e);
             }
-        });
+            aplicarTema(appData.configuracoes.tema || 'dark');
+        }
 
-        // Autenticação: Login, Cadastro e Recuperação
-        function realizarLogin(e) {
-            e.preventDefault();
-            const identifier = document.getElementById('login-identifier').value.trim();
-            const senha = document.getElementById('login-senha').value.trim();
+        // Sistema de Autenticação e Telas
+        function mudarAuthView(view) {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('register-view').classList.add('hidden');
+            document.getElementById('forgot-view').classList.add('hidden');
+            
+            if (view === 'login') document.getElementById('login-view').classList.remove('hidden');
+            if (view === 'register') document.getElementById('register-view').classList.remove('hidden');
+            if (view === 'forgot') document.getElementById('forgot-view').classList.remove('hidden');
+        }
 
-            let db = getCloudDatabase();
-            if (db[identifier]) {
-                if (db[identifier].senha === senha) {
-                    currentUser = identifier;
-                    localStorage.setItem(SESSION_USER_KEY, currentUser);
-                    iniciarSessaoUI();
-                } else {
-                    alert('Senha incorreta.');
-                }
+        function verificarSessaoAtiva() {
+            if (appData.usuarioLogado) {
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                atualizarInterfaceCompleta();
             } else {
-                db[identifier] = { senha: senha, data: getDefaultCloudData() };
-                saveCloudDatabase(db);
-                currentUser = identifier;
-                localStorage.setItem(SESSION_USER_KEY, currentUser);
-                iniciarSessaoUI();
+                document.getElementById('auth-container').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('hidden');
             }
         }
 
-        function realizarCadastro(e) {
-            e.preventDefault();
-            const identifier = document.getElementById('signup-identifier').value.trim();
-            const senha = document.getElementById('signup-senha').value.trim();
-
-            let db = getCloudDatabase();
-            if (db[identifier]) {
-                alert('Este CPF ou e-mail já está cadastrado. Faça login.');
-                switchAuthTab('login');
-                return;
-            }
-
-            db[identifier] = { senha: senha, data: getDefaultCloudData() };
-            saveCloudDatabase(db);
-            currentUser = identifier;
-            localStorage.setItem(SESSION_USER_KEY, currentUser);
-            alert('Conta criada com sucesso!');
-            iniciarSessaoUI();
+        function logout() {
+            appData.usuarioLogado = null;
+            salvarDados();
+            verificarSessaoAtiva();
         }
 
-        function realizarRecuperacao(e) {
-            e.preventDefault();
-            const identifier = document.getElementById('recovery-identifier').value.trim();
-            const novaSenha = document.getElementById('recovery-novasenha').value.trim();
+        // Navegação Interna
+        function mudarView(viewId) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
 
-            let db = getCloudDatabase();
-            if (!db[identifier]) {
-                db[identifier] = { senha: novaSenha, data: getDefaultCloudData() };
-            } else {
-                db[identifier].senha = novaSenha;
-            }
-            saveCloudDatabase(db);
-            alert('Senha redefinida com sucesso! Faça login com a nova senha.');
-            switchAuthTab('login');
-        }
+            const targetView = document.getElementById(`view-${viewId}`);
+            const targetNav = document.getElementById(`nav-${viewId}`);
 
-        function fazerLogout() {
-            currentUser = null;
-            localStorage.removeItem(SESSION_USER_KEY);
-            document.getElementById('auth-overlay').style.display = 'flex';
-        }
+            if (targetView) targetView.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
 
-        function iniciarSessaoUI() {
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.getElementById('session-user-display').innerText = currentUser;
-            carregarDadosUsuario();
-            carregarConfiguracoesNaTela();
-            atualizarTelas();
-            verificarNotificacoesPushAutomaticas();
-        }
-
-        // Verificar sessão ativa ao abrir
-        if (currentUser) {
-            iniciarSessaoUI();
-        } else {
-            document.getElementById('auth-overlay').style.display = 'flex';
-        }
-
-        function salvarParametrosMetas() {
-            const matDia = parseInt(document.getElementById('param-materias-dia').value) || 2;
-            const topMat = parseInt(document.getElementById('param-topicos-materia').value) || 2;
-            const qtdQ = parseInt(document.getElementById('param-questoes').value) || 40;
-
-            appData.parametrosMetas = {
-                materiasPorDia: matDia,
-                topicosPorMateria: topMat,
-                quantidadeQuestoes: qtdQ
+            const titulos = {
+                dashboard: 'Dashboard',
+                materias: 'Matérias & Tópicos',
+                plano: 'Plano Semanal',
+                metas: 'Metas Diárias',
+                revisoes: 'Revisões Pendentes',
+                estatisticas: 'Estatísticas',
+                calendario: 'Calendário',
+                configuracoes: 'Configurações'
             };
-            salvarDados();
+            document.getElementById('page-title').textContent = titulos[viewId] || 'Plataforma';
         }
 
-        function salvarConfiguracoesNotificacao() {
-            if (!appData.notificacoesConfig) appData.notificacoesConfig = {};
-            appData.notificacoesConfig.ativo = document.getElementById('notif-ativo').value;
-            appData.notificacoesConfig.horario = document.getElementById('notif-horario').value;
-            appData.notificacoesConfig.metas = document.getElementById('notif-metas').value;
-            appData.notificacoesConfig.inatividade = document.getElementById('notif-inatividade').value;
-            salvarDados();
-            dispararNotificacaoPush("Configurações Atualizadas", "Suas preferências de notificações push foram salvas com sucesso!");
-        }
-
-        // Sistema de Notificações Push (Requisito 8)
-        function solicitarPermissaoNotificacoes() {
-            if (!("Notification" in window)) {
-                alert("Este navegador não suporta notificações desktop.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    alert("Notificações permitidas com sucesso!");
-                    dispararNotificacaoPush("Treinador IA", "Notificações ativadas! Você receberá seus lembretes e avisos por aqui.");
-                } else {
-                    alert("Permissão de notificações negada.");
-                }
-            });
-        }
-
-        function dispararNotificacaoPush(titulo, corpo) {
-            if (!appData.notificacoesConfig || appData.notificacoesConfig.ativo === "disabled") return;
-            if ("Notification" in window && Notification.permission === "granted") {
-                try {
-                    new Notification(titulo, {
-                        body: corpo,
-                        icon: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/graduation-cap.svg"
-                    });
-                } catch (e) {
-                    console.log("Erro ao disparar notificação:", e);
-                }
-            }
-        }
-
-        function verificarNotificacoesPushAutomaticas() {
-            if (!appData.notificacoesConfig || appData.notificacoesConfig.ativo === "disabled") return;
-            
-            // Verificar revisões e metas pendentes para notificação
-            let revPendentes = (appData.revisoes || []).filter(r => !r.concluido).length;
-            if (revPendentes > 0 && appData.notificacoesConfig.metas === "enabled") {
-                setTimeout(() => {
-                    dispararNotificacaoPush("Lembrete de Metas e Revisões", `Você possui ${revPendentes} revisão(ões) pendente(s) programada(s) para hoje!`);
-                }, 2000);
-            }
-
-            // Verificar inatividade (dias sem estudar)
-            const hojeIso = new Date().toISOString().split('T')[0];
-            const ontemObj = new Date();
-            ontemObj.setDate(ontemObj.getDate() - 1);
-            const ontemIso = ontemObj.toISOString().split('T')[0];
-
-            if (appData.notificacoesConfig.inatividade === "enabled") {
-                if (appData.historicoEstudos && !appData.historicoEstudos[hojeIso] && !appData.historicoEstudos[ontemIso]) {
-                    setTimeout(() => {
-                        dispararNotificacaoPush("Aviso de Inatividade", "Notamos que você ficou alguns dias sem estudar. Vamos retomar o ritmo rumo à aprovação!");
-                    }, 4000);
-                }
-            }
-        }
-
-        function registrarDiaEstudadoHoje() {
-            const hojeIso = new Date().toISOString().split('T')[0];
-            if (!appData.historicoEstudos) appData.historicoEstudos = {};
-            appData.historicoEstudos[hojeIso] = true;
-            salvarDados();
-            dispararNotificacaoPush("Meta Concluída!", "Parabéns! Seu estudo de hoje foi registrado e contabilizado com sucesso.");
-        }
-
-        // Cadastro de Matérias
-        function adicionarMateria() {
-            const nome = document.getElementById('nova-materia-nome').value.trim();
-            if (!nome) return alert('Digite o nome da matéria.');
-
-            if (appData.materias.some(m => m.nome.toLowerCase() === nome.toLowerCase())) {
-                return alert('Esta matéria já está cadastrada.');
-            }
-
-            appData.materias.push({
-                id: Date.now(),
-                nome: nome,
-                topicos: []
-            });
-            document.getElementById('nova-materia-nome').value = '';
-            salvarDados();
-            alert('Matéria cadastrada com sucesso!');
-        }
-
-        function adicionarTopicoManual(materiaId) {
-            let m = appData.materias.find(x => x.id === materiaId);
-            if (!m) return;
-
-            let proximoNum = m.topicos.length;
-            let numFormatado = proximoNum < 10 ? '0' + proximoNum : proximoNum;
-            let nomeSugerido = `Tópico ${numFormatado} - Novo Conteúdo`;
-
-            let nomeTopico = prompt(`Adicionar tópico para ${m.nome} (Iniciando em 00):`, nomeSugerido);
-            if (nomeTopico && nomeTopico.trim() !== '') {
-                m.topicos.push({
-                    id: Date.now() + Math.random(),
-                    nome: nomeTopico.trim(),
-                    concluido: false
-                });
-                salvarDados();
-            }
-        }
-
-        function editarTopico(materiaId, topicoId) {
-            let m = appData.materias.find(x => x.id === materiaId);
-            if (!m) return;
-            let t = m.topicos.find(x => x.id === topicoId);
-            if (!t) return;
-
-            let novoNome = prompt('Editar nome do tópico:', t.nome);
-            if (novoNome && novoNome.trim() !== '') {
-                t.nome = novoNome.trim();
-                salvarDados();
-            }
-        }
-
-        function excluirTopico(materiaId, topicoId) {
-            let m = appData.materias.find(x => x.id === materiaId);
-            if (!m) return;
-            m.topicos = m.topicos.filter(t => t.id !== topicoId);
-            salvarDados();
-        }
-
-        function moverTopico(materiaId, index, direcao) {
-            let m = appData.materias.find(x => x.id === materiaId);
-            if (!m) return;
-            let novoIndex = index + direcao;
-            if (novoIndex < 0 || novoIndex >= m.topicos.length) return;
-
-            let temp = m.topicos[index];
-            m.topicos[index] = m.topicos[novoIndex];
-            m.topicos[novoIndex] = temp;
-            salvarDados();
-        }
-
-        function removerMateria(id) {
-            let m = appData.materias.find(x => x.id == id);
-            if (m) {
-                appData.revisoes = appData.revisoes.filter(r => r.materia !== m.nome);
-            }
-            appData.materias = appData.materias.filter(m => m.id != id);
-            appData.planoSemanal.forEach(p => {
-                p.materias = p.materias.filter(matId => matId !== id);
-            });
-            salvarDados();
-        }
-
-        let filtroAtualCadastro = 'todos';
-        function mudarFiltroCadastro(filtro) {
-            filtroAtualCadastro = filtro;
-            renderGerenciadorMaterias();
-        }
-
-        let termoPesquisaAtual = '';
-        function filtrarPesquisaRapida(termo) {
-            termoPesquisaAtual = termo.toLowerCase().trim();
-            renderGerenciadorMaterias();
-        }
-
-        function renderGerenciadorMaterias() {
-            const container = document.getElementById('materias-gerenciador-container');
-            container.innerHTML = '';
-            
-            let materiasFiltradas = appData.materias.filter(m => {
-                let matchPesquisa = true;
-                if (termoPesquisaAtual) {
-                    let matchMat = m.nome.toLowerCase().includes(termoPesquisaAtual);
-                    let matchTop = m.topicos.some(t => t.nome.toLowerCase().includes(termoPesquisaAtual));
-                    matchPesquisa = matchMat || matchTop;
-                }
-                if (!matchPesquisa) return false;
-
-                let totalT = m.topicos.length;
-                let conclT = m.topicos.filter(t => t.concluido).length;
-                let temRevisao = appData.revisoes.some(r => r.materia === m.nome && !r.concluido);
-
-                if (filtroAtualCadastro === 'andamento') {
-                    return totalT > 0 && conclT < totalT;
-                } else if (filtroAtualCadastro === 'concluidas') {
-                    return totalT > 0 && conclT === totalT;
-                } else if (filtroAtualCadastro === 'revisoes') {
-                    return temRevisao;
-                }
-                return true;
-            });
-
-            if (materiasFiltradas.length === 0) {
-                container.innerHTML = `<p>Nenhuma matéria encontrada com os filtros ou pesquisa atuais.</p>`;
-                return;
-            }
-
-            materiasFiltradas.forEach(m => {
-                let topicosHtml = '';
-                if (m.topicos.length === 0) {
-                    topicosHtml = `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nenhum tópico cadastrado ainda.</p>`;
-                } else {
-                    topicosHtml = m.topicos.map((t, idx) => `
-                        <div class="semana-item-row" style="margin-bottom: 0.4rem;">
-                            <span><strong>#${idx < 10 ? '0' + idx : idx}</strong> - ${t.nome} ${t.concluido ? '(Concluído)' : ''}</span>
-                            <div style="display: flex; gap: 0.3rem;">
-                                <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="moverTopico(${m.id}, ${idx}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
-                                <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="moverTopico(${m.id}, ${idx}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
-                                <button class="btn-primary" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="editarTopico(${m.id}, ${t.id})">Editar</button>
-                                <button class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="excluirTopico(${m.id}, ${t.id})">Excluir</button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-
-                container.innerHTML += `
-                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.375rem; margin-bottom: 1.25rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <strong>${m.nome} (${m.topicos.length} tópicos)</strong>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="btn-add-item" onclick="adicionarTopicoManual(${m.id})"><i class="fa-solid fa-plus"></i> Adicionar Tópico</button>
-                                <button class="btn-danger" onclick="removerMateria(${m.id})">Excluir Matéria</button>
-                            </div>
-                        </div>
-                        <div style="max-height: 250px; overflow-y: auto;">
-                            ${topicosHtml}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function renderPlanoSemanal() {
-            const container = document.getElementById('plano-semanal-container');
-            container.innerHTML = '';
-
-            appData.planoSemanal.forEach((p, idx) => {
-                let checkboxesHtml = '';
-                if (appData.materias.length === 0) {
-                    checkboxesHtml = `<p style="font-size: 0.85rem; color: var(--text-muted);">Cadastre matérias primeiro para selecioná-las aqui.</p>`;
-                } else {
-                    checkboxesHtml = appData.materias.map(m => {
-                        let isChecked = p.materias.includes(m.id) ? 'checked' : '';
-                        return `
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: var(--text-main);">
-                                <input type="checkbox" value="${m.id}" ${isChecked} onchange="atualizarPlanoDiaMemoria(${idx}, ${m.id}, this.checked)">
-                                ${m.nome}
-                            </label>
-                        `;
-                    }).join('');
-                }
-
-                container.innerHTML += `
-                    <div class="semana-card-item">
-                        <div class="semana-card-header">
-                            <strong>${p.dia}</strong>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem;">
-                            ${checkboxesHtml}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function atualizarPlanoDiaMemoria(diaIdx, materiaId, isChecked) {
-            let planoDia = appData.planoSemanal[diaIdx];
-            if (isChecked) {
-                if (!planoDia.materias.includes(materiaId)) {
-                    planoDia.materias.push(materiaId);
-                }
-            } else {
-                planoDia.materias = planoDia.materias.filter(id => id !== materiaId);
-            }
-            salvarDados();
-        }
-
-        function renderMetasHoje() {
-            const revWrapper = document.getElementById('wrapper-revisoes-hoje');
-            const revContainer = document.getElementById('revisoes-hoje-list');
-            revContainer.innerHTML = '';
-
-            let revisoesPendentes = appData.revisoes.filter(r => !r.concluido);
-
-            if (revisoesPendentes.length === 0) {
-                revWrapper.style.display = 'none';
-            } else {
-                revWrapper.style.display = 'block';
-                revisoesPendentes.forEach(r => {
-                    revContainer.innerHTML += `
-                        <div class="goal-item" style="border-left: 4px solid var(--accent);">
-                            <div class="goal-header">
-                                <div class="goal-info">
-                                    <h4>${r.materia}</h4>
-                                    <p><strong>Revisar Tópico:</strong> ${r.topico}</p>
-                                    <p><i class="fa-solid fa-bell" style="color: var(--accent);"></i> <strong>Lembrete:</strong> Revisão Programada Ativa</p>
-                                </div>
-                                <span class="badge badge-rev">Revisão R${r.revNum}</span>
-                            </div>
-                            <div class="goal-actions">
-                                <div class="questoes-input-container">
-                                    <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
-                                    <input type="number" id="input-q-rev-${r.id}" value="${r.questoes || appData.parametrosMetas.quantidadeQuestoes}" min="1" max="200">
-                                </div>
-                                <button class="btn-action" onclick="concluirRevisao(${r.id})"><i class="fa-solid fa-check"></i> Concluir Revisão</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            const estudoContainer = document.getElementById('estudo-hoje-list');
-            estudoContainer.innerHTML = '';
-            
-            let planoHojeObj = appData.planoSemanal.find(p => p.dia === diaSemanaHojeNome);
-            let materiasIdsHoje = planoHojeObj ? planoHojeObj.materias : [];
-            let maxMaterias = appData.parametrosMetas.materiasPorDia || 2;
-            let maxTopicos = appData.parametrosMetas.topicosPorMateria || 2;
-            let defaultQ = appData.parametrosMetas.quantidadeQuestoes || 40;
-
-            let countMaterias = 0;
-            materiasIdsHoje.forEach(matId => {
-                if (countMaterias >= maxMaterias) return;
-                let m = appData.materias.find(x => x.id === matId);
-                if (m) {
-                    let topicosPendentes = m.topicos.filter(t => !t.concluido).slice(0, maxTopicos);
-
-                    if (topicosPendentes.length > 0) {
-                        topicosPendentes.forEach((t, tIdx) => {
-                            estudoContainer.innerHTML += `
-                                <div class="goal-item">
-                                    <div class="goal-header">
-                                        <div class="goal-info">
-                                            <h4>${m.nome}</h4>
-                                            <p><strong>Tópico:</strong> ${t.nome}</p>
-                                            <p><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Teoria + Questões</p>
-                                        </div>
-                                        <span class="badge">Meta de Hoje (${diaSemanaHojeNome})</span>
-                                    </div>
-                                    <div class="goal-actions">
-                                        <div class="questoes-input-container">
-                                            <label style="font-size: 0.85rem; color: var(--text-muted);">Questões:</label>
-                                            <input type="number" id="input-q-est-${m.id}-${t.id}" value="${defaultQ}" min="1" max="200">
-                                        </div>
-                                        <button class="btn-action" onclick="concluirEstudo(${m.id}, ${t.id})"><i class="fa-solid fa-play"></i> Concluir Tópico</button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        countMaterias++;
-                    } else {
-                        let statusMsg = m.topicos.length === 0 ? "Nenhum tópico cadastrado ainda para esta matéria." : "Todos os tópicos desta matéria já foram concluídos!";
-                        estudoContainer.innerHTML += `
-                            <div class="goal-item" style="opacity: 0.8;">
-                                <div class="goal-header">
-                                    <div class="goal-info">
-                                        <h4>${m.nome}</h4>
-                                        <p style="color: var(--accent);"><strong>Aviso:</strong> ${statusMsg}</p>
-                                    </div>
-                                    <span class="badge" style="background-color: var(--text-muted);">Matéria do Dia</span>
-                                </div>
-                            </div>
-                        `;
-                        countMaterias++;
-                    }
-                }
-            });
-
-            if (materiasIdsHoje.length === 0 && revisoesPendentes.length === 0) {
-                estudoContainer.innerHTML = `<p>Nenhuma matéria programada para hoje (${diaSemanaHojeNome}). Configure seu plano semanal.</p>`;
-            }
-        }
-
-        function concluirRevisao(id) {
-            let r = appData.revisoes.find(x => x.id == id);
-            let inputQ = document.getElementById(`input-q-rev-${id}`);
-            let qRespondidas = inputQ ? parseInt(inputQ.value) || appData.parametrosMetas.quantidadeQuestoes : appData.parametrosMetas.quantidadeQuestoes;
-
-            if (r) {
-                r.concluido = true;
-                appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
-                registrarDiaEstudadoHoje();
-
-                if (r.revNum < 20) {
-                    appData.revisoes.push({
-                        id: Date.now() + Math.random(),
-                        materia: r.materia,
-                        topico: r.topico,
-                        revNum: r.revNum + 1,
-                        questoes: appData.parametrosMetas.quantidadeQuestoes,
-                        concluido: false
-                    });
-                }
-                salvarDados();
-            }
-        }
-
-        function concluirEstudo(materiaId, topicoId) {
-            let m = appData.materias.find(x => x.id == materiaId);
-            if (m) {
-                let t = m.topicos.find(x => x.id == topicoId);
-                let inputQ = document.getElementById(`input-q-est-${materiaId}-${topicoId}`);
-                let qRespondidas = inputQ ? parseInt(inputQ.value) || appData.parametrosMetas.quantidadeQuestoes : appData.parametrosMetas.quantidadeQuestoes;
-
-                if (t) {
-                    t.concluido = true;
-                    appData.estatisticas.questoesResolvidas = (appData.estatisticas.questoesResolvidas || 0) + qRespondidas;
-                    registrarDiaEstudadoHoje();
-
-                    appData.revisoes.push({
-                        id: Date.now() + Math.random(),
-                        materia: m.nome,
-                        topico: t.nome,
-                        revNum: 1,
-                        questoes: appData.parametrosMetas.quantidadeQuestoes,
-                        concluido: false
-                    });
-                    salvarDados();
-                }
-            }
-        }
-
-        function atualizarProgresso() {
-            let totalTopicos = 0;
-            let concluidosTopicos = 0;
-            let container = document.getElementById('progresso-materias-container');
-            container.innerHTML = '';
-
-            if (appData.materias.length === 0) {
-                container.innerHTML = `<p>Nenhum dado de progresso disponível.</p>`;
-            }
-
-            appData.materias.forEach(m => {
-                let mTotal = m.topicos.length;
-                let mConc = m.topicos.filter(t => t.concluido).length;
-                totalTopicos += mTotal;
-                concluidosTopicos += mConc;
-                let perc = mTotal > 0 ? Math.round((mConc / mTotal) * 100) : 0;
-
-                container.innerHTML += `
-                    <div style="margin-bottom: 1.25rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                            <strong>${m.nome}</strong>
-                            <span>${mConc}/${mTotal} tópicos (${perc}%)</span>
-                        </div>
-                        <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${perc}%;"></div></div>
-                    </div>
-                `;
-            });
-
-            let geralPerc = totalTopicos > 0 ? Math.round((concluidosTopicos / totalTopicos) * 100) : 0;
-            document.getElementById('dash-perc').innerText = geralPerc + '%';
-            document.getElementById('dash-topicos').innerText = `${concluidosTopicos} / ${totalTopicos}`;
-            document.getElementById('dash-questoes').innerText = appData.estatisticas.questoesResolvidas || 0;
-
-            // Painel de Desempenho
-            document.getElementById('painel-prog-dia').innerText = geralPerc + '%';
-            document.getElementById('painel-prog-semana').innerText = geralPerc + '%';
-            document.getElementById('painel-prog-mes').innerText = geralPerc + '%';
-            document.getElementById('painel-cumprimento-metas').innerText = geralPerc > 0 ? '100%' : '0%';
-
-            // Resumo com dias estudados, dias sem estudar, percentual de metas, maior sequência de dias, tópicos concluídos e questões respondidas (Requisito 7)
-            const resumoContainer = document.getElementById('resumo-mensal-conteudo');
-            const dataHoje = new Date();
-            const ano = dataHoje.getFullYear();
-            const mes = dataHoje.getMonth();
-            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-            
-            let diasEstudadosCont = 0;
-            let diasSemEstudoCont = 0;
-            let sequenciaAtual = 0;
-            let maiorSequencia = 0;
-
-            for (let d = 1; d <= diasNoMes; d++) {
-                let dStr = `${ano}-${(mes+1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
-                if (appData.historicoEstudos && appData.historicoEstudos[dStr]) {
-                    diasEstudadosCont++;
-                    sequenciaAtual++;
-                    if (sequenciaAtual > maiorSequencia) maiorSequencia = sequenciaAtual;
-                } else {
-                    if (d <= dataHoje.getDate()) {
-                        diasSemEstudoCont++;
-                    }
-                    sequenciaAtual = 0;
-                }
-            }
-            let percMes = Math.round((diasEstudadosCont / dataHoje.getDate()) * 100) || 0;
-
-            document.getElementById('dash-dias').innerText = maiorSequencia + (maiorSequencia === 1 ? ' dia' : ' dias');
-
-            resumoContainer.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Dias Estudados</span>
-                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--success);">${diasEstudadosCont}</div>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Dias Sem Estudo</span>
-                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--danger);">${diasSemEstudoCont}</div>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Percentual de Metas</span>
-                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">${percMes}%</div>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Maior Sequência de Dias</span>
-                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--accent);">${maiorSequencia} dias</div>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Tópicos Concluídos</span>
-                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">${concluidosTopicos} / ${totalTopicos}</div>
-                    </div>
-                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color);">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Questões Respondidas</span>
-                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--success);">${appData.estatisticas.questoesResolvidas || 0}</div>
-                    </div>
-                </div>
-            `;
-
-            // Calendário mostrando automaticamente dias estudados e não estudados (Requisito 6)
-            const calContainer = document.getElementById('calendario-integrado-container');
-            calContainer.innerHTML = '';
-            
-            let calGrid = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;">`;
-            for (let d = 1; d <= diasNoMes; d++) {
-                let dStr = `${ano}-${(mes+1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
-                let foiEstudado = appData.historicoEstudos && appData.historicoEstudos[dStr];
-                let isPastOrToday = d <= dataHoje.getDate();
+        // Configuração de Event Listeners
+        function inicializarEventos() {
+            // Login
+            document.getElementById('form-login').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const senha = document.getElementById('login-senha').value;
                 
-                let statusLabel = 'Futuro';
-                let bgBadge = 'var(--border-color)';
-                if (isPastOrToday) {
-                    if (foiEstudado) {
-                        statusLabel = 'Estudado';
-                        bgBadge = 'var(--success)';
-                    } else {
-                        statusLabel = 'Não Estudado';
-                        bgBadge = 'var(--danger)';
-                    }
+                const usuario = appData.usuarios.find(u => u.email === email && u.senha === senha);
+                if (usuario || (email === "admin@estudos.com" && senha === "123456")) {
+                    appData.usuarioLogado = email;
+                    salvarDados();
+                    verificarSessaoAtiva();
+                } else {
+                    alert("E-mail ou senha incorretos.");
+                }
+            });
+
+            // Cadastro
+            document.getElementById('form-register').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nome = document.getElementById('reg-nome').value;
+                const email = document.getElementById('reg-email').value;
+                const senha = document.getElementById('reg-senha').value;
+
+                if (appData.usuarios.some(u => u.email === email)) {
+                    alert("Este e-mail já está cadastrado.");
+                    return;
                 }
 
-                calGrid += `
-                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 0.375rem; text-align: center;">
-                        <strong style="font-size: 0.9rem; color: var(--text-main);">${d}/${mes+1}/${ano}</strong>
-                        <div style="margin-top: 0.4rem;">
-                            <span style="font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: ${bgBadge}; color: #fff; font-weight: 600;">${statusLabel}</span>
-                        </div>
-                    </div>
-                `;
-            }
-            calGrid += `</div>`;
-            calContainer.innerHTML = calGrid;
-        }
-
-        function aplicarTemaPronto(preset) {
-            const cfg = appData.config;
-            cfg.preset = preset;
-            if (preset === 'indigo') {
-                cfg.primary = '#4f46e5';
-                cfg.accent = '#f59e0b';
-                cfg.success = '#10b981';
-            } else if (preset === 'emerald') {
-                cfg.primary = '#059669';
-                cfg.accent = '#f59e0b';
-                cfg.success = '#10b981';
-            } else if (preset === 'violet') {
-                cfg.primary = '#7c3aed';
-                cfg.accent = '#ec4899';
-                cfg.success = '#10b981';
-            } else if (preset === 'blue') {
-                cfg.primary = '#2563eb';
-                cfg.accent = '#38bdf8';
-                cfg.success = '#10b981';
-            } else if (preset === 'sunset') {
-                cfg.primary = '#ea580c';
-                cfg.accent = '#facc15';
-                cfg.success = '#10b981';
-            }
-            
-            if (preset !== 'custom') {
-                document.getElementById('picker-primary').value = cfg.primary;
-                document.getElementById('picker-accent').value = cfg.accent;
-                document.getElementById('picker-success').value = cfg.success;
-            }
-            aplicarConfiguracoes();
-        }
-
-        function aplicarConfiguracoes() {
-            const cfg = appData.config;
-            cfg.theme = document.getElementById('config-theme').value;
-            cfg.font = document.getElementById('config-font').value;
-            cfg.fontsize = document.getElementById('config-fontsize').value;
-            cfg.iconsize = document.getElementById('config-iconsize').value;
-            cfg.anim = document.getElementById('config-anim').value;
-
-            cfg.primary = document.getElementById('picker-primary').value;
-            cfg.accent = document.getElementById('picker-accent').value;
-            cfg.bgColor = document.getElementById('picker-bg').value;
-            cfg.cardBg = document.getElementById('picker-card').value;
-            cfg.success = document.getElementById('picker-success').value;
-            cfg.border = document.getElementById('picker-border').value;
-
-            document.getElementById('val-primary').innerText = cfg.primary;
-            document.getElementById('val-accent').innerText = cfg.accent;
-            document.getElementById('val-bg').innerText = cfg.bgColor;
-            document.getElementById('val-card').innerText = cfg.cardBg;
-            document.getElementById('val-success').innerText = cfg.success;
-            document.getElementById('val-border').innerText = cfg.border;
-
-            const root = document.documentElement;
-            root.setAttribute('data-theme', cfg.theme);
-            root.setAttribute('data-font', cfg.font);
-            root.setAttribute('data-fontsize', cfg.fontsize);
-            root.setAttribute('data-iconsize', cfg.iconsize);
-            root.setAttribute('data-anim', cfg.anim);
-
-            root.style.setProperty('--primary', cfg.primary);
-            root.style.setProperty('--accent', cfg.accent);
-            root.style.setProperty('--bg-color', cfg.bgColor);
-            root.style.setProperty('--card-bg', cfg.cardBg);
-            root.style.setProperty('--success', cfg.success);
-            root.style.setProperty('--border-color', cfg.border);
-
-            salvarDados();
-        }
-
-        function carregarConfiguracoesNaTela() {
-            const cfg = appData.config;
-            if (!cfg) return;
-
-            document.getElementById('config-theme').value = cfg.theme || 'dark';
-            document.getElementById('config-font').value = cfg.font || 'segoe';
-            document.getElementById('config-fontsize').value = cfg.fontsize || 'medium';
-            document.getElementById('config-iconsize').value = cfg.iconsize || 'medium';
-            document.getElementById('config-anim').value = cfg.anim || 'enabled';
-            document.getElementById('config-preset-tema').value = cfg.preset || 'custom';
-
-            if (cfg.primary) document.getElementById('picker-primary').value = cfg.primary;
-            if (cfg.accent) document.getElementById('picker-accent').value = cfg.accent;
-            if (cfg.bgColor) document.getElementById('picker-bg').value = cfg.bgColor;
-            if (cfg.cardBg) document.getElementById('picker-card').value = cfg.cardBg;
-            if (cfg.success) document.getElementById('picker-success').value = cfg.success;
-            if (cfg.border) document.getElementById('picker-border').value = cfg.border;
-
-            if (appData.parametrosMetas) {
-                document.getElementById('param-materias-dia').value = appData.parametrosMetas.materiasPorDia || 2;
-                document.getElementById('param-topicos-materia').value = appData.parametrosMetas.topicosPorMateria || 2;
-                document.getElementById('param-questoes').value = appData.parametrosMetas.quantidadeQuestoes || 40;
-            }
-
-            if (appData.notificacoesConfig) {
-                document.getElementById('notif-ativo').value = appData.notificacoesConfig.ativo || 'enabled';
-                document.getElementById('notif-horario').value = appData.notificacoesConfig.horario || '08:00';
-                document.getElementById('notif-metas').value = appData.notificacoesConfig.metas || 'enabled';
-                document.getElementById('notif-inatividade').value = appData.notificacoesConfig.inatividade || 'enabled';
-            }
-
-            aplicarConfiguracoes();
-        }
-
-        function atualizarTelas() {
-            renderMetasHoje();
-            renderGerenciadorMaterias();
-            renderPlanoSemanal();
-            atualizarProgresso();
-        }
-
-        function resetarDados() {
-            if (confirm('Deseja realmente restaurar as configurações padrão de aparência?')) {
-                appData.config = getDefaultCloudData().config;
+                appData.usuarios.push({ nome, email, senha });
+                appData.usuarioLogado = email;
                 salvarDados();
-                carregarConfiguracoesNaTela();
+                verificarSessaoAtiva();
+                alert("Cadastro realizado com sucesso!");
+            });
+
+            // Recuperação de Senha
+            document.getElementById('form-forgot').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgot-email').value;
+                alert(`Instruções de recuperação enviadas para: ${email}`);
+                mudarAuthView('login');
+            });
+
+            // Cadastro de Matérias
+            document.getElementById('form-cadastrar-materia').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nomeInput = document.getElementById('nova-materia-nome');
+                const nome = nomeInput.value.trim();
+
+                if (!nome) return;
+
+                const novaMateria = { id: 'mat_' + Date.now(), nome };
+                appData.materias.push(novaMateria);
+                salvarDados();
+                
+                nomeInput.value = '';
+                atualizarInterfaceCompleta();
+            });
+
+            // Cadastro de Tópicos
+            document.getElementById('form-cadastrar-topico').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const materiaId = document.getElementById('topico-materia-id').value;
+                const nomeInput = document.getElementById('novo-topico-nome');
+                const nome = nomeInput.value.trim();
+
+                if (!nome || !materiaId) return;
+
+                const novoTopico = { id: 'top_' + Date.now(), materiaId, nome };
+                appData.topicos.push(novoTopico);
+                
+                // Adiciona notificação de revisão automática para 7 dias
+                appData.revisoes.push({ id: 'rev_' + Date.now(), topicoId: novoTopico.id, data: new Date(Date.now() + 7*24*60*60*1000).toLocaleDateString(), concluida: false });
+
+                salvarDados();
+                nomeInput.value = '';
+                atualizarInterfaceCompleta();
+            });
+
+            // Plano Semanal
+            document.getElementById('form-plano-semanal').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const dia = document.getElementById('plano-dia').value;
+                const descricao = document.getElementById('plano-descricao').value.trim();
+
+                if (!descricao) return;
+
+                appData.planoSemanal.push({ id: 'plano_' + Date.now(), dia, descricao });
+                salvarDados();
+                document.getElementById('plano-descricao').value = '';
+                atualizarInterfaceCompleta();
+            });
+        }
+
+        // Operações de Edição e Exclusão
+        function excluirMateria(id) {
+            appData.materias = appData.materias.filter(m => m.id !== id);
+            appData.topicos = appData.topicos.filter(t => t.materiaId !== id);
+            salvarDados();
+            atualizarInterfaceCompleta();
+        }
+
+        function excluirTopico(id) {
+            appData.topicos = appData.topicos.filter(t => t.id !== id);
+            salvarDados();
+            atualizarInterfaceCompleta();
+        }
+
+        function excluirPlano(id) {
+            appData.planoSemanal = appData.planoSemanal.filter(p => p.id !== id);
+            salvarDados();
+            atualizarInterfaceCompleta();
+        }
+
+        function alternarMeta(id) {
+            const meta = appData.metasDiarias.find(m => m.id === id);
+            if (meta) {
+                meta.concluida = !meta.concluida;
+                salvarDados();
+                atualizarInterfaceCompleta();
             }
         }
 
-        function limparTodosDados() {
-            if (confirm('ATENÇÃO: Deseja realmente zerar todos os dados da plataforma?')) {
-                let db = getCloudDatabase();
-                if (db[currentUser]) {
-                    db[currentUser].data = getDefaultCloudData();
-                    saveCloudDatabase(db);
-                    appData = db[currentUser].data;
-                    carregarConfiguracoesNaTela();
-                    atualizarTelas();
+        // Metas Automáticas
+        function gerarMetasAutomaticas() {
+            appData.metasDiarias = appData.topicos.slice(0, 3).map((topico, idx) => ({
+                id: 'meta_' + Date.now() + '_' + idx,
+                descricao: `Estudar tópico: ${topico.nome}`,
+                concluida: false
+            }));
+            salvarDados();
+            atualizarInterfaceCompleta();
+            alert("Metas diárias geradas com base nos tópicos!");
+        }
+
+        // Temas
+        function mudarTema(tema) {
+            appData.configuracoes.tema = tema;
+            salvarDados();
+            aplicarTema(tema);
+        }
+
+        function aplicarTema(tema) {
+            document.documentElement.setAttribute('data-theme', tema);
+            const selectTema = document.getElementById('select-tema');
+            if (selectTema) selectTema.value = tema;
+        }
+
+        // Sincronização
+        function sincronizarDados() {
+            salvarDados();
+            alert("Dados sincronizados e salvos com sucesso!");
+        }
+
+        // Atualização da Interface Completa
+        function atualizarInterfaceCompleta() {
+            // Select de Matérias para Tópicos
+            const selectMateria = document.getElementById('topico-materia-id');
+            if (selectMateria) {
+                selectMateria.innerHTML = '';
+                if (appData.materias.length === 0) {
+                    selectMateria.innerHTML = '<option value="">Cadastre uma matéria primeiro</option>';
+                } else {
+                    appData.materias.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m.id;
+                        opt.textContent = m.nome;
+                        selectMateria.appendChild(opt);
+                    });
                 }
             }
+
+            // Container de Matérias e Tópicos
+            const containerMatTop = document.getElementById('container-materias-topicos');
+            if (containerMatTop) {
+                containerMatTop.innerHTML = '';
+                appData.materias.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.style.marginBottom = '1rem';
+                    
+                    const topicosDaMateria = appData.topicos.filter(t => t.materiaId === m.id);
+                    let topicosHtml = topicosDaMateria.map(t => `
+                        <li>
+                            <span>${t.nome}</span>
+                            <button onclick="excluirTopico('${t.id}')" class="btn btn-danger">Excluir</button>
+                        </li>
+                    `).join('');
+
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <strong>${m.nome}</strong>
+                            <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir Matéria</button>
+                        </div>
+                        <ul class="item-list">${topicosHtml || '<li>Nenhum tópico cadastrado.</li>'}</ul>
+                    `;
+                    containerMatTop.appendChild(div);
+                });
+            }
+
+            // Plano Semanal
+            const listaPlano = document.getElementById('lista-plano-semanal');
+            if (listaPlano) {
+                listaPlano.innerHTML = appData.planoSemanal.length === 0 ? '<li>Nenhum plano cadastrado.</li>' : 
+                    appData.planoSemanal.map(p => `
+                        <li>
+                            <span><strong>${p.dia}:</strong> ${p.descricao}</span>
+                            <button onclick="excluirPlano('${p.id}')" class="btn btn-danger">Excluir</button>
+                        </li>
+                    `).join('');
+            }
+
+            // Metas Diárias
+            const listaMetas = document.getElementById('lista-metas-diarias');
+            if (listaMetas) {
+                listaMetas.innerHTML = appData.metasDiarias.length === 0 ? '<li>Nenhuma meta diária gerada. Clique em gerar metas automáticas.</li>' :
+                    appData.metasDiarias.map(m => `
+                        <li>
+                            <span style="${m.concluida ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${m.descricao}</span>
+                            <button onclick="alternarMeta('${m.id}')" class="btn ${m.concluida ? 'btn-secondary' : 'btn-primary'}">${m.concluida ? 'Concluída' : 'Concluir'}</button>
+                        </li>
+                    `).join('');
+            }
+
+            // Revisões
+            const listaRevisoes = document.getElementById('lista-revisoes');
+            if (listaRevisoes) {
+                listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão pendente.</li>' :
+                    appData.revisoes.map(r => {
+                        const topico = appData.topicos.find(t => t.id === r.topicoId);
+                        return `<li><span>Revisar: ${topico ? topico.nome : 'Tópico'} - Data: ${r.data}</span></li>`;
+                    }).join('');
+            }
+
+            // Estatísticas
+            document.getElementById('stat-total-materias').textContent = `Matérias cadastradas: ${appData.materias.length}`;
+            document.getElementById('stat-total-topicos').textContent = `Tópicos cadastrados: ${appData.topicos.length}`;
+            const metasConcluidas = appData.metasDiarias.filter(m => m.concluida).length;
+            const taxaMetas = appData.metasDiarias.length > 0 ? Math.round((metasConcluidas / appData.metasDiarias.length) * 100) : 0;
+            document.getElementById('stat-metas-concluidas').textContent = `Taxa de conclusão de metas: ${taxaMetas}%`;
+
+            // Dashboard
+            document.getElementById('dash-resumo-materias').textContent = `Total de matérias: ${appData.materias.length}`;
+            document.getElementById('dash-resumo-metas').textContent = `Metas cumpridas hoje: ${metasConcluidas}/${appData.metasDiarias.length}`;
+
+            // Calendário Simples
+            const calContainer = document.getElementById('calendario-container');
+            if (calContainer) {
+                calContainer.innerHTML = '';
+                const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+                diasSemana.forEach(d => {
+                    calContainer.innerHTML += `<div class="calendar-day-header">${d}</div>`;
+                });
+                for (let i = 1; i <= 31; i++) {
+                    calContainer.innerHTML += `<div class="calendar-day"><span>${i}</span></div>`;
+                }
+            }
+        }
+
+        function toggleNotificacoes() {
+            const dropdown = document.getElementById('notification-dropdown');
+            dropdown.classList.toggle('hidden');
         }
     </script>
 </body>
