@@ -478,16 +478,13 @@
             <!-- 3. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana.</p>
+                    <h3>Planejamento Semanal (Salvamento Automático)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana. As alterações são salvas instantaneamente.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
-                    <div style="margin-top: 2rem;">
-                        <button onclick="salvarPlanoEstudos()" class="btn btn-primary" style="max-width: 250px;">Salvar Plano</button>
-                    </div>
                 </div>
             </section>
 
-            <!-- 4. METAS DE ESTUDO (Ajustado para quantidade de matérias e tópicos por dia com botão Salvar) -->
+            <!-- 4. METAS DE ESTUDO -->
             <section id="view-metas-estudo" class="view-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
                     <h3>Metas de Estudo (Configuração Diária)</h3>
@@ -495,16 +492,12 @@
                     
                     <div class="form-group">
                         <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
-                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2">
+                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2" oninput="salvarConfigMetasEstudoAutomatico()">
                     </div>
 
                     <div class="form-group">
                         <label for="input-metas-topicos">Quantidade de Tópicos por Matéria</label>
-                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3">
-                    </div>
-
-                    <div style="margin-top: 2rem;">
-                        <button onclick="salvarConfigMetasEstudo()" class="btn btn-primary" style="max-width: 250px;">Salvar Metas de Estudo</button>
+                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3" oninput="salvarConfigMetasEstudoAutomatico()">
                     </div>
                 </div>
             </section>
@@ -546,21 +539,20 @@
             <!-- 9. PERFIL -->
             <section id="view-perfil" class="view-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h3>Perfil do Aluno</h3>
+                    <h3>Perfil do Aluno (Salvamento Automático)</h3>
                     <form id="form-perfil">
                         <div class="form-group">
                             <label for="perfil-nome">Nome Completo</label>
-                            <input type="text" id="perfil-nome" class="form-control" required>
+                            <input type="text" id="perfil-nome" class="form-control" required oninput="salvarPerfilAutomatico()">
                         </div>
                         <div class="form-group">
                             <label for="perfil-idade">Idade</label>
-                            <input type="number" id="perfil-idade" class="form-control" required>
+                            <input type="number" id="perfil-idade" class="form-control" required oninput="salvarPerfilAutomatico()">
                         </div>
                         <div class="form-group">
                             <label for="perfil-objetivo">Objetivo / Concurso</label>
-                            <input type="text" id="perfil-objetivo" class="form-control" placeholder="Ex: Analista Judiciário" required>
+                            <input type="text" id="perfil-objetivo" class="form-control" placeholder="Ex: Analista Judiciário" required oninput="salvarPerfilAutomatico()">
                         </div>
-                        <button type="submit" class="btn btn-primary">Salvar Perfil</button>
                     </form>
                 </div>
             </section>
@@ -584,7 +576,6 @@
                     </div>
 
                     <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                        <button onclick="fazerSalvarGeral()" class="btn btn-primary w-full">Salvar Alterações</button>
                         <button onclick="fazerBackup()" class="btn btn-secondary w-full">Fazer Backup</button>
                         <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar / Importar Dados</button>
                     </div>
@@ -649,11 +640,6 @@
                 localStorage.setItem("plataforma_estudos_data", JSON.stringify(appData));
                 localStorage.setItem("plataforma_estudos_config", JSON.stringify(configGeral));
             } catch (e) { console.error(e); }
-        }
-
-        function fazerSalvarGeral() {
-            salvarDados();
-            mostrarCoach("Dados salvos com sucesso!");
         }
 
         function carregarDadosUsuario() {
@@ -750,7 +736,7 @@
                 toast.classList.remove('hidden');
                 setTimeout(() => {
                     toast.classList.add('hidden');
-                }, 4000);
+                }, 3000);
             }
         }
 
@@ -780,15 +766,6 @@
                 verificarSessaoAtiva();
             });
 
-            document.getElementById('form-perfil').addEventListener('submit', (e) => {
-                e.preventDefault();
-                appData.perfil.nome = document.getElementById('perfil-nome').value;
-                appData.perfil.idade = parseInt(document.getElementById('perfil-idade').value) || 27;
-                appData.perfil.objetivo = document.getElementById('perfil-objetivo').value;
-                salvarDados();
-                mostrarCoach("Perfil atualizado com sucesso!");
-            });
-
             document.getElementById('form-cadastrar-materia').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const input = document.getElementById('nova-materia-nome');
@@ -813,8 +790,24 @@
                 salvarDados();
                 input.value = '';
                 atualizarInterfaceCompleta();
-                mostrarCoach("Nova matéria cadastrada com sucesso!");
             });
+        }
+
+        function salvarPerfilAutomatico() {
+            appData.perfil.nome = document.getElementById('perfil-nome').value;
+            appData.perfil.idade = parseInt(document.getElementById('perfil-idade').value) || 27;
+            appData.perfil.objetivo = document.getElementById('perfil-objetivo').value;
+            salvarDados();
+        }
+
+        function salvarConfigMetasEstudoAutomatico() {
+            const qtdMatInput = document.getElementById('input-metas-materias');
+            const qtdTopInput = document.getElementById('input-metas-topicos');
+            if (qtdMatInput && qtdTopInput) {
+                appData.configMetas.qtdMaterias = parseInt(qtdMatInput.value) || 2;
+                appData.configMetas.qtdTopicos = parseInt(qtdTopInput.value) || 3;
+                salvarDados();
+            }
         }
 
         function adicionarTopico(materiaId) {
@@ -833,6 +826,12 @@
                 salvarDados();
                 atualizarInterfaceCompleta();
             }
+        }
+
+        function excluirMateria(materiaId) {
+            appData.materias = appData.materias.filter(x => x.id !== materiaId);
+            salvarDados();
+            atualizarInterfaceCompleta();
         }
 
         function atualizarTopicoDetalhe(materiaId, indexTopico, campo, valor) {
@@ -864,8 +863,6 @@
                     appData.estatisticas.questoesFeitas += topico.questoesFeitas;
                     appData.estatisticas.acertos += topico.acertos;
                     appData.estatisticas.erros += topico.erros;
-
-                    mostrarCoach("Parabéns por concluir este tópico! Continue firme!");
                 }
                 salvarDados();
                 atualizarInterfaceCompleta();
@@ -875,12 +872,14 @@
         function adicionarMateriaPlano(dia) {
             if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
             appData.planoSemanal[dia].push('');
+            salvarDados();
             renderizarPlanoSemanal();
         }
 
         function removerMateriaPlano(dia, index) {
             if (appData.planoSemanal[dia]) {
                 appData.planoSemanal[dia].splice(index, 1);
+                salvarDados();
                 renderizarPlanoSemanal();
             }
         }
@@ -888,33 +887,7 @@
         function atualizarMateriaPlanoSelect(dia, index, valor) {
             if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
             appData.planoSemanal[dia][index] = valor;
-        }
-
-        function salvarPlanoEstudos() {
-            const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            dias.forEach(dia => {
-                const selects = document.querySelectorAll(`.select-plano-${dia}`);
-                let arr = [];
-                selects.forEach(sel => {
-                    if (sel.value) arr.push(sel.value);
-                });
-                appData.planoSemanal[dia] = arr;
-            });
             salvarDados();
-            atualizarInterfaceCompleta();
-            mostrarCoach("Plano de Estudos salvo e sincronizado com sucesso!");
-        }
-
-        function salvarConfigMetasEstudo() {
-            const qtdMatInput = document.getElementById('input-metas-materias');
-            const qtdTopInput = document.getElementById('input-metas-topicos');
-            if (qtdMatInput && qtdTopInput) {
-                appData.configMetas.qtdMaterias = parseInt(qtdMatInput.value) || 2;
-                appData.configMetas.qtdTopicos = parseInt(qtdTopInput.value) || 3;
-                salvarDados();
-                atualizarInterfaceCompleta();
-                mostrarCoach("Configurações de Metas de Estudo salvas e sincronizadas!");
-            }
         }
 
         function renderizarPlanoSemanal() {
@@ -1025,7 +998,7 @@
                                 <h4 style="color: var(--accent); font-size: 1.15rem; font-weight: 600;">${m.nome}</h4>
                                 <div class="flex gap-2">
                                     <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Adicionar Tópico</button>
-                                    <button onclick="appData.materias = appData.materias.filter(x => x.id !== '${m.id}'); salvarDados(); atualizarInterfaceCompleta();" class="btn btn-danger">Excluir</button>
+                                    <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir</button>
                                 </div>
                             </div>
                             <div class="topicos-grid">
@@ -1039,14 +1012,14 @@
                                                 <strong style="font-size: 0.95rem;">Tópico ${t.numero}</strong>
                                                 <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
                                             </div>
-                                            <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
+                                            <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
                                             <div class="flex gap-2">
-                                                <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" placeholder="Link da Lei" value="${t.linkLei}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'linkLei', this.value)">
+                                                <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" placeholder="Link da Lei" value="${t.linkLei}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'linkLei', this.value)">
                                                 ${t.linkLei ? `<a href="${t.linkLei}" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Ler</a>` : ''}
                                             </div>
                                             <div class="flex gap-2" style="font-size: 0.8rem; color: var(--text-muted); align-items: center; justify-content: space-between; margin-top: 0.25rem;">
-                                                <span>Q: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
-                                                <span>Acertos: <input type="number" style="width: 40px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
+                                                <span>Q: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
+                                                <span>Acertos: <input type="number" style="width: 40px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
                                                 <span style="color: var(--accent); font-weight: 600;">${perc}%</span>
                                             </div>
                                         </div>
@@ -1107,10 +1080,10 @@
             const listaRevisoes = document.getElementById('lista-revisoes-completa');
             if(listaRevisoes) {
                 listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão gerada. Conclua tópicos para gerar revisões automáticas.</li>' :
-                    appData.revisoes.map(r => `
+                    appData.revisoes.map((r, rIdx) => `
                         <li>
                             <span style="${r.concluida ? 'text-decoration: line-through; opacity: 0.6;' : ''}">🔄 ${r.titulo} — Data: <strong>${r.data}</strong></span>
-                            <button onclick="r.concluida = !r.concluida; salvarDados(); atualizarInterfaceCompleta();" class="btn ${r.concluida ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${r.concluida ? 'Concluída' : 'Marcar Feita'}</button>
+                            <button onclick="appData.revisoes[${rIdx}].concluida = !appData.revisoes[${rIdx}].concluida; salvarDados(); atualizarInterfaceCompleta();" class="btn ${r.concluida ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${r.concluida ? 'Concluída' : 'Marcar Feita'}</button>
                         </li>
                     `).join('');
             }
