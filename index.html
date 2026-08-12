@@ -159,15 +159,26 @@
             color: white; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 50%; font-weight: bold;
         }
 
-        /* Menu Superior Fixo (Exatamente 8 Abas Solicitadas) */
+        /* Menu Superior com Rolagem Horizontal e Setas */
+        .tools-nav-wrapper {
+            background: var(--bg-card); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; position: relative;
+        }
+
+        .scroll-arrow {
+            background: var(--bg-card); border: none; color: var(--text-main);
+            width: 40px; height: 100%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10; font-size: 1.2rem; opacity: 0.7; transition: opacity 0.2s;
+        }
+        .scroll-arrow:hover { opacity: 1; color: var(--accent); }
+
         .tools-nav-container {
-            background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 1rem var(--spacing-ui);
-            overflow-x: auto; scrollbar-width: none;
+            padding: 1rem 0.5rem; overflow-x: auto; scrollbar-width: none; flex-grow: 1; scroll-behavior: smooth;
         }
         .tools-nav-container::-webkit-scrollbar { display: none; }
 
         .tools-grid {
-            display: flex; gap: 0.75rem; max-width: 1500px; margin: 0 auto; min-width: max-content;
+            display: flex; gap: 0.75rem; max-width: 1500px; margin: 0 auto; min-width: max-content; padding: 0 0.5rem;
         }
 
         .tool-card {
@@ -203,21 +214,28 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Hero Banner Clean na Página Inicial */
+        /* Hero Banner Tela Cheia */
+        .hero-fullscreen {
+            position: fixed; top: 80px; left: 0; width: 100vw; height: calc(100vh - 80px);
+            background: var(--bg-main); z-index: 90;
+            display: flex; align-items: center; justify-content: center; padding: 2rem;
+        }
+        .hero-fullscreen.hidden { display: none !important; }
+
         .hero-banner {
             background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: 1.5rem; padding: 4rem 2rem;
-            text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
-            position: relative; overflow: hidden;
+            border: 1px solid var(--border); border-radius: 1.5rem; padding: 5rem 3rem;
+            text-align: center; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+            position: relative; overflow: hidden; width: 100%; max-width: 900px;
         }
 
         .hero-banner h2 {
-            font-size: 2.75rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.03em;
+            font-size: 3rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.03em;
             color: var(--text-main);
         }
 
         .hero-date {
-            font-size: 1rem; color: var(--accent); font-weight: 600; margin-bottom: 2.5rem;
+            font-size: 1.1rem; color: var(--accent); font-weight: 600; margin-bottom: 3rem;
             text-transform: uppercase; letter-spacing: 0.08em;
         }
 
@@ -272,12 +290,21 @@
         }
         .calendar-day.today { border-color: var(--accent); background: var(--accent-glow); }
 
-        /* Tópicos 00 a 30 */
+        /* Tópicos 00 em diante */
         .topicos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .topico-box {
             background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui); padding: 1.25rem;
             display: flex; flex-direction: column; gap: 0.75rem;
         }
+
+        /* Toast Coach */
+        #coach-toast {
+            position: fixed; bottom: 24px; right: 24px; background: var(--bg-card);
+            border: 1px solid var(--accent); border-radius: var(--radius-ui); padding: 1rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; gap: 0.85rem;
+            max-width: 380px; animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         @media (max-width: 900px) {
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
@@ -340,7 +367,7 @@
         <header>
             <div class="flex items-center gap-2">
                 <button id="nav-back-button" onclick="voltarHistorico()" class="nav-back-btn hidden">← Voltar</button>
-                <div class="header-brand" onclick="mudarView(configGeral.paginaInicial || 'dashboard')">
+                <div class="header-brand" onclick="mudarView('dashboard')">
                     <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                     <div class="header-title">
                         <h1>Plataforma de Estudos</h1>
@@ -356,42 +383,54 @@
             </div>
         </header>
 
-        <!-- MENU SUPERIOR FIXO (EXATAMENTE AS 8 ABAS SOLICITADAS) -->
-        <nav class="tools-nav-container">
-            <div class="tools-grid">
-                <div class="tool-card active" onclick="mudarView('dashboard')" id="nav-dashboard">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-                    <span class="tool-label">Início</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('materias')" id="nav-materias">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0-5H20"/></svg></span>
-                    <span class="tool-label">Matérias</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('plano')" id="nav-plano">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
-                    <span class="tool-label">Plano de Estudos</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('metas')" id="nav-metas">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
-                    <span class="tool-label">Metas</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('revisoes')" id="nav-revisoes">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.68-5.68"/></svg></span>
-                    <span class="tool-label">Revisões</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('progresso')" id="nav-progresso">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></span>
-                    <span class="tool-label">Progresso</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('calendario')" id="nav-calendario">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
-                    <span class="tool-label">Calendário</span>
-                </div>
-                <div class="tool-card" onclick="mudarView('configuracoes')" id="nav-configuracoes">
-                    <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-                    <span class="tool-label">Configurações</span>
+        <!-- MENU SUPERIOR COM ROLAGEM HORIZONTAL E SETAS -->
+        <nav class="tools-nav-wrapper">
+            <button class="scroll-arrow" onclick="rolarMenu('esq')">‹</button>
+            <div class="tools-nav-container" id="tools-nav-scroll">
+                <div class="tools-grid">
+                    <div class="tool-card active" onclick="mudarView('dashboard')" id="nav-dashboard">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                        <span class="tool-label">Início</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('materias')" id="nav-materias">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0-5H20"/></svg></span>
+                        <span class="tool-label">Matérias</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('plano')" id="nav-plano">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
+                        <span class="tool-label">Plano de Estudos</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('metas-estudo')" id="nav-metas-estudo">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>
+                        <span class="tool-label">Metas de Estudo</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('metas')" id="nav-metas">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+                        <span class="tool-label">Metas de Hoje</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('revisoes')" id="nav-revisoes">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.68-5.68"/></svg></span>
+                        <span class="tool-label">Ver Revisões</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('progresso')" id="nav-progresso">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></span>
+                        <span class="tool-label">Progresso</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('calendario')" id="nav-calendario">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
+                        <span class="tool-label">Calendário</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('perfil')" id="nav-perfil">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                        <span class="tool-label">Perfil</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('configuracoes')" id="nav-configuracoes">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83l2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                        <span class="tool-label">Configurações</span>
+                    </div>
                 </div>
             </div>
+            <button class="scroll-arrow" onclick="rolarMenu('dir')">›</button>
         </nav>
 
         <div id="notification-dropdown" class="hidden">
@@ -399,17 +438,20 @@
             <ul id="lista-notificacoes"></ul>
         </div>
 
+        <!-- TELA INICIAL EM TELA CHEIA -->
+        <div id="hero-fullscreen-view" class="hero-fullscreen">
+            <div class="hero-banner">
+                <h2>Foco, Disciplina e Execução</h2>
+                <div id="current-date-hero" class="hero-date"></div>
+                <button onclick="fecharHeroFullscreen()" class="btn-hero">Iniciar Estudos</button>
+            </div>
+        </div>
+
         <!-- CONTEÚDO PRINCIPAL -->
         <main class="content-area">
 
             <!-- 1. INÍCIO -->
             <section id="view-dashboard" class="view-section active">
-                <div class="hero-banner">
-                    <h2>Foco, Disciplina e Execução</h2>
-                    <div id="current-date-hero" class="hero-date">Terça-feira, 11 de Agosto de 2026</div>
-                    <button onclick="mudarView('metas')" class="btn-hero">Iniciar Estudos</button>
-                </div>
-
                 <div class="card">
                     <h3>Resumo das Metas de Hoje</h3>
                     <div id="dash-resumo-metas-hoje" class="item-list"></div>
@@ -428,68 +470,89 @@
                     </form>
                 </div>
                 <div class="card">
-                    <h3>Matérias Cadastradas e Tópicos (00 a 30)</h3>
+                    <h3>Matérias Cadastradas e Tópicos</h3>
                     <div id="container-materias-gerenciador"></div>
                 </div>
             </section>
 
-            <!-- 3. PLANO DE ESTUDOS -->
+            <!-- 3. PLANO DE ESTUDOS (Simplificado) -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal (Segunda a Domingo)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure o cronograma diário com matérias, tópicos, PDFs e quantidade de questões.</p>
+                    <h3>Planejamento Semanal (Escolha de Matérias por Dia)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina qual matéria será estudada em cada dia da semana.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
                 </div>
             </section>
 
-            <!-- 4. METAS -->
+            <!-- 4. METAS DE ESTUDO (Nova Ferramenta) -->
+            <section id="view-metas-estudo" class="view-section">
+                <div class="card">
+                    <h3>Configuração Avançada de Metas</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Ajuste finamente as matérias por dia, tópicos vinculados e questões por tópico.</p>
+                    <div id="container-config-metas-estudo"></div>
+                </div>
+            </section>
+
+            <!-- 5. METAS DE HOJE -->
             <section id="view-metas" class="view-section">
                 <div class="card">
-                    <h3>Metas de Hoje (Geradas Automaticamente)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Sincronizadas com o seu plano semanal e pendências ativas.</p>
+                    <h3>Metas de Hoje (Sincronizadas Automaticamente)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe e conclua as metas programadas para hoje.</p>
                     <div id="lista-metas-diarias-automaticas" class="item-list"></div>
                 </div>
             </section>
 
-            <!-- 5. REVISÕES -->
+            <!-- 6. VER REVISÕES -->
             <section id="view-revisoes" class="view-section">
                 <div class="card">
-                    <h3>Agenda de Revisões (R1 até R30)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe o ciclo completo de repetição espaçada.</p>
+                    <h3>Agenda de Revisões Automáticas</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Itens gerados automaticamente pelo sistema de repetição interna.</p>
                     <div id="lista-revisoes-completa" class="item-list"></div>
                 </div>
             </section>
 
-            <!-- 6. PROGRESSO -->
+            <!-- 7. PROGRESSO -->
             <section id="view-progresso" class="view-section">
-                <div class="grid-2">
-                    <div class="card">
-                        <h3>Métricas Gerais de Desempenho</h3>
-                        <p id="prog-cobertura" style="margin-bottom: 0.85rem; font-size: 1.05rem;">📊 Cobertura geral do edital: <strong>0%</strong></p>
-                        <p id="prog-horas" style="margin-bottom: 0.85rem; font-size: 1.05rem;">⏱️ Horas estudadas: <strong>0h</strong></p>
-                        <p id="prog-questoes" style="margin-bottom: 0.85rem; font-size: 1.05rem;">📝 Questões feitas: <strong>0</strong></p>
-                        <p id="prog-acertos-erros" style="margin-bottom: 0.85rem; font-size: 1.05rem;">✅ Acertos / ❌ Erros: <strong>0 / 0</strong></p>
-                        <p id="prog-taxa" style="font-size: 1.05rem;">🎯 Aproveitamento: <strong>0%</strong></p>
-                    </div>
-                    <div class="card">
-                        <h3>Evolução por Matéria</h3>
-                        <div id="progresso-materias-grafico" class="item-list" style="border: none; background: transparent; padding: 0;"></div>
-                    </div>
+                <div class="card">
+                    <h3>Pendências e Concluídos</h3>
+                    <div id="container-progresso-pendencias" class="item-list"></div>
                 </div>
             </section>
 
-            <!-- 7. CALENDÁRIO -->
+            <!-- 8. CALENDÁRIO -->
             <section id="view-calendario" class="view-section">
                 <div class="card">
-                    <h3>Calendário Estratégico</h3>
+                    <h3>Calendário Sincronizado</h3>
                     <div id="calendario-container" class="calendar-grid" style="margin-top: 1.5rem;"></div>
                 </div>
             </section>
 
-            <!-- 8. CONFIGURAÇÕES -->
+            <!-- 9. PERFIL -->
+            <section id="view-perfil" class="view-section">
+                <div class="card" style="max-width: 650px; margin: 0 auto;">
+                    <h3>Perfil do Aluno</h3>
+                    <form id="form-perfil">
+                        <div class="form-group">
+                            <label for="perfil-nome">Nome Completo</label>
+                            <input type="text" id="perfil-nome" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="perfil-idade">Idade</label>
+                            <input type="number" id="perfil-idade" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="perfil-objetivo">Objetivo / Concurso</label>
+                            <input type="text" id="perfil-objetivo" class="form-control" placeholder="Ex: Analista Judiciário" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Perfil</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 10. CONFIGURAÇÕES -->
             <section id="view-configuracoes" class="view-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h3>Configurações da Plataforma</h3>
+                    <h3>Configurações e Gestão de Dados</h3>
                     
                     <div class="form-group">
                         <label for="select-tema">Tema Visual</label>
@@ -504,91 +567,20 @@
                         <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;" onchange="atualizarConfig('corPrimaria', this.value)">
                     </div>
 
-                    <div class="grid-2" style="margin-bottom: 0;">
-                        <div class="form-group">
-                            <label for="select-fonte">Fonte do Sistema</label>
-                            <select id="select-fonte" class="form-control" onchange="atualizarConfig('fonte', this.value)">
-                                <option value="'Inter', sans-serif">Inter (Moderna)</option>
-                                <option value="'Segoe UI', sans-serif">Segoe UI</option>
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Poppins', sans-serif">Poppins</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="select-tamanho-fonte">Tamanho da Fonte</label>
-                            <select id="select-tamanho-fonte" class="form-control" onchange="atualizarConfig('tamanhoFonte', this.value)">
-                                <option value="0.9rem">Compacto (Pequeno)</option>
-                                <option value="1rem" selected>Padrão (Médio)</option>
-                                <option value="1.1rem">Amplo (Grande)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid-2" style="margin-bottom: 0;">
-                        <div class="form-group">
-                            <label for="select-tamanho-icone">Tamanho de Ícones</label>
-                            <select id="select-tamanho-icone" class="form-control" onchange="atualizarConfig('tamanhoIcone', this.value)">
-                                <option value="16px">Pequeno (16px)</option>
-                                <option value="18px" selected>Padrão (18px)</option>
-                                <option value="22px">Grande (22px)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="select-espacamento">Espaçamento Geral</label>
-                            <select id="select-espacamento" class="form-control" onchange="atualizarConfig('espacamento', this.value)">
-                                <option value="1rem">Compacto</option>
-                                <option value="1.5rem" selected>Padrão</option>
-                                <option value="2.5rem">Respiro Ampliado</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid-2" style="margin-bottom: 0;">
-                        <div class="form-group">
-                            <label for="select-botoes">Formato de Botões e Cards</label>
-                            <select id="select-botoes" class="form-control" onchange="atualizarConfig('botoes', this.value)">
-                                <option value="0.5rem">Arredondamento Suave</option>
-                                <option value="0.75rem" selected>Padrão Moderno</option>
-                                <option value="1.25rem">Bem Arredondado (Pill)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="select-animacao">Velocidade de Animação</label>
-                            <select id="select-animacao" class="form-control" onchange="atualizarConfig('animacao', this.value)">
-                                <option value="0.1s">Rápida (0.1s)</option>
-                                <option value="0.2s" selected>Fluida (0.2s)</option>
-                                <option value="0.4s">Suave Lenta (0.4s)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid-2" style="margin-bottom: 0;">
-                        <div class="form-group">
-                            <label for="select-notif">Notificações Automáticas</label>
-                            <select id="select-notif" class="form-control" onchange="atualizarConfig('notificacoes', this.value)">
-                                <option value="ativadas">Ativadas</option>
-                                <option value="desativadas">Desativadas</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="select-pagina-inicial">Página Inicial Padrão</label>
-                            <select id="select-pagina-inicial" class="form-control" onchange="atualizarConfig('paginaInicial', this.value)">
-                                <option value="dashboard">Início</option>
-                                <option value="materias">Matérias</option>
-                                <option value="plano">Plano de Estudos</option>
-                                <option value="metas">Metas</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <button onclick="fazerSalvarGeral()" class="btn btn-primary w-full">Salvar Alterações</button>
                         <button onclick="fazerBackup()" class="btn btn-secondary w-full">Fazer Backup</button>
-                        <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar Backup</button>
+                        <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar / Importar Dados</button>
                     </div>
                 </div>
             </section>
 
         </main>
+    </div>
+
+    <!-- TOAST COACH -->
+    <div id="coach-toast" class="hidden">
+        <span id="coach-msg" style="font-size: 0.95rem; font-weight: 500;"></span>
     </div>
 
     <!-- SCRIPT DE EXECUÇÃO -->
@@ -597,9 +589,11 @@
             usuarioLogado: null,
             usuarios: [],
             materias: [], 
-            planoSemanal: { Segunda: [], Terça: [], Quarta: [], Quinta: [], Sexta: [], Sábado: [], Domingo: [] },
+            planoSemanal: { Segunda: '', Terça: '', Quarta: '', Quinta: '', Sexta: '', Sábado: '', Domingo: '' },
+            metasEstudoDetalhes: {},
             revisoes: [],
-            estatisticas: { horas: 12, questoesFeitas: 180, acertos: 150, erros: 30 }
+            perfil: { nome: 'Arlan Souza de ramos', idade: 27, objetivo: 'Concurso Público' },
+            estatisticas: { horas: 0, questoesFeitas: 0, acertos: 0, erros: 0 }
         };
 
         let configGeral = {
@@ -641,6 +635,11 @@
             } catch (e) { console.error(e); }
         }
 
+        function fazerSalvarGeral() {
+            salvarDados();
+            mostrarCoach("Dados salvos com sucesso!");
+        }
+
         function carregarDadosUsuario() {
             try {
                 const d = localStorage.getItem("plataforma_estudos_data");
@@ -661,12 +660,18 @@
             if (appData.usuarioLogado) {
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                mudarView(configGeral.paginaInicial || 'dashboard', false);
+                document.getElementById('hero-fullscreen-view').classList.remove('hidden');
+                mudarView('dashboard', false);
                 atualizarInterfaceCompleta();
             } else {
                 document.getElementById('auth-container').classList.remove('hidden');
                 document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('hero-fullscreen-view').classList.add('hidden');
             }
+        }
+
+        function fecharHeroFullscreen() {
+            document.getElementById('hero-fullscreen-view').classList.add('hidden');
         }
 
         function logout() {
@@ -705,6 +710,25 @@
             }
         }
 
+        function rolarMenu(direcao) {
+            const container = document.getElementById('tools-nav-scroll');
+            if (container) {
+                container.scrollBy({ left: direcao === 'esq' ? -200 : 200, behavior: 'smooth' });
+            }
+        }
+
+        function mostrarCoach(msg) {
+            const toast = document.getElementById('coach-toast');
+            const txt = document.getElementById('coach-msg');
+            if (toast && txt) {
+                txt.textContent = msg;
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 4000);
+            }
+        }
+
         function inicializarEventos() {
             document.getElementById('form-login').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -726,8 +750,18 @@
                 if (appData.usuarios.some(u => u.email === email)) { alert("E-mail já cadastrado."); return; }
                 appData.usuarios.push({ nome, email, senha });
                 appData.usuarioLogado = email;
+                appData.perfil.nome = nome;
                 salvarDados();
                 verificarSessaoAtiva();
+            });
+
+            document.getElementById('form-perfil').addEventListener('submit', (e) => {
+                e.preventDefault();
+                appData.perfil.nome = document.getElementById('perfil-nome').value;
+                appData.perfil.idade = parseInt(document.getElementById('perfil-idade').value) || 27;
+                appData.perfil.objetivo = document.getElementById('perfil-objetivo').value;
+                salvarDados();
+                mostrarCoach("Perfil atualizado com sucesso!");
             });
 
             document.getElementById('form-cadastrar-materia').addEventListener('submit', (e) => {
@@ -736,18 +770,16 @@
                 const nome = input.value.trim();
                 if (!nome) return;
 
-                let topicosIniciais = [];
-                for(let i=0; i<=30; i++) {
-                    topicosIniciais.push({
-                        numero: i < 10 ? '0' + i : '' + i,
-                        nome: `Tópico ${i < 10 ? '0' + i : i} - Conteúdo Programático`,
-                        linkLei: '',
-                        estudoFeito: false,
-                        questoesFeitas: 0,
-                        acertos: 0,
-                        erros: 0
-                    });
-                }
+                // Começando estritamente pelo tópico 00
+                let topicosIniciais = [{
+                    numero: '00',
+                    nome: 'Tópico 00 - Conteúdo Inicial',
+                    linkLei: '',
+                    estudoFeito: false,
+                    questoesFeitas: 0,
+                    acertos: 0,
+                    erros: 0
+                }];
 
                 appData.materias.push({
                     id: 'mat_' + Date.now(),
@@ -757,7 +789,26 @@
                 salvarDados();
                 input.value = '';
                 atualizarInterfaceCompleta();
+                mostrarCoach("Nova matéria cadastrada com sucesso!");
             });
+        }
+
+        function adicionarTopico(materiaId) {
+            const materia = appData.materias.find(m => m.id === materiaId);
+            if (materia) {
+                const proximoNum = materia.topicos.length < 10 ? '0' + materia.topicos.length : '' + materia.topicos.length;
+                materia.topicos.push({
+                    numero: proximoNum,
+                    nome: `Tópico ${proximoNum} - Novo Conteúdo`,
+                    linkLei: '',
+                    estudoFeito: false,
+                    questoesFeitas: 0,
+                    acertos: 0,
+                    erros: 0
+                });
+                salvarDados();
+                atualizarInterfaceCompleta();
+            }
         }
 
         function atualizarTopicoDetalhe(materiaId, indexTopico, campo, valor) {
@@ -765,7 +816,6 @@
             if(materia && materia.topicos[indexTopico]) {
                 materia.topicos[indexTopico][campo] = valor;
                 salvarDados();
-                atualizarInterfaceCompleta();
             }
         }
 
@@ -775,25 +825,52 @@
                 const topico = materia.topicos[indexTopico];
                 topico.estudoFeito = !topico.estudoFeito;
                 if(topico.estudoFeito) {
-                    if(topico.questoesFeitas < 50) topico.questoesFeitas = 50;
+                    if(topico.questoesFeitas === 0) topico.questoesFeitas = 50;
                     if(topico.acertos === 0) { topico.acertos = 42; topico.erros = 8; }
                     
-                    // Gera revisões automáticas de R1 até R30
+                    // Cálculo interno de revisões (sem rótulos R1/R7)
                     [1, 7, 15, 30].forEach(dias => {
                         appData.revisoes.push({
                             id: 'rev_' + Date.now() + Math.random(),
-                            titulo: `${materia.nome} - Tópico ${topico.numero} (R${dias})`,
+                            titulo: `${materia.nome} - Tópico ${topico.numero}`,
                             data: new Date(Date.now() + dias*24*60*60*1000).toLocaleDateString(),
                             concluida: false
                         });
                     });
                     appData.estatisticas.horas += 2;
-                    appData.estatisticas.questoesFeitas += 50;
-                    appData.estatisticas.acertos += 42;
-                    appData.estatisticas.erros += 8;
+                    appData.estatisticas.questoesFeitas += topico.questoesFeitas;
+                    appData.estatisticas.acertos += topico.acertos;
+                    appData.estatisticas.erros += topico.erros;
+
+                    mostrarCoach("Parabéns por concluir este tópico! Continue firme!");
                 }
                 salvarDados();
                 atualizarInterfaceCompleta();
+
+                // Verifica se todas as metas do dia foram concluídas
+                verificarMetasConcluidasDia();
+            }
+        }
+
+        function verificarMetasConcluidasDia() {
+            const hojeNome = new Date().toLocaleDateString('pt-BR', { weekday: 'long' });
+            let diaKey = 'Segunda';
+            if(hojeNome.includes('Terça')) diaKey = 'Terça';
+            if(hojeNome.includes('Quarta')) diaKey = 'Quarta';
+            if(hojeNome.includes('Quinta')) diaKey = 'Quinta';
+            if(hojeNome.includes('Sexta')) diaKey = 'Sexta';
+            if(hojeNome.includes('Sábado')) diaKey = 'Sábado';
+            if(hojeNome.includes('Domingo')) diaKey = 'Domingo';
+
+            const matNome = appData.planoSemanal[diaKey];
+            if(matNome) {
+                const materia = appData.materias.find(m => m.nome === matNome);
+                if(materia && materia.topicos.length > 0) {
+                    const todasFeitas = materia.topicos.every(t => t.estudoFeito);
+                    if(todasFeitas) {
+                        mostrarCoach("Excelente! Você concluiu todas as metas do dia!");
+                    }
+                }
             }
         }
 
@@ -807,8 +884,6 @@
             const root = document.documentElement;
             root.setAttribute('data-theme', configGeral.tema || 'dark');
             root.style.setProperty('--primary-color', configGeral.corPrimaria || '#3b82f6');
-            
-            // Calcula hover levemente mais escuro/claro
             root.style.setProperty('--primary-hover', configGeral.corPrimaria === '#3b82f6' ? '#2563eb' : configGeral.corPrimaria);
             root.style.setProperty('--font-family', configGeral.fonte || "'Inter', sans-serif");
             root.style.setProperty('--font-scale', configGeral.tamanhoFonte || '1rem');
@@ -817,17 +892,8 @@
             root.style.setProperty('--radius-ui', configGeral.botoes || '0.75rem');
             root.style.setProperty('--anim-speed', configGeral.animacao || '0.2s');
 
-            // Sincroniza selects com config atual
             if(document.getElementById('select-tema')) document.getElementById('select-tema').value = configGeral.tema;
             if(document.getElementById('input-cor-primaria')) document.getElementById('input-cor-primaria').value = configGeral.corPrimaria;
-            if(document.getElementById('select-fonte')) document.getElementById('select-fonte').value = configGeral.fonte;
-            if(document.getElementById('select-tamanho-fonte')) document.getElementById('select-tamanho-fonte').value = configGeral.tamanhoFonte;
-            if(document.getElementById('select-tamanho-icone')) document.getElementById('select-tamanho-icone').value = configGeral.tamanhoIcone;
-            if(document.getElementById('select-espacamento')) document.getElementById('select-espacamento').value = configGeral.espacamento;
-            if(document.getElementById('select-botoes')) document.getElementById('select-botoes').value = configGeral.botoes;
-            if(document.getElementById('select-animacao')) document.getElementById('select-animacao').value = configGeral.animacao;
-            if(document.getElementById('select-notif')) document.getElementById('select-notif').value = configGeral.notificacoes;
-            if(document.getElementById('select-pagina-inicial')) document.getElementById('select-pagina-inicial').value = configGeral.paginaInicial;
         }
 
         function fazerBackup() {
@@ -838,6 +904,7 @@
             a.href = url;
             a.download = `backup_estudos_${new Date().toISOString().slice(0,10)}.json`;
             a.click();
+            mostrarCoach("Backup exportado com sucesso!");
         }
 
         function restaurarBackupPrompt() {
@@ -855,7 +922,7 @@
                         salvarDados();
                         aplicarConfiguracoesVisuais();
                         atualizarInterfaceCompleta();
-                        alert("Backup restaurado com sucesso!");
+                        mostrarCoach("Dados importados e restaurados com sucesso!");
                     } catch(err) { alert("Arquivo de backup inválido."); }
                 };
                 reader.readAsText(file);
@@ -869,7 +936,12 @@
         }
 
         function atualizarInterfaceCompleta() {
-            // 1. Matérias e Tópicos (00 a 30)
+            // Sincroniza campos de perfil
+            if(document.getElementById('perfil-nome')) document.getElementById('perfil-nome').value = appData.perfil.nome || '';
+            if(document.getElementById('perfil-idade')) document.getElementById('perfil-idade').value = appData.perfil.idade || 27;
+            if(document.getElementById('perfil-objetivo')) document.getElementById('perfil-objetivo').value = appData.perfil.objetivo || '';
+
+            // 1. Matérias e Tópicos (Começando do 00)
             const containerMat = document.getElementById('container-materias-gerenciador');
             if(containerMat) {
                 containerMat.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Nenhuma matéria cadastrada.</p>' :
@@ -877,7 +949,10 @@
                         <div class="card" style="margin-top: 1rem;">
                             <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
                                 <h4 style="color: var(--accent); font-size: 1.15rem; font-weight: 600;">${m.nome}</h4>
-                                <button onclick="appData.materias = appData.materias.filter(x => x.id !== '${m.id}'); salvarDados(); atualizarInterfaceCompleta();" class="btn btn-danger">Excluir Matéria</button>
+                                <div class="flex gap-2">
+                                    <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Adicionar Tópico</button>
+                                    <button onclick="appData.materias = appData.materias.filter(x => x.id !== '${m.id}'); salvarDados(); atualizarInterfaceCompleta();" class="btn btn-danger">Excluir</button>
+                                </div>
                             </div>
                             <div class="topicos-grid">
                                 ${m.topicos.map((t, idx) => {
@@ -893,11 +968,11 @@
                                             <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
                                             <div class="flex gap-2">
                                                 <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" placeholder="Link da Lei" value="${t.linkLei}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'linkLei', this.value)">
-                                                ${t.linkLei ? `<a href="${t.linkLei}" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Ler Lei</a>` : ''}
+                                                ${t.linkLei ? `<a href="${t.linkLei}" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Ler</a>` : ''}
                                             </div>
                                             <div class="flex gap-2" style="font-size: 0.8rem; color: var(--text-muted); align-items: center; justify-content: space-between; margin-top: 0.25rem;">
-                                                <span>Q: <input type="number" style="width: 50px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
-                                                <span>Acertos: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
+                                                <span>Q: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
+                                                <span>Acertos: <input type="number" style="width: 40px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" onchange="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
                                                 <span style="color: var(--accent); font-weight: 600;">${perc}%</span>
                                             </div>
                                         </div>
@@ -908,47 +983,44 @@
                     `).join('');
             }
 
-            // 2. Plano de Estudos Semanal (Segunda a Domingo com matérias, tópicos, PDFs e questões)
+            // 2. Plano de Estudos Simplificado (Matérias por dia da semana)
             const containerPlano = document.getElementById('container-plano-semanal');
             if(containerPlano) {
                 const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
                 containerPlano.innerHTML = dias.map(dia => {
-                    const p = appData.planoSemanal[dia] || { materia: '', topico: '', pdfs: 2, questoes: 50 };
+                    const matSelecionada = appData.planoSemanal[dia] || '';
                     return `
                         <div class="card" style="margin-bottom: 0;">
                             <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">${dia}-feira</h4>
-                            <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label style="font-size: 0.8rem;">Matéria Programada</label>
-                                <select class="form-control" onchange="appData.planoSemanal['${dia}'].materia = this.value; salvarDados();" style="font-size: 0.9rem; padding: 0.6rem;">
-                                    <option value="">Selecione a Matéria</option>
-                                    ${appData.materias.map(m => `<option value="${m.nome}" ${p.materia === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
+                                <select class="form-control" onchange="appData.planoSemanal['${dia}'] = this.value; salvarDados(); atualizarInterfaceCompleta();" style="font-size: 0.9rem; padding: 0.6rem;">
+                                    <option value="">Nenhuma Matéria</option>
+                                    ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
                                 </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0.75rem;">
-                                <label style="font-size: 0.8rem;">Tópico / Assunto</label>
-                                <input type="text" class="form-control" style="font-size: 0.9rem; padding: 0.6rem;" placeholder="Ex: Tópico 01 - Direitos Fundamentais" value="${p.topico || ''}" onchange="appData.planoSemanal['${dia}'].topico = this.value; salvarDados();">
-                            </div>
-                            <div class="grid-2" style="margin-bottom: 0; gap: 0.75rem;">
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label style="font-size: 0.8rem;">Qtd PDFs</label>
-                                    <input type="number" class="form-control" style="font-size: 0.9rem; padding: 0.6rem;" value="${p.pdfs || 2}" onchange="appData.planoSemanal['${dia}'].pdfs = parseInt(this.value)||0; salvarDados();">
-                                </div>
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label style="font-size: 0.8rem;">Qtd Questões</label>
-                                    <input type="number" class="form-control" style="font-size: 0.9rem; padding: 0.6rem;" value="${p.questoes || 50}" onchange="appData.planoSemanal['${dia}'].questoes = parseInt(this.value)||0; salvarDados();">
-                                </div>
                             </div>
                         </div>
                     `;
                 }).join('');
             }
 
-            // 3. Metas de Hoje Automáticas
+            // 3. Metas de Estudo Avançadas (Matérias, Tópicos e Questões)
+            const containerMetasEstudo = document.getElementById('container-config-metas-estudo');
+            if(containerMetasEstudo) {
+                containerMetasEstudo.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Cadastre matérias primeiro.</p>' :
+                    appData.materias.map(m => `
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.75rem;">${m.nome}</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Total de Tópicos: ${m.topicos.length} | Questões cadastradas nos tópicos acima.</p>
+                        </div>
+                    `).join('');
+            }
+
+            // 4. Metas de Hoje (Sincronizadas)
             const listaMetas = document.getElementById('lista-metas-diarias-automaticas');
             const dashMetas = document.getElementById('dash-resumo-metas-hoje');
             
             const hojeNome = new Date().toLocaleDateString('pt-BR', { weekday: 'long' });
-            // Identifica o dia atual de forma simples
             let diaAtualKey = 'Segunda';
             if(hojeNome.includes('Terça')) diaAtualKey = 'Terça';
             if(hojeNome.includes('Quarta')) diaAtualKey = 'Quarta';
@@ -957,79 +1029,67 @@
             if(hojeNome.includes('Sábado')) diaAtualKey = 'Sábado';
             if(hojeNome.includes('Domingo')) diaAtualKey = 'Domingo';
 
-            const planoHoje = appData.planoSemanal[diaAtualKey];
+            const matDia = appData.planoSemanal[diaAtualKey];
             let htmlMetas = '';
-            if(planoHoje && planoHoje.materia) {
-                htmlMetas = `
-                    <li>
-                        <span>🎯 <strong>${planoHoje.materia}</strong> — ${planoHoje.topico || 'Estudo programado'} (${planoHoje.pdfs || 2} PDFs & ${planoHoje.questoes || 50} Questões)</span>
-                        <span style="color: var(--accent); font-weight: 500;">Pendente</span>
-                    </li>
-                `;
-            } else {
-                htmlMetas = appData.materias.length === 0 ? '<li>Nenhuma matéria cadastrada. Configure o plano de estudos ou cadastre matérias.</li>' :
-                    appData.materias.slice(0, 2).map(m => `
+            if(matDia) {
+                const matObj = appData.materias.find(m => m.nome === matDia);
+                if(matObj && matObj.topicos.length > 0) {
+                    htmlMetas = matObj.topicos.map((t, idx) => `
                         <li>
-                            <span>🎯 <strong>${m.nome}</strong>: Estudar 2 PDFs + Mínimo de 50 Questões</span>
-                            <span style="color: var(--accent); font-weight: 500;">Automática</span>
+                            <span>🎯 <strong>${matObj.nome}</strong> — ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
+                            <button onclick="concluirEstudoTopico('${matObj.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
                         </li>
                     `).join('');
+                } else {
+                    htmlMetas = `<li>Matéria "${matDia}" sem tópicos cadastrados.</li>`;
+                }
+            } else {
+                htmlMetas = `<li>Nenhuma matéria programada para hoje (${diaAtualKey}-feira). Configure no Plano de Estudos.</li>`;
             }
 
             if(listaMetas) listaMetas.innerHTML = htmlMetas;
             if(dashMetas) dashMetas.innerHTML = htmlMetas;
 
-            // 4. Revisões de R1 até R30
+            // 5. Ver Revisões (Somente geradas automaticamente)
             const listaRevisoes = document.getElementById('lista-revisoes-completa');
             if(listaRevisoes) {
-                listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão programada. Conclua tópicos para gerar o ciclo de R1 até R30 automaticamente.</li>' :
+                listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão gerada. Conclua tópicos para gerar revisões automáticas.</li>' :
                     appData.revisoes.map(r => `
                         <li>
-                            <span style="${r.concluida ? 'text-decoration: line-through; opacity: 0.6;' : ''}">🔄 ${r.titulo} — Vencimento: <strong>${r.data}</strong></span>
-                            <button onclick="r.concluida = !r.concluida; salvarDados(); atualizarInterfaceCompleta();" class="btn ${r.concluida ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${r.concluida ? 'Concluída' : 'Marcar Concluída'}</button>
+                            <span style="${r.concluida ? 'text-decoration: line-through; opacity: 0.6;' : ''}">🔄 ${r.titulo} — Data: <strong>${r.data}</strong></span>
+                            <button onclick="r.concluida = !r.concluida; salvarDados(); atualizarInterfaceCompleta();" class="btn ${r.concluida ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${r.concluida ? 'Concluída' : 'Marcar Feita'}</button>
                         </li>
                     `).join('');
             }
 
-            // 5. Progresso Geral e Visual
-            let totalTopicosMapeados = 0;
-            let totalTopicosEstudados = 0;
-            appData.materias.forEach(m => {
-                m.topicos.forEach(t => {
-                    totalTopicosMapeados++;
-                    if(t.estudoFeito) totalTopicosEstudados++;
+            // 6. Progresso (Somente Pendências e Concluídos)
+            const containerProgresso = document.getElementById('container-progresso-pendencias');
+            if(containerProgresso) {
+                let itensPendentes = [];
+                let itensConcluidos = [];
+                appData.materias.forEach(m => {
+                    m.topicos.forEach(t => {
+                        const txt = `${m.nome} - ${t.nome}`;
+                        if(t.estudoFeito) itensConcluidos.push(txt);
+                        else itensPendentes.push(txt);
+                    });
                 });
-            });
-            const percEdital = totalTopicosMapeados > 0 ? Math.round((totalTopicosEstudados / totalTopicosMapeados) * 100) : 0;
-            
-            document.getElementById('prog-cobertura').innerHTML = `📊 Cobertura geral do edital: <strong>${percEdital}%</strong>`;
-            document.getElementById('prog-horas').innerHTML = `⏱️ Horas estudadas: <strong>${appData.estatisticas.horas}h</strong>`;
-            document.getElementById('prog-questoes').innerHTML = `📝 Questões feitas: <strong>${appData.estatisticas.questoesFeitas}</strong>`;
-            document.getElementById('prog-acertos-erros').innerHTML = `✅ Acertos / ❌ Erros: <strong>${appData.estatisticas.acertos} / ${appData.estatisticas.erros}</strong>`;
-            const taxa = appData.estatisticas.questoesFeitas > 0 ? Math.round((appData.estatisticas.acertos / appData.estatisticas.questoesFeitas) * 100) : 0;
-            document.getElementById('prog-taxa').innerHTML = `🎯 Aproveitamento: <strong>${taxa}%</strong>`;
 
-            const progGrafico = document.getElementById('progresso-materias-grafico');
-            if(progGrafico) {
-                progGrafico.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Sem dados gráficos no momento.</p>' :
-                    appData.materias.map(m => {
-                        let topEst = m.topicos.filter(t => t.estudoFeito).length;
-                        let pMat = Math.round((topEst / m.topicos.length) * 100);
-                        return `
-                            <div style="margin-bottom: 1rem; width: 100%;">
-                                <div class="flex justify-between" style="font-size: 0.9rem; margin-bottom: 0.35rem;">
-                                    <span>${m.nome}</span>
-                                    <span style="font-weight: 600; color: var(--accent);">${pMat}%</span>
-                                </div>
-                                <div style="background: var(--border); height: 8px; border-radius: 4px; overflow: hidden;">
-                                    <div style="background: var(--accent); width: ${pMat}%; height: 100%; transition: width 0.4s;"></div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                containerProgresso.innerHTML = `
+                    <div style="width: 100%;">
+                        <h4 style="color: var(--accent); margin-bottom: 0.75rem;">Pendências (${itensPendentes.length})</h4>
+                        <ul style="list-style: none; margin-bottom: 1.5rem;">
+                            ${itensPendentes.length === 0 ? '<li style="color: var(--text-muted);">Nenhuma pendência. Tudo em dia!</li>' : itensPendentes.map(p => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">⏳ ${p}</li>`).join('')}
+                        </ul>
+                        <h4 style="color: var(--success); margin-bottom: 0.75rem;">Concluídos (${itensConcluidos.length})</h4>
+                        <ul style="list-style: none;">
+                            ${itensConcluidos.length === 0 ? '<li style="color: var(--text-muted);">Nenhum tópico concluído ainda.</li>' : itensConcluidos.map(c => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-decoration: line-through; opacity: 0.7;">✅ ${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
             }
 
-            // 6. Calendário
+            // 7. Calendário Sincronizado
             const calContainer = document.getElementById('calendario-container');
             if (calContainer) {
                 calContainer.innerHTML = '';
@@ -1037,7 +1097,7 @@
                     calContainer.innerHTML += `<div class="calendar-day-header">${d}</div>`;
                 });
                 for (let i = 1; i <= 31; i++) {
-                    const isToday = i === 11 ? 'today' : '';
+                    const isToday = i === 12 ? 'today' : '';
                     calContainer.innerHTML += `<div class="calendar-day ${isToday}"><span>${i}</span></div>`;
                 }
             }
@@ -1049,7 +1109,7 @@
             if(revPendentes > 0) {
                 badge.textContent = revPendentes;
                 badge.classList.remove('hidden');
-                listaNotif.innerHTML = `<li>Você possui ${revPendentes} revisão(ões) pendente(s) no ciclo R1-R30.</li>`;
+                listaNotif.innerHTML = `<li>Você possui ${revPendentes} revisão(ões) pendente(s).</li>`;
             } else {
                 badge.classList.add('hidden');
                 listaNotif.innerHTML = `<li>Nenhuma pendência no momento. Excelente ritmo!</li>`;
