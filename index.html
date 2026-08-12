@@ -475,11 +475,11 @@
                 </div>
             </section>
 
-            <!-- 3. PLANO DE ESTUDOS (Permite várias matérias por dia + botão Salvar) -->
+            <!-- 3. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal (Múltiplas Matérias por Dia)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Adicione e configure quais matérias serão estudadas em cada dia da semana.</p>
+                    <h3>Planejamento Semanal</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
                     <div style="margin-top: 2rem;">
                         <button onclick="salvarPlanoEstudos()" class="btn btn-primary" style="max-width: 250px;">Salvar Plano</button>
@@ -487,12 +487,25 @@
                 </div>
             </section>
 
-            <!-- 4. METAS DE ESTUDO (Nova Ferramenta) -->
+            <!-- 4. METAS DE ESTUDO (Ajustado para quantidade de matérias e tópicos por dia com botão Salvar) -->
             <section id="view-metas-estudo" class="view-section">
-                <div class="card">
-                    <h3>Configuração Avançada de Metas</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Ajuste finamente as matérias por dia, tópicos vinculados e questões por tópico.</p>
-                    <div id="container-config-metas-estudo"></div>
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <h3>Metas de Estudo (Configuração Diária)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina a quantidade exata de matérias e quantos tópicos por matéria devem ser exibidos diariamente nas Metas de Hoje.</p>
+                    
+                    <div class="form-group">
+                        <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
+                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-metas-topicos">Quantidade de Tópicos por Matéria</label>
+                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3">
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <button onclick="salvarConfigMetasEstudo()" class="btn btn-primary" style="max-width: 250px;">Salvar Metas de Estudo</button>
+                    </div>
                 </div>
             </section>
 
@@ -593,7 +606,7 @@
             usuarios: [],
             materias: [], 
             planoSemanal: { Segunda: [], Terça: [], Quarta: [], Quinta: [], Sexta: [], Sábado: [], Domingo: [] },
-            metasEstudoDetalhes: {},
+            configMetas: { qtdMaterias: 2, qtdTopicos: 3 },
             revisoes: [],
             perfil: { nome: 'Arlan Souza de ramos', idade: 27, objetivo: 'Concurso Público' },
             estatisticas: { horas: 0, questoesFeitas: 0, acertos: 0, erros: 0 }
@@ -649,7 +662,6 @@
                 if (d) {
                     const parsed = JSON.parse(d);
                     appData = { ...appData, ...parsed };
-                    // Compatibilidade retroativa caso planoSemanal seja string ou array antigo
                     Object.keys(appData.planoSemanal).forEach(dia => {
                         if (!Array.isArray(appData.planoSemanal[dia])) {
                             const val = appData.planoSemanal[dia];
@@ -857,32 +869,6 @@
                 }
                 salvarDados();
                 atualizarInterfaceCompleta();
-                verificarMetasConcluidasDia();
-            }
-        }
-
-        function verificarMetasConcluidasDia() {
-            const hojeNome = new Date().toLocaleDateString('pt-BR', { weekday: 'long' });
-            let diaKey = 'Segunda';
-            if(hojeNome.includes('Terça')) diaKey = 'Terça';
-            if(hojeNome.includes('Quarta')) diaKey = 'Quarta';
-            if(hojeNome.includes('Quinta')) diaKey = 'Quinta';
-            if(hojeNome.includes('Sexta')) diaKey = 'Sexta';
-            if(hojeNome.includes('Sábado')) diaKey = 'Sábado';
-            if(hojeNome.includes('Domingo')) diaKey = 'Domingo';
-
-            const materiasDia = appData.planoSemanal[diaKey] || [];
-            if(materiasDia.length > 0) {
-                let todasFeitas = true;
-                materiasDia.forEach(matNome => {
-                    const materia = appData.materias.find(m => m.nome === matNome);
-                    if(materia && materia.topicos.length > 0) {
-                        if(!materia.topicos.every(t => t.estudoFeito)) todasFeitas = false;
-                    }
-                });
-                if(todasFeitas && materiasDia.length > 0) {
-                    mostrarCoach("Excelente! Você concluiu todas as metas do dia!");
-                }
             }
         }
 
@@ -905,7 +891,6 @@
         }
 
         function salvarPlanoEstudos() {
-            // Recolhe os valores atuais dos selects diretamente do DOM para garantir sincronismo exato
             const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
             dias.forEach(dia => {
                 const selects = document.querySelectorAll(`.select-plano-${dia}`);
@@ -918,6 +903,18 @@
             salvarDados();
             atualizarInterfaceCompleta();
             mostrarCoach("Plano de Estudos salvo e sincronizado com sucesso!");
+        }
+
+        function salvarConfigMetasEstudo() {
+            const qtdMatInput = document.getElementById('input-metas-materias');
+            const qtdTopInput = document.getElementById('input-metas-topicos');
+            if (qtdMatInput && qtdTopInput) {
+                appData.configMetas.qtdMaterias = parseInt(qtdMatInput.value) || 2;
+                appData.configMetas.qtdTopicos = parseInt(qtdTopInput.value) || 3;
+                salvarDados();
+                atualizarInterfaceCompleta();
+                mostrarCoach("Configurações de Metas de Estudo salvas e sincronizadas!");
+            }
         }
 
         function renderizarPlanoSemanal() {
@@ -1016,6 +1013,9 @@
             if(document.getElementById('perfil-idade')) document.getElementById('perfil-idade').value = appData.perfil.idade || 27;
             if(document.getElementById('perfil-objetivo')) document.getElementById('perfil-objetivo').value = appData.perfil.objetivo || '';
 
+            if(document.getElementById('input-metas-materias')) document.getElementById('input-metas-materias').value = appData.configMetas.qtdMaterias;
+            if(document.getElementById('input-metas-topicos')) document.getElementById('input-metas-topicos').value = appData.configMetas.qtdTopicos;
+
             const containerMat = document.getElementById('container-materias-gerenciador');
             if(containerMat) {
                 containerMat.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Nenhuma matéria cadastrada.</p>' :
@@ -1059,17 +1059,6 @@
 
             renderizarPlanoSemanal();
 
-            const containerMetasEstudo = document.getElementById('container-config-metas-estudo');
-            if(containerMetasEstudo) {
-                containerMetasEstudo.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Cadastre matérias primeiro.</p>' :
-                    appData.materias.map(m => `
-                        <div class="card" style="margin-bottom: 1rem;">
-                            <h4 style="color: var(--accent); margin-bottom: 0.75rem;">${m.nome}</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Total de Tópicos: ${m.topicos.length} | Questões cadastradas nos tópicos acima.</p>
-                        </div>
-                    `).join('');
-            }
-
             const listaMetas = document.getElementById('lista-metas-diarias-automaticas');
             const dashMetas = document.getElementById('dash-resumo-metas-hoje');
             
@@ -1084,11 +1073,20 @@
 
             const materiasDia = appData.planoSemanal[diaAtualKey] || [];
             let htmlMetas = '';
+            const maxMaterias = appData.configMetas.qtdMaterias || 2;
+            const maxTopicos = appData.configMetas.qtdTopicos || 3;
+
             if(materiasDia.length > 0) {
+                let countMat = 0;
                 materiasDia.forEach(matNome => {
+                    if (countMat >= maxMaterias) return;
                     const matObj = appData.materias.find(m => m.nome === matNome);
                     if(matObj && matObj.topicos.length > 0) {
+                        countMat++;
+                        let countTop = 0;
                         matObj.topicos.forEach((t, idx) => {
+                            if (countTop >= maxTopicos) return;
+                            countTop++;
                             htmlMetas += `
                                 <li>
                                     <span>🎯 <strong>${matObj.nome}</strong> — ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
