@@ -475,12 +475,15 @@
                 </div>
             </section>
 
-            <!-- 3. PLANO DE ESTUDOS (Simplificado) -->
+            <!-- 3. PLANO DE ESTUDOS (Permite várias matérias por dia + botão Salvar) -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal (Escolha de Matérias por Dia)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina qual matéria será estudada em cada dia da semana.</p>
+                    <h3>Planejamento Semanal (Múltiplas Matérias por Dia)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Adicione e configure quais matérias serão estudadas em cada dia da semana.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
+                    <div style="margin-top: 2rem;">
+                        <button onclick="salvarPlanoEstudos()" class="btn btn-primary" style="max-width: 250px;">Salvar Plano</button>
+                    </div>
                 </div>
             </section>
 
@@ -589,7 +592,7 @@
             usuarioLogado: null,
             usuarios: [],
             materias: [], 
-            planoSemanal: { Segunda: '', Terça: '', Quarta: '', Quinta: '', Sexta: '', Sábado: '', Domingo: '' },
+            planoSemanal: { Segunda: [], Terça: [], Quarta: [], Quinta: [], Sexta: [], Sábado: [], Domingo: [] },
             metasEstudoDetalhes: {},
             revisoes: [],
             perfil: { nome: 'Arlan Souza de ramos', idade: 27, objetivo: 'Concurso Público' },
@@ -643,7 +646,17 @@
         function carregarDadosUsuario() {
             try {
                 const d = localStorage.getItem("plataforma_estudos_data");
-                if (d) appData = { ...appData, ...JSON.parse(d) };
+                if (d) {
+                    const parsed = JSON.parse(d);
+                    appData = { ...appData, ...parsed };
+                    // Compatibilidade retroativa caso planoSemanal seja string ou array antigo
+                    Object.keys(appData.planoSemanal).forEach(dia => {
+                        if (!Array.isArray(appData.planoSemanal[dia])) {
+                            const val = appData.planoSemanal[dia];
+                            appData.planoSemanal[dia] = val ? [val] : [];
+                        }
+                    });
+                }
                 const c = localStorage.getItem("plataforma_estudos_config");
                 if (c) configGeral = { ...configGeral, ...JSON.parse(c) };
             } catch (e) { console.error(e); }
@@ -770,7 +783,6 @@
                 const nome = input.value.trim();
                 if (!nome) return;
 
-                // Começando estritamente pelo tópico 00
                 let topicosIniciais = [{
                     numero: '00',
                     nome: 'Tópico 00 - Conteúdo Inicial',
@@ -828,7 +840,6 @@
                     if(topico.questoesFeitas === 0) topico.questoesFeitas = 50;
                     if(topico.acertos === 0) { topico.acertos = 42; topico.erros = 8; }
                     
-                    // Cálculo interno de revisões (sem rótulos R1/R7)
                     [1, 7, 15, 30].forEach(dias => {
                         appData.revisoes.push({
                             id: 'rev_' + Date.now() + Math.random(),
@@ -846,8 +857,6 @@
                 }
                 salvarDados();
                 atualizarInterfaceCompleta();
-
-                // Verifica se todas as metas do dia foram concluídas
                 verificarMetasConcluidasDia();
             }
         }
@@ -862,15 +871,82 @@
             if(hojeNome.includes('Sábado')) diaKey = 'Sábado';
             if(hojeNome.includes('Domingo')) diaKey = 'Domingo';
 
-            const matNome = appData.planoSemanal[diaKey];
-            if(matNome) {
-                const materia = appData.materias.find(m => m.nome === matNome);
-                if(materia && materia.topicos.length > 0) {
-                    const todasFeitas = materia.topicos.every(t => t.estudoFeito);
-                    if(todasFeitas) {
-                        mostrarCoach("Excelente! Você concluiu todas as metas do dia!");
+            const materiasDia = appData.planoSemanal[diaKey] || [];
+            if(materiasDia.length > 0) {
+                let todasFeitas = true;
+                materiasDia.forEach(matNome => {
+                    const materia = appData.materias.find(m => m.nome === matNome);
+                    if(materia && materia.topicos.length > 0) {
+                        if(!materia.topicos.every(t => t.estudoFeito)) todasFeitas = false;
                     }
+                });
+                if(todasFeitas && materiasDia.length > 0) {
+                    mostrarCoach("Excelente! Você concluiu todas as metas do dia!");
                 }
+            }
+        }
+
+        function adicionarMateriaPlano(dia) {
+            if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
+            appData.planoSemanal[dia].push('');
+            renderizarPlanoSemanal();
+        }
+
+        function removerMateriaPlano(dia, index) {
+            if (appData.planoSemanal[dia]) {
+                appData.planoSemanal[dia].splice(index, 1);
+                renderizarPlanoSemanal();
+            }
+        }
+
+        function atualizarMateriaPlanoSelect(dia, index, valor) {
+            if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
+            appData.planoSemanal[dia][index] = valor;
+        }
+
+        function salvarPlanoEstudos() {
+            // Recolhe os valores atuais dos selects diretamente do DOM para garantir sincronismo exato
+            const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+            dias.forEach(dia => {
+                const selects = document.querySelectorAll(`.select-plano-${dia}`);
+                let arr = [];
+                selects.forEach(sel => {
+                    if (sel.value) arr.push(sel.value);
+                });
+                appData.planoSemanal[dia] = arr;
+            });
+            salvarDados();
+            atualizarInterfaceCompleta();
+            mostrarCoach("Plano de Estudos salvo e sincronizado com sucesso!");
+        }
+
+        function renderizarPlanoSemanal() {
+            const containerPlano = document.getElementById('container-plano-semanal');
+            if(containerPlano) {
+                const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+                containerPlano.innerHTML = dias.map(dia => {
+                    const materiasSelecionadas = appData.planoSemanal[dia] || [];
+                    return `
+                        <div class="card" style="margin-bottom: 0;">
+                            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+                                <h4 style="font-size: 1.1rem;">${dia}-feira</h4>
+                                <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Adicionar Matéria</button>
+                            </div>
+                            <div id="container-selects-${dia}" class="flex flex-col gap-2">
+                                ${materiasSelecionadas.length === 0 ? '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
+                                ${materiasSelecionadas.map((matSelecionada, idx) => `
+                                    <div class="flex gap-2 items-center">
+                                        <select class="form-control select-plano-${dia}" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
+                                            <option value="">Nenhuma Matéria</option>
+                                            ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
+                                        </select>
+                                        <button onclick="removerMateriaPlano('${dia}', ${idx})" class="btn btn-danger" style="padding: 0.6rem; font-size: 0.8rem;">✕</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
         }
 
@@ -936,12 +1012,10 @@
         }
 
         function atualizarInterfaceCompleta() {
-            // Sincroniza campos de perfil
             if(document.getElementById('perfil-nome')) document.getElementById('perfil-nome').value = appData.perfil.nome || '';
             if(document.getElementById('perfil-idade')) document.getElementById('perfil-idade').value = appData.perfil.idade || 27;
             if(document.getElementById('perfil-objetivo')) document.getElementById('perfil-objetivo').value = appData.perfil.objetivo || '';
 
-            // 1. Matérias e Tópicos (Começando do 00)
             const containerMat = document.getElementById('container-materias-gerenciador');
             if(containerMat) {
                 containerMat.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Nenhuma matéria cadastrada.</p>' :
@@ -983,28 +1057,8 @@
                     `).join('');
             }
 
-            // 2. Plano de Estudos Simplificado (Matérias por dia da semana)
-            const containerPlano = document.getElementById('container-plano-semanal');
-            if(containerPlano) {
-                const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-                containerPlano.innerHTML = dias.map(dia => {
-                    const matSelecionada = appData.planoSemanal[dia] || '';
-                    return `
-                        <div class="card" style="margin-bottom: 0;">
-                            <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">${dia}-feira</h4>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label style="font-size: 0.8rem;">Matéria Programada</label>
-                                <select class="form-control" onchange="appData.planoSemanal['${dia}'] = this.value; salvarDados(); atualizarInterfaceCompleta();" style="font-size: 0.9rem; padding: 0.6rem;">
-                                    <option value="">Nenhuma Matéria</option>
-                                    ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
-                                </select>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
+            renderizarPlanoSemanal();
 
-            // 3. Metas de Estudo Avançadas (Matérias, Tópicos e Questões)
             const containerMetasEstudo = document.getElementById('container-config-metas-estudo');
             if(containerMetasEstudo) {
                 containerMetasEstudo.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Cadastre matérias primeiro.</p>' :
@@ -1016,7 +1070,6 @@
                     `).join('');
             }
 
-            // 4. Metas de Hoje (Sincronizadas)
             const listaMetas = document.getElementById('lista-metas-diarias-automaticas');
             const dashMetas = document.getElementById('dash-resumo-metas-hoje');
             
@@ -1029,20 +1082,23 @@
             if(hojeNome.includes('Sábado')) diaAtualKey = 'Sábado';
             if(hojeNome.includes('Domingo')) diaAtualKey = 'Domingo';
 
-            const matDia = appData.planoSemanal[diaAtualKey];
+            const materiasDia = appData.planoSemanal[diaAtualKey] || [];
             let htmlMetas = '';
-            if(matDia) {
-                const matObj = appData.materias.find(m => m.nome === matDia);
-                if(matObj && matObj.topicos.length > 0) {
-                    htmlMetas = matObj.topicos.map((t, idx) => `
-                        <li>
-                            <span>🎯 <strong>${matObj.nome}</strong> — ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
-                            <button onclick="concluirEstudoTopico('${matObj.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
-                        </li>
-                    `).join('');
-                } else {
-                    htmlMetas = `<li>Matéria "${matDia}" sem tópicos cadastrados.</li>`;
-                }
+            if(materiasDia.length > 0) {
+                materiasDia.forEach(matNome => {
+                    const matObj = appData.materias.find(m => m.nome === matNome);
+                    if(matObj && matObj.topicos.length > 0) {
+                        matObj.topicos.forEach((t, idx) => {
+                            htmlMetas += `
+                                <li>
+                                    <span>🎯 <strong>${matObj.nome}</strong> — ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
+                                    <button onclick="concluirEstudoTopico('${matObj.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
+                                </li>
+                            `;
+                        });
+                    }
+                });
+                if(!htmlMetas) htmlMetas = `<li>Matérias de hoje sem tópicos cadastrados.</li>`;
             } else {
                 htmlMetas = `<li>Nenhuma matéria programada para hoje (${diaAtualKey}-feira). Configure no Plano de Estudos.</li>`;
             }
@@ -1050,7 +1106,6 @@
             if(listaMetas) listaMetas.innerHTML = htmlMetas;
             if(dashMetas) dashMetas.innerHTML = htmlMetas;
 
-            // 5. Ver Revisões (Somente geradas automaticamente)
             const listaRevisoes = document.getElementById('lista-revisoes-completa');
             if(listaRevisoes) {
                 listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão gerada. Conclua tópicos para gerar revisões automáticas.</li>' :
@@ -1062,7 +1117,6 @@
                     `).join('');
             }
 
-            // 6. Progresso (Somente Pendências e Concluídos)
             const containerProgresso = document.getElementById('container-progresso-pendencias');
             if(containerProgresso) {
                 let itensPendentes = [];
@@ -1089,7 +1143,6 @@
                 `;
             }
 
-            // 7. Calendário Sincronizado
             const calContainer = document.getElementById('calendario-container');
             if (calContainer) {
                 calContainer.innerHTML = '';
@@ -1102,7 +1155,6 @@
                 }
             }
 
-            // Notificações Badge
             const revPendentes = appData.revisoes.filter(r => !r.concluida).length;
             const badge = document.getElementById('notif-badge');
             const listaNotif = document.getElementById('lista-notificacoes');
