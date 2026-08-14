@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Estudos</title>
+    <title>Plataforma de Estudos - Arlan</title>
     <style>
         :root {
             --bg-main: #0a0d14;
@@ -61,62 +61,6 @@
         .gap-4 { gap: 1rem; }
         .w-full { width: 100%; }
 
-        #auth-container {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-main);
-            z-index: 1000;
-            display: none; justify-content: center; align-items: center;
-            padding: 2rem;
-        }
-
-        .auth-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 3rem;
-            border-radius: var(--radius-ui);
-            width: 100%; max-width: 440px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .auth-card h2 {
-            margin-bottom: 0.75rem; font-size: 2rem; font-weight: 700; text-align: center; color: var(--text-main);
-            letter-spacing: -0.03em;
-        }
-
-        .auth-subtitle {
-            text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem;
-        }
-
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label {
-            display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-        }
-
-        .form-control {
-            width: 100%; padding: 0.9rem 1.1rem;
-            background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: var(--radius-ui); color: var(--text-main); font-size: 1rem;
-        }
-
-        .form-control:focus {
-            outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow);
-        }
-
-        .btn {
-            display: inline-flex; justify-content: center; align-items: center;
-            padding: 0.9rem 1.75rem; border-radius: var(--radius-ui); font-weight: 500;
-            cursor: pointer; border: none; font-size: 1rem; transition: all var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--accent); color: white; width: 100%; box-shadow: 0 4px 14px var(--accent-glow); }
-        .btn-primary:hover { background: var(--accent-hover); }
-        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: var(--accent-glow); border-color: var(--accent); }
-        .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-ui); }
-        .btn-danger:hover { opacity: 0.9; }
-
         #app-container {
             display: flex; flex-direction: column; width: 100vw; min-height: 100vh;
         }
@@ -141,7 +85,7 @@
         .nav-back-btn:hover { border-color: var(--accent); }
 
         .notification-bell {
-            position: relative; cursor: pointer; font-size: 1.1rem;
+            position: relative; cursor: pointer;
             background: var(--bg-input); padding: 0.65rem; border-radius: 50%; border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
         }
@@ -288,6 +232,33 @@
         }
         .materia-content-body { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
 
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%; padding: 0.9rem 1.1rem;
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: var(--radius-ui); color: var(--text-main); font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .btn {
+            display: inline-flex; justify-content: center; align-items: center;
+            padding: 0.9rem 1.75rem; border-radius: var(--radius-ui); font-weight: 500;
+            cursor: pointer; border: none; font-size: 1rem; transition: all var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 14px var(--accent-glow); }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--accent-glow); border-color: var(--accent); }
+        .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-ui); }
+        .btn-danger:hover { opacity: 0.9; }
+
         #coach-toast {
             position: fixed; bottom: 24px; right: 24px; background: var(--bg-card);
             border: 1px solid var(--accent); border-radius: var(--radius-ui); padding: 1rem 1.5rem;
@@ -306,8 +277,6 @@
     </style>
 </head>
 <body>
-
-    <div id="auth-container" class="hidden"></div>
 
     <div id="app-container">
         <header>
@@ -399,7 +368,7 @@
             <section id="view-metas" class="view-section">
                 <div class="card">
                     <h3>Metas de Hoje (Sincronização em Tempo Real)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe os próximos tópicos pendentes com avanço automático por matéria.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Próximos tópicos pendentes com avanço automático por matéria de acordo com o plano diário.</p>
                     <div id="lista-metas-diarias-automaticas" class="item-list"></div>
                 </div>
             </section>
@@ -415,7 +384,7 @@
             <!-- 3. MATÉRIAS -->
             <section id="view-materias" class="view-section">
                 <div class="card">
-                    <h3>Cadastrar Nova Matéria e Tópico</h3>
+                    <h3>Cadastrar Nova Matéria</h3>
                     <form id="form-cadastrar-materia" class="flex gap-4 items-center" style="flex-wrap: wrap;">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
                             <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria (Ex: Direito Administrativo)" required>
@@ -438,8 +407,8 @@
             <!-- 4. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal (Sincronização Automática)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana. As Metas de Hoje são recalculadas instantaneamente ao alterar qualquer campo.</p>
+                    <h3>Planejamento Semanal (Centro de Sincronização)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. As Metas de Hoje se recalculam instantaneamente ao alterar qualquer campo.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
                 </div>
             </section>
@@ -447,8 +416,8 @@
             <!-- 5. METAS DE ESTUDO -->
             <section id="view-metas-estudo" class="view-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
-                    <h3>Metas de Estudo (Configuração Diária Instantânea)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina a quantidade exata de matérias e quantos tópicos por matéria devem ser exibidos diariamente. As alterações atualizam as Metas de Hoje na hora.</p>
+                    <h3>Metas de Estudo (Configuração de Quantidade)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina quantas matérias e quantos tópicos por matéria aparecem diariamente.</p>
                     
                     <div class="form-group">
                         <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
@@ -466,7 +435,7 @@
             <section id="view-revisoes" class="view-section">
                 <div class="card">
                     <h3>Agenda de Revisões Automáticas</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Itens gerados automaticamente pelo sistema de repetição interna.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Itens gerados automaticamente pelo sistema de repetição interna preservados.</p>
                     <div id="lista-revisoes-completa" class="item-list"></div>
                 </div>
             </section>
@@ -490,7 +459,7 @@
             <!-- 9. PERFIL -->
             <section id="view-perfil" class="view-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h3>Perfil do Aluno (Salvamento Automático)</h3>
+                    <h3>Perfil do Aluno</h3>
                     <form id="form-perfil">
                         <div class="form-group">
                             <label for="perfil-nome">Nome Completo</label>
@@ -502,7 +471,7 @@
                         </div>
                         <div class="form-group">
                             <label for="perfil-objetivo">Objetivo / Concurso</label>
-                            <input type="text" id="perfil-objetivo" class="form-control" placeholder="Ex: Analista Judiciário" required oninput="salvarPerfilAutomatico()">
+                            <input type="text" id="perfil-objetivo" class="form-control" required oninput="salvarPerfilAutomatico()">
                         </div>
                     </form>
                 </div>
@@ -512,7 +481,6 @@
             <section id="view-configuracoes" class="view-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
                     <h3>Configurações e Gestão de Dados</h3>
-                    
                     <div class="form-group">
                         <label for="select-tema">Tema Visual</label>
                         <select id="select-tema" class="form-control" onchange="atualizarConfig('tema', this.value)">
@@ -520,12 +488,10 @@
                             <option value="light">Modo Claro (Light)</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="input-cor-primaria">Cor Principal de Destaque</label>
                         <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;" onchange="atualizarConfig('corPrimaria', this.value)">
                     </div>
-
                     <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
                         <button onclick="fazerBackup()" class="btn btn-secondary w-full">Fazer Backup</button>
                         <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar / Importar Dados</button>
@@ -588,92 +554,32 @@
 
         function inicializarMatériasIniciaisObrigatorias() {
             const topicosPortuguesa = [
-                "00 - Análise sintática da oração e do período",
-                "01 - Pontuação",
-                "02 - Concordância verbal e nominal",
-                "03 - Regência verbal e nominal",
-                "04 - Emprego do sinal crase",
-                "05 - Significação de palavras",
-                "06 - Emprego de classes de palavras",
-                "07 - Colocação pronominal",
-                "08 - Reescrita de frases e parágrafos do texto",
-                "09 - Correção gramatical e textual",
-                "10 - Tipologia textual",
-                "11 - Coesão e coerência textual",
-                "12 - Compreensão e interpretação de textos",
-                "13 - Ortografia oficial",
-                "14 - Acentuação gráfica",
-                "15 - Emprego das letras"
+                "00 - Análise sintática da oração e do período", "01 - Pontuação", "02 - Concordância verbal e nominal",
+                "03 - Regência verbal e nominal", "04 - Emprego do sinal crase", "05 - Significação de palavras",
+                "06 - Emprego de classes de palavras", "07 - Colocação pronominal", "08 - Reescrita de frases e parágrafos do texto",
+                "09 - Correção gramatical e textual", "10 - Tipologia textual", "11 - Coesão e coerência textual",
+                "12 - Compreensão e interpretação de textos", "13 - Ortografia oficial", "14 - Acentuação gráfica", "15 - Emprego das letras"
             ];
-
             const topicosAdmin = [
-                "00 - Estado, governo e administração pública",
-                "01 - Conceitos e princípios da administração pública",
-                "02 - Agentes públicos",
-                "03 - Poderes administrativos",
-                "04 - Controle da administração pública",
-                "05 - Responsabilidade civil do Estado",
-                "06 - Lei nº 8.112/1990 e suas alterações",
-                "07 - Lei de Improbidade Administrativa (Lei nº 8.429/1992)",
-                "08 - Processo Administrativo Federal (Lei nº 9.784/1999)",
-                "09 - Licitações e Contratos Administrativos",
-                "10 - Serviços públicos",
-                "11 - Organização administrativa",
-                "12 - Bens públicos",
-                "13 - Intervenção do Estado na propriedade",
-                "14 - Desapropriação",
-                "15 - Atos administrativos"
+                "00 - Estado, governo e administração pública", "01 - Conceitos e princípios da administração pública", "02 - Agentes públicos",
+                "03 - Poderes administrativos", "04 - Controle da administração pública", "05 - Responsabilidade civil do Estado",
+                "06 - Lei nº 8.112/1990", "07 - Lei de Improbidade Administrativa (Lei nº 8.429/1992)", "08 - Processo Administrativo Federal (Lei nº 9.784/1999)",
+                "09 - Licitações e Contratos", "10 - Serviços públicos", "11 - Organização administrativa", "12 - Bens públicos", "13 - Intervenção", "14 - Desapropriação", "15 - Atos administrativos"
             ];
-
             const topicosConstitucional = [
-                "00 - Constituição: conceitos, classificação e aplicabilidade das normas constitucionais",
-                "01 - Direitos e garantias fundamentais",
-                "02 - Direitos e deveres individuais e coletivos",
-                "03 - Direitos sociais",
-                "04 - Nacionalidade e Cidadania",
-                "05 - Direitos políticos",
-                "06 - Partidos políticos",
-                "07 - Organização político-administrativa da República Federativa do Brasil",
-                "08 - União, Estados Federados, Distrito Federal e Municípios",
-                "09 - Poder Legislativo",
-                "10 - Poder Executivo",
-                "11 - Poder Judiciário",
-                "12 - Funções essenciais à justiça",
-                "13 - Ordem econômica e financeira",
-                "14 - Ordem social",
-                "15 - Controle de constitucionalidade"
+                "00 - Constituição: conceitos e classificação", "01 - Direitos e garantias fundamentais", "02 - Direitos individuais e coletivos",
+                "03 - Direitos sociais", "04 - Nacionalidade e Cidadania", "05 - Direitos políticos", "06 - Partidos políticos",
+                "07 - Organização político-administrativa", "08 - União, Estados, DF e Municípios", "09 - Poder Legislativo", "10 - Poder Executivo",
+                "11 - Poder Judiciário", "12 - Funções essenciais à justiça", "13 - Ordem econômica", "14 - Ordem social", "15 - Controle de constitucionalidade"
             ];
-
             const topicosPenal = [
-                "00 - Princípios básicos do Direito Penal",
-                "01 - A lei penal no tempo e no espaço",
-                "02 - A lei penal em relação às pessoas",
-                "03 - Interpretação da lei penal",
-                "04 - Teoria do crime",
-                "05 - Fato típico e seus elementos",
-                "06 - Ilicitude e causas de exclusão",
-                "07 - Culpabilidade e causas de exclusão",
-                "08 - Concurso de pessoas",
-                "09 - Das penas",
-                "10 - Medidas de segurança",
-                "11 - Ação penal",
-                "12 - Extinção da punibilidade",
-                "13 - Crimes contra a pessoa",
-                "14 - Crimes contra o patrimônio",
-                "15 - Crimes contra a administração pública"
+                "00 - Princípios básicos", "01 - Lei penal no tempo e espaço", "02 - Lei penal em relação às pessoas", "03 - Interpretação",
+                "04 - Teoria do crime", "05 - Fato típico", "06 - Ilicitude", "07 - Culpabilidade", "08 - Concurso de pessoas", "09 - Das penas",
+                "10 - Medidas de segurança", "11 - Ação penal", "12 - Extinção da punibilidade", "13 - Crimes contra a pessoa", "14 - Crimes contra o patrimônio", "15 - Crimes contra adm pública"
             ];
-
             const topicosProcessualPenal = [
-                "00 - Sistemas processuais penais",
-                "01 - Princípios gerais e aplicação da lei processual penal",
-                "02 - Inquérito policial",
-                "03 - Ação penal",
-                "04 - Competência",
-                "05 - Prova",
-                "06 - Prisão, medidas cautelares e liberdade provisória",
-                "07 - Citações e intimações",
-                "08 - Sentença",
-                "09 - Recursos em geral"
+                "00 - Sistemas processuais penais", "01 - Princípios gerais", "02 - Inquérito policial", "03 - Ação penal", "04 - Competência",
+                "05 - Prova", "06 - Prisão e medidas cautelares", "07 - Citações e intimações", "08 - Sentença", "09 - Recursos em geral"
             ];
 
             const nomesObrigatorios = [
@@ -754,12 +660,6 @@
                 if (d) {
                     const parsed = JSON.parse(d);
                     appData = { ...appData, ...parsed };
-                    Object.keys(appData.planoSemanal).forEach(dia => {
-                        if (!Array.isArray(appData.planoSemanal[dia])) {
-                            const val = appData.planoSemanal[dia];
-                            appData.planoSemanal[dia] = val ? [val] : [];
-                        }
-                    });
                 }
                 const c = localStorage.getItem("plataforma_estudos_config");
                 if (c) configGeral = { ...configGeral, ...JSON.parse(c) };
@@ -814,9 +714,7 @@
             if (toast && txt) {
                 txt.textContent = msg;
                 toast.classList.remove('hidden');
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 3000);
+                setTimeout(() => { toast.classList.add('hidden'); }, 3000);
             }
         }
 
@@ -906,7 +804,7 @@
                 materiasAbertas[materiaId] = true;
                 salvarDados();
                 atualizarInterfaceCompleta();
-                mostrarCoach("Tópico excluído com sucesso!");
+                mostrarCoach("Tópico excluído!");
             }
         }
 
@@ -915,7 +813,7 @@
             delete materiasAbertas[materiaId];
             salvarDados();
             atualizarInterfaceCompleta();
-            mostrarCoach("Matéria excluída com sucesso!");
+            mostrarCoach("Matéria excluída!");
         }
 
         function atualizarTopicoDetalhe(materiaId, indexTopico, campo, valor) {
@@ -943,10 +841,6 @@
                             concluida: false
                         });
                     });
-                    appData.estatisticas.horas += 2;
-                    appData.estatisticas.questoesFeitas += topico.questoesFeitas;
-                    appData.estatisticas.acertos += topico.acertos;
-                    appData.estatisticas.erros += topico.erros;
                 }
                 salvarDados();
                 atualizarInterfaceCompleta();
@@ -986,23 +880,14 @@
             root.setAttribute('data-theme', configGeral.tema || 'dark');
             root.style.setProperty('--primary-color', configGeral.corPrimaria || '#3b82f6');
             root.style.setProperty('--primary-hover', configGeral.corPrimaria === '#3b82f6' ? '#2563eb' : configGeral.corPrimaria);
-            root.style.setProperty('--font-family', configGeral.fonte || "'Inter', sans-serif");
-            root.style.setProperty('--font-scale', configGeral.tamanhoFonte || '1rem');
-            root.style.setProperty('--icon-size', configGeral.tamanhoIcone || '18px');
-            root.style.setProperty('--spacing-ui', configGeral.espacamento || '1.5rem');
-            root.style.setProperty('--radius-ui', configGeral.botoes || '0.75rem');
-            root.style.setProperty('--anim-speed', configGeral.animacao || '0.2s');
-
             if(document.getElementById('select-tema')) document.getElementById('select-tema').value = configGeral.tema;
             if(document.getElementById('input-cor-primaria')) document.getElementById('input-cor-primaria').value = configGeral.corPrimaria;
         }
 
         function fazerBackup() {
-            const dadosExport = { appData, configGeral };
-            const blob = new Blob([JSON.stringify(dadosExport, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob([JSON.stringify({ appData, configGeral }, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
-            a.href = url;
+            a.href = URL.createObjectURL(blob);
             a.download = `backup_estudos_${new Date().toISOString().slice(0,10)}.json`;
             a.click();
             mostrarCoach("Backup exportado com sucesso!");
@@ -1013,7 +898,6 @@
             input.type = 'file';
             input.accept = '.json';
             input.onchange = e => {
-                const file = e.target.files[0];
                 const reader = new FileReader();
                 reader.onload = event => {
                     try {
@@ -1023,17 +907,16 @@
                         salvarDados();
                         aplicarConfiguracoesVisuais();
                         atualizarInterfaceCompleta();
-                        mostrarCoach("Dados importados e restaurados com sucesso!");
-                    } catch(err) { alert("Arquivo de backup inválido."); }
+                        mostrarCoach("Dados importados com sucesso!");
+                    } catch(err) { alert("Arquivo inválido."); }
                 };
-                reader.readAsText(file);
+                reader.readAsText(e.target.files[0]);
             };
             input.click();
         }
 
         function toggleNotificacoes() {
-            const dropdown = document.getElementById('notification-dropdown');
-            dropdown.classList.toggle('hidden');
+            document.getElementById('notification-dropdown').classList.toggle('hidden');
         }
 
         function atualizarInterfaceCompleta() {
@@ -1047,7 +930,6 @@
             const containerMat = document.getElementById('container-materias-gerenciador');
             if(containerMat) {
                 const materiasFiltradas = appData.materias.filter(m => m.nome.toLowerCase().includes(termoPesquisaMatérias));
-                
                 containerMat.innerHTML = materiasFiltradas.length === 0 ? '<p style="color: var(--text-muted); text-align: center; padding: 1rem;">Nenhuma matéria encontrada.</p>' :
                     materiasFiltradas.map(m => {
                         const isOpen = !!materiasAbertas[m.id];
@@ -1059,8 +941,8 @@
                                         <h4 style="color: var(--text-main); font-size: 1.15rem; font-weight: 600; margin: 0;">${m.nome}</h4>
                                     </div>
                                     <div class="flex gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">+ Adicionar Tópico</button>
-                                        <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir Matéria</button>
+                                        <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">+ Tópico</button>
+                                        <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir</button>
                                     </div>
                                 </div>
                                 <div class="materia-content-body ${isOpen ? '' : 'hidden'}">
@@ -1074,8 +956,8 @@
                                                     <div class="flex justify-between items-center">
                                                         <strong style="font-size: 0.95rem;">Tópico ${t.numero}</strong>
                                                         <div class="flex gap-2">
-                                                            <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
-                                                            <button onclick="excluirTopico('${m.id}', ${idx})" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Excluir Tópico">✕</button>
+                                                            <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Feito' : 'Estudar'}</button>
+                                                            <button onclick="excluirTopico('${m.id}', ${idx})" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">✕</button>
                                                         </div>
                                                     </div>
                                                     <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
@@ -1107,13 +989,13 @@
                         <div class="card" style="margin-bottom: 0;">
                             <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
                                 <h4 style="font-size: 1.1rem;">${dia}-feira</h4>
-                                <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Adicionar Matéria</button>
+                                <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Matéria</button>
                             </div>
-                            <div id="container-selects-${dia}" class="flex flex-col gap-2">
+                            <div class="flex flex-col gap-2">
                                 ${materiasSelecionadas.length === 0 ? '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
                                 ${materiasSelecionadas.map((matSelecionada, idx) => `
                                     <div class="flex gap-2 items-center">
-                                        <select class="form-control select-plano-${dia}" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
+                                        <select class="form-control" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
                                             <option value="">Nenhuma Matéria</option>
                                             ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
                                         </select>
@@ -1150,17 +1032,8 @@
                     const matObj = appData.materias.find(m => m.nome === matNome);
                     if(matObj && matObj.topicos.length > 0) {
                         countMat++;
-                        
-                        // Avanço automático: encontra o primeiro tópico não concluído ou o último estudado
-                        let topicosParaExibir = [];
                         let pendentes = matObj.topicos.filter(t => !t.estudoFeito);
-                        
-                        if (pendentes.length > 0) {
-                            topicosParaExibir = pendentes.slice(0, maxTopicos);
-                        } else {
-                            // Se todos estiverem concluídos, mostra os últimos da lista
-                            topicosParaExibir = matObj.topicos.slice(-maxTopicos);
-                        }
+                        let topicosParaExibir = pendentes.length > 0 ? pendentes.slice(0, maxTopicos) : matObj.topicos.slice(-maxTopicos);
 
                         topicosParaExibir.forEach(t => {
                             const originalIdx = matObj.topicos.findIndex(item => item.numero === t.numero && item.nome === t.nome);
@@ -1183,7 +1056,7 @@
 
             const listaRevisoes = document.getElementById('lista-revisoes-completa');
             if(listaRevisoes) {
-                listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão gerada. Conclua tópicos para gerar revisões automáticas.</li>' :
+                listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão gerada.</li>' :
                     appData.revisoes.map((r, rIdx) => `
                         <li>
                             <span style="${r.concluida ? 'text-decoration: line-through; opacity: 0.6;' : ''}">🔄 ${r.titulo} — Data: <strong>${r.data}</strong></span>
@@ -1203,16 +1076,15 @@
                         else itensPendentes.push(txt);
                     });
                 });
-
                 containerProgresso.innerHTML = `
                     <div style="width: 100%;">
                         <h4 style="color: var(--accent); margin-bottom: 0.75rem;">Pendências (${itensPendentes.length})</h4>
                         <ul style="list-style: none; margin-bottom: 1.5rem;">
-                            ${itensPendentes.length === 0 ? '<li style="color: var(--text-muted);">Nenhuma pendência. Tudo em dia!</li>' : itensPendentes.map(p => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">⏳ ${p}</li>`).join('')}
+                            ${itensPendentes.length === 0 ? '<li style="color: var(--text-muted);">Tudo em dia!</li>' : itensPendentes.map(p => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">⏳ ${p}</li>`).join('')}
                         </ul>
                         <h4 style="color: var(--success); margin-bottom: 0.75rem;">Concluídos (${itensConcluidos.length})</h4>
                         <ul style="list-style: none;">
-                            ${itensConcluidos.length === 0 ? '<li style="color: var(--text-muted);">Nenhum tópico concluído ainda.</li>' : itensConcluidos.map(c => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-decoration: line-through; opacity: 0.7;">✅ ${c}</li>`).join('')}
+                            ${itensConcluidos.length === 0 ? '<li style="color: var(--text-muted);">Nenhum concluído ainda.</li>' : itensConcluidos.map(c => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-decoration: line-through; opacity: 0.7;">✅ ${c}</li>`).join('')}
                         </ul>
                     </div>
                 `;
@@ -1225,8 +1097,7 @@
                     calContainer.innerHTML += `<div class="calendar-day-header">${d}</div>`;
                 });
                 for (let i = 1; i <= 31; i++) {
-                    const isToday = i === 14 ? 'today' : '';
-                    calContainer.innerHTML += `<div class="calendar-day ${isToday}"><span>${i}</span></div>`;
+                    calContainer.innerHTML += `<div class="calendar-day ${i === 14 ? 'today' : ''}"><span>${i}</span></div>`;
                 }
             }
 
@@ -1239,7 +1110,7 @@
                 listaNotif.innerHTML = `<li>Você possui ${revPendentes} revisão(ões) pendente(s).</li>`;
             } else {
                 badge.classList.add('hidden');
-                listaNotif.innerHTML = `<li>Nenhuma pendência no momento. Excelente ritmo!</li>`;
+                listaNotif.innerHTML = `<li>Nenhuma pendência no momento.</li>`;
             }
         }
     </script>
