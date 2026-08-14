@@ -302,6 +302,12 @@
             display: flex; flex-direction: column; gap: 0.75rem;
         }
 
+        /* Acordeão de Matérias e Barra de Pesquisa */
+        .materia-accordion-header {
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 0.5rem 0;
+        }
+        .materia-content-body { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+
         /* Toast Coach */
         #coach-toast {
             position: fixed; bottom: 24px; right: 24px; background: var(--bg-card);
@@ -500,13 +506,19 @@
                     <h3>Cadastrar Nova Matéria e Tópico</h3>
                     <form id="form-cadastrar-materia" class="flex gap-4 items-center" style="flex-wrap: wrap;">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria (Ex: Direito Constitucional)" required>
+                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria (Ex: Direito Administrativo)" required>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: auto;">Cadastrar Matéria</button>
                     </form>
                 </div>
+                
                 <div class="card">
-                    <h3>Matérias Cadastradas e Tópicos</h3>
+                    <div class="flex justify-between items-center" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                        <h3 style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Matérias Cadastradas e Tópicos</h3>
+                        <div style="width: 260px;">
+                            <input type="text" id="input-busca-materias" class="form-control" placeholder="🔍 Pesquisar matéria..." oninput="filtrarMaterias(this.value)" style="padding: 0.5rem 0.9rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
                     <div id="container-materias-gerenciador"></div>
                 </div>
             </section>
@@ -604,7 +616,7 @@
 
                     <div class="form-group" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui);">
                         <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent);">Integração Firebase (Pronta p/ Conexão)</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Estrutura preparada para sincronização em nuvem Firestore / Auth.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Estrutura preparada para sincronização em nuvem Firestore / Auth (compatível com SDK modular v9+).</p>
                         <button onclick="mostrarCoach('Estrutura Firebase pronta para conectar SDK.')" class="btn btn-secondary w-full" style="font-size: 0.85rem;">Configurar Credenciais Firebase</button>
                     </div>
 
@@ -649,6 +661,10 @@
             paginaInicial: 'metas'
         };
 
+        // Estado para controlar quais matérias estão abertas/fechadas (accordion)
+        let materiasAbertas = {};
+        let termoPesquisaMatérias = "";
+
         let historicoNavegacao = ['metas'];
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -661,12 +677,101 @@
         });
 
         function inicializarMatériasIniciaisObrigatorias() {
+            const topicosPortuguesa = [
+                "00 - Análise sintática da oração e do período",
+                "01 - Pontuação",
+                "02 - Concordância verbal e nominal",
+                "03 - Regência verbal e nominal",
+                "04 - Emprego do sinal crase",
+                "05 - Significação de palavras",
+                "06 - Emprego de classes de palavras",
+                "07 - Colocação pronominal",
+                "08 - Reescrita de frases e parágrafos do texto",
+                "09 - Correção gramatical e textual",
+                "10 - Tipologia textual",
+                "11 - Coesão e coerência textual",
+                "12 - Compreensão e interpretação de textos",
+                "13 - Ortografia oficial",
+                "14 - Acentuação gráfica",
+                "15 - Emprego das letras"
+            ];
+
+            const topicosAdmin = [
+                "00 - Estado, governo e administração pública",
+                "01 - Conceitos e princípios da administração pública",
+                "02 - Agentes públicos",
+                "03 - Poderes administrativos",
+                "04 - Controle da administração pública",
+                "05 - Responsabilidade civil do Estado",
+                "06 - Lei nº 8.112/1990 e suas alterações",
+                "07 - Lei de Improbidade Administrativa (Lei nº 8.429/1992)",
+                "08 - Processo Administrativo Federal (Lei nº 9.784/1999)",
+                "09 - Licitações e Contratos Administrativos",
+                "10 - Serviços públicos",
+                "11 - Organização administrativa",
+                "12 - Bens públicos",
+                "13 - Intervenção do Estado na propriedade",
+                "14 - Desapropriação",
+                "15 - Atos administrativos"
+            ];
+
+            const topicosConstitucional = [
+                "00 - Constituição: conceitos, classificação e aplicabilidade das normas constitucionais",
+                "01 - Direitos e garantias fundamentais",
+                "02 - Direitos e deveres individuais e coletivos",
+                "03 - Direitos sociais",
+                "04 - Nacionalidade e Cidadania",
+                "05 - Direitos políticos",
+                "06 - Partidos políticos",
+                "07 - Organização político-administrativa da República Federativa do Brasil",
+                "08 - União, Estados Federados, Distrito Federal e Municípios",
+                "09 - Poder Legislativo",
+                "10 - Poder Executivo",
+                "11 - Poder Judiciário",
+                "12 - Funções essenciais à justiça",
+                "13 - Ordem econômica e financeira",
+                "14 - Ordem social",
+                "15 - Controle de constitucionalidade"
+            ];
+
+            const topicosPenal = [
+                "00 - Princípios básicos do Direito Penal",
+                "01 - A lei penal no tempo e no espaço",
+                "02 - A lei penal em relação às pessoas",
+                "03 - Interpretação da lei penal",
+                "04 - Teoria do crime",
+                "05 - Fato típico e seus elementos",
+                "06 - Ilicitude e causas de exclusão",
+                "07 - Culpabilidade e causas de exclusão",
+                "08 - Concurso de pessoas",
+                "09 - Das penas",
+                "10 - Medidas de segurança",
+                "11 - Ação penal",
+                "12 - Extinção da punibilidade",
+                "13 - Crimes contra a pessoa",
+                "14 - Crimes contra o patrimônio",
+                "15 - Crimes contra a administração pública"
+            ];
+
+            const topicosProcessualPenal = [
+                "00 - Sistemas processuais penais",
+                "01 - Princípios gerais e aplicação da lei processual penal",
+                "02 - Inquérito policial",
+                "03 - Ação penal",
+                "04 - Competência",
+                "05 - Prova",
+                "06 - Prisão, medidas cautelares e liberdade provisória",
+                "07 - Citações e intimações",
+                "08 - Sentença",
+                "09 - Recursos em geral"
+            ];
+
             const nomesObrigatorios = [
-                { nome: "Língua Portuguesa", max: 15 },
-                { nome: "Direito Administrativo", max: 15 },
-                { nome: "Direito Constitucional", max: 15 },
-                { nome: "Direito Penal", max: 15 },
-                { nome: "Direito Processual Penal", max: 9 }
+                { nome: "Língua Portuguesa", lista: topicosPortuguesa },
+                { nome: "Direito Administrativo", lista: topicosAdmin },
+                { nome: "Direito Constitucional", lista: topicosConstitucional },
+                { nome: "Direito Penal", lista: topicosPenal },
+                { nome: "Direito Processual Penal", lista: topicosProcessualPenal }
             ];
 
             let precisaAtualizar = false;
@@ -674,7 +779,7 @@
                 precisaAtualizar = true;
             } else {
                 for (let i = 0; i < nomesObrigatorios.length; i++) {
-                    if (appData.materias[i].nome !== nomesObrigatorios[i].nome || appData.materias[i].topicos.length !== (nomesObrigatorios[i].max + 1)) {
+                    if (appData.materias[i].nome !== nomesObrigatorios[i].nome || appData.materias[i].topicos.length !== nomesObrigatorios[i].lista.length) {
                         precisaAtualizar = true;
                         break;
                     }
@@ -683,19 +788,18 @@
 
             if (precisaAtualizar) {
                 appData.materias = nomesObrigatorios.map((item, mIdx) => {
-                    let topicos = [];
-                    for (let t = 0; t <= item.max; t++) {
-                        let numStr = t < 10 ? '0' + t : '' + t;
-                        topicos.push({
+                    let topicos = item.lista.map((textoTopico, tIdx) => {
+                        let numStr = tIdx < 10 ? '0' + tIdx : '' + tIdx;
+                        return {
                             numero: numStr,
-                            nome: `Tópico ${numStr} - ${item.nome}`,
+                            nome: textoTopico,
                             linkLei: '',
                             estudoFeito: false,
                             questoesFeitas: 0,
                             acertos: 0,
                             erros: 0
-                        });
-                    }
+                        };
+                    });
                     return {
                         id: 'mat_obrigatoria_' + mIdx,
                         nome: item.nome,
@@ -750,7 +854,6 @@
                 const c = localStorage.getItem("plataforma_estudos_config");
                 if (c) configGeral = { ...configGeral, ...JSON.parse(c) };
 
-                // Verificar se há sessão salva por token/localStorage
                 const sessaoSalva = localStorage.getItem("plataforma_sessao_ativa");
                 if (sessaoSalva && !appData.usuarioLogado) {
                     appData.usuarioLogado = sessaoSalva;
@@ -892,7 +995,7 @@
 
                 let topicosIniciais = [{
                     numero: '00',
-                    nome: 'Tópico 00 - Conteúdo Inicial',
+                    nome: 'Conteúdo Inicial',
                     linkLei: '',
                     estudoFeito: false,
                     questoesFeitas: 0,
@@ -900,11 +1003,13 @@
                     erros: 0
                 }];
 
+                const novoId = 'mat_' + Date.now();
                 appData.materias.push({
-                    id: 'mat_' + Date.now(),
+                    id: novoId,
                     nome: nome,
                     topicos: topicosIniciais
                 });
+                materiasAbertas[novoId] = true; // Abre automaticamente a nova matéria
                 salvarDados();
                 input.value = '';
                 atualizarInterfaceCompleta();
@@ -929,22 +1034,33 @@
             }
         }
 
+        function toggleAcordeonMateria(materiaId) {
+            materiasAbertas[materiaId] = !materiasAbertas[materiaId];
+            atualizarInterfaceCompleta();
+        }
+
+        function filtrarMaterias(termo) {
+            termoPesquisaMatérias = termo.toLowerCase().trim();
+            atualizarInterfaceCompleta();
+        }
+
         function adicionarTopico(materiaId) {
             const materia = appData.materias.find(m => m.id === materiaId);
             if (materia) {
                 const proximoNum = materia.topicos.length < 10 ? '0' + materia.topicos.length : '' + materia.topicos.length;
                 materia.topicos.push({
                     numero: proximoNum,
-                    nome: `Tópico ${proximoNum} - Novo Conteúdo`,
+                    nome: 'Novo Conteúdo',
                     linkLei: '',
                     estudoFeito: false,
                     questoesFeitas: 0,
                     acertos: 0,
                     erros: 0
                 });
+                materiasAbertas[materiaId] = true; // Garante que a matéria continue aberta
                 salvarDados();
                 atualizarInterfaceCompleta();
-                mostrarCoach("Tópico cadastrado automaticamente!");
+                mostrarCoach("Tópico adicionado com sucesso!");
             }
         }
 
@@ -952,6 +1068,7 @@
             const materia = appData.materias.find(m => m.id === materiaId);
             if (materia && materia.topicos[indexTopico]) {
                 materia.topicos.splice(indexTopico, 1);
+                materiasAbertas[materiaId] = true;
                 salvarDados();
                 atualizarInterfaceCompleta();
                 mostrarCoach("Tópico excluído com sucesso!");
@@ -960,6 +1077,7 @@
 
         function excluirMateria(materiaId) {
             appData.materias = appData.materias.filter(x => x.id !== materiaId);
+            delete materiasAbertas[materiaId];
             salvarDados();
             atualizarInterfaceCompleta();
             mostrarCoach("Matéria excluída com sucesso!");
@@ -1034,7 +1152,7 @@
                                 <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Adicionar Matéria</button>
                             </div>
                             <div id="container-selects-${dia}" class="flex flex-col gap-2">
-                                ${materiasSelecionadas.length === 0 ? '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
+                                ${materiasSelecionadas.length === 0 ? '<p style="color: var::text-muted; font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
                                 ${materiasSelecionadas.map((matSelecionada, idx) => `
                                     <div class="flex gap-2 items-center">
                                         <select class="form-control select-plano-${dia}" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
@@ -1122,46 +1240,56 @@
 
             const containerMat = document.getElementById('container-materias-gerenciador');
             if(containerMat) {
-                containerMat.innerHTML = appData.materias.length === 0 ? '<p style="color: var(--text-muted);">Nenhuma matéria cadastrada.</p>' :
-                    appData.materias.map(m => `
-                        <div class="card" style="margin-top: 1rem;">
-                            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
-                                <h4 style="color: var(--accent); font-size: 1.15rem; font-weight: 600;">${m.nome}</h4>
-                                <div class="flex gap-2">
-                                    <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Cadastrar Tópico</button>
-                                    <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir Matéria</button>
+                const materiasFiltradas = appData.materias.filter(m => m.nome.toLowerCase().includes(termoPesquisaMatérias));
+                
+                containerMat.innerHTML = materiasFiltradas.length === 0 ? '<p style="color: var(--text-muted); text-align: center; padding: 1rem;">Nenhuma matéria encontrada.</p>' :
+                    materiasFiltradas.map(m => {
+                        const isOpen = !!materiasAbertas[m.id];
+                        return `
+                            <div class="card" style="margin-top: 1rem; margin-bottom: 1rem;">
+                                <div class="materia-accordion-header" onclick="toggleAcordeonMateria('${m.id}')">
+                                    <div class="flex items-center gap-2">
+                                        <span style="font-size: 1.1rem; color: var(--accent); transition: transform 0.2s; transform: rotate(${isOpen ? '90deg' : '0deg'});">▶</span>
+                                        <h4 style="color: var(--text-main); font-size: 1.15Font; font-weight: 600; margin: 0;">${m.nome}</h4>
+                                    </div>
+                                    <div class="flex gap-2" onclick="event.stopPropagation()">
+                                        <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">+ Adicionar Tópico</button>
+                                        <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir Matéria</button>
+                                    </div>
+                                </div>
+                                <div class="materia-content-body ${isOpen ? '' : 'hidden'}">
+                                    <div class="topicos-grid">
+                                        ${m.topicos.map((t, idx) => {
+                                            const totalQ = t.questoesFeitas || 0;
+                                            const ac = t.acertos || 0;
+                                            const perc = totalQ > 0 ? Math.round((ac / totalQ) * 100) : 0;
+                                            return `
+                                                <div class="topico-box">
+                                                    <div class="flex justify-between items-center">
+                                                        <strong style="font-size: 0.95rem;">Tópico ${t.numero}</strong>
+                                                        <div class="flex gap-2">
+                                                            <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
+                                                            <button onclick="excluirTopico('${m.id}', ${idx})" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Excluir Tópico">✕</button>
+                                                        </div>
+                                                    </div>
+                                                    <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
+                                                    <div class="flex gap-2">
+                                                        <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" placeholder="Link da Lei" value="${t.linkLei}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'linkLei', this.value)">
+                                                        ${t.linkLei ? `<a href="${t.linkLei}" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Ler</a>` : ''}
+                                                    </div>
+                                                    <div class="flex gap-2" style="font-size: 0.8rem; color: var(--text-muted); align-items: center; justify-content: space-between; margin-top: 0.25rem;">
+                                                        <span>Q: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
+                                                        <span>Acertos: <input type="number" style="width: 40px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
+                                                        <span style="color: var(--accent); font-weight: 600;">${perc}%</span>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="topicos-grid">
-                                ${m.topicos.map((t, idx) => {
-                                    const totalQ = t.questoesFeitas || 0;
-                                    const ac = t.acertos || 0;
-                                    const perc = totalQ > 0 ? Math.round((ac / totalQ) * 100) : 0;
-                                    return `
-                                        <div class="topico-box">
-                                            <div class="flex justify-between items-center">
-                                                <strong style="font-size: 0.95rem;">Tópico ${t.numero}</strong>
-                                                <div class="flex gap-2">
-                                                    <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
-                                                    <button onclick="excluirTopico('${m.id}', ${idx})" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Excluir Tópico">✕</button>
-                                                </div>
-                                            </div>
-                                            <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
-                                            <div class="flex gap-2">
-                                                <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" placeholder="Link da Lei" value="${t.linkLei}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'linkLei', this.value)">
-                                                ${t.linkLei ? `<a href="${t.linkLei}" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Ler</a>` : ''}
-                                            </div>
-                                            <div class="flex gap-2" style="font-size: 0.8rem; color: var(--text-muted); align-items: center; justify-content: space-between; margin-top: 0.25rem;">
-                                                <span>Q: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
-                                                <span>Acertos: <input type="number" style="width: 40px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
-                                                <span style="color: var(--accent); font-weight: 600;">${perc}%</span>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
             }
 
             renderizarPlanoSemanal();
@@ -1196,7 +1324,7 @@
                             countTop++;
                             htmlMetas += `
                                 <li>
-                                    <span>🎯 <strong>${matObj.nome}</strong> — ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
+                                    <span>🎯 <strong>${matObj.nome}</strong> — Tópico ${t.numero}: ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
                                     <button onclick="concluirEstudoTopico('${matObj.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
                                 </li>
                             `;
@@ -1228,7 +1356,7 @@
                 let itensConcluidos = [];
                 appData.materias.forEach(m => {
                     m.topicos.forEach(t => {
-                        const txt = `${m.nome} - ${t.nome}`;
+                        const txt = `${m.nome} - Tópico ${t.numero}: ${t.nome}`;
                         if(t.estudoFeito) itensConcluidos.push(txt);
                         else itensPendentes.push(txt);
                     });
