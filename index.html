@@ -391,7 +391,6 @@
             const todayName = dayNamesMap[new Date().getDay()];
             const plannedSubjectStr = weeklyPlan[todayName] || "";
 
-            // Separar por vírgula ou barra caso o usuário coloque mais de uma matéria no mesmo dia (ex: "Direitos Humanos, Língua Portuguesa")
             const targetSubjectNames = plannedSubjectStr.split(/,|\//).map(s => s.trim().toLowerCase()).filter(Boolean);
 
             let matchingTopics = [];
@@ -404,7 +403,6 @@
                 }
             });
 
-            // Se não encontrar nenhuma matéria específica mapeada ou se o campo estiver vazio, fallback para tópicos pendentes gerais
             let displayTopics = matchingTopics;
             if (displayTopics.length === 0) {
                 subjects.forEach(sub => {
