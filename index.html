@@ -1,1403 +1,688 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" style="--font-scale: 1rem; --primary-color: #3b82f6; --primary-hover: #2563eb; --radius-ui: 0.75rem; --spacing-ui: 1.5rem; --anim-speed: 0.2s;">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Estudos</title>
-    <style>
-        :root {
-            --bg-main: #0a0d14;
-            --bg-card: #121824;
-            --bg-input: #0a0d14;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --accent: var(--primary-color, #3b82f6);
-            --accent-hover: var(--primary-hover, #2563eb);
-            --accent-glow: rgba(59, 130, 246, 0.15);
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --border: #1e293b;
+    <title>Plataforma de Estudos - Foco e Produtividade</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
         }
-
-        [data-theme="light"] {
-            --bg-main: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-input: #f1f5f9;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --accent: var(--primary-color, #2563eb);
-            --accent-hover: var(--primary-hover, #1d4ed8);
-            --accent-glow: rgba(37, 99, 235, 0.1);
-            --danger: #dc2626;
-            --success: #16a34a;
-            --warning: #d97706;
-            --border: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family, 'Inter', system-ui, -apple-system, sans-serif);
-            transition: background-color var(--anim-speed), color var(--anim-speed), border-color var(--anim-speed), box-shadow var(--anim-speed);
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-size: var(--font-scale);
-        }
-
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-4 { gap: 1rem; }
-        .w-full { width: 100%; }
-
-        /* Autenticação Minimalista */
-        #auth-container {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-main);
-            z-index: 1000;
-            display: flex; justify-content: center; align-items: center;
-            padding: 2rem;
-        }
-
-        .auth-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 3rem;
-            border-radius: var(--radius-ui);
-            width: 100%; max-width: 440px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .auth-card h2 {
-            margin-bottom: 0.75rem; font-size: 2rem; font-weight: 700; text-align: center; color: var(--text-main);
-            letter-spacing: -0.03em;
-        }
-
-        .auth-subtitle {
-            text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem;
-        }
-
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label {
-            display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-        }
-
-        .form-control {
-            width: 100%; padding: 0.9rem 1.1rem;
-            background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: var(--radius-ui); color: var(--text-main); font-size: 1rem;
-        }
-
-        .form-control:focus {
-            outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow);
-        }
-
-        .checkbox-group {
-            display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;
-        }
-        .checkbox-group input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
-
-        .btn {
-            display: inline-flex; justify-content: center; align-items: center;
-            padding: 0.9rem 1.75rem; border-radius: var(--radius-ui); font-weight: 500;
-            cursor: pointer; border: none; font-size: 1rem; transition: all var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--accent); color: white; width: 100%; box-shadow: 0 4px 14px var(--accent-glow); }
-        .btn-primary:hover { background: var(--accent-hover); }
-        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: var(--accent-glow); border-color: var(--accent); }
-        .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-ui); }
-        .btn-danger:hover { opacity: 0.9; }
-
-        .auth-links { margin-top: 2rem; text-align: center; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .auth-links a { color: var(--accent); text-decoration: none; cursor: pointer; font-weight: 500; }
-        .auth-links a:hover { text-decoration: underline; }
-
-        /* Layout Principal Clean & Moderno */
-        #app-container {
-            display: flex; flex-direction: column; width: 100vw; min-height: 100vh;
-        }
-
-        header {
-            height: 80px; background: var(--bg-card); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 var(--spacing-ui);
-            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
-        }
-
-        .header-brand { display: flex; align-items: center; gap: 0.85rem; cursor: pointer; }
-        .header-brand svg { width: 24px; height: 24px; stroke: var(--accent); stroke-width: 2; fill: none; }
-        .header-title h1 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; }
-
-        .header-actions { display: flex; align-items: center; gap: 1rem; }
-        
-        .nav-back-btn {
-            background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main);
-            padding: 0.5rem 0.9rem; border-radius: var(--radius-ui); cursor: pointer; font-weight: 500; font-size: 0.85rem;
-            display: none; align-items: center; gap: 0.4rem;
-        }
-        .nav-back-btn:hover { border-color: var(--accent); }
-
-        .notification-bell {
-            position: relative; cursor: pointer; font-size: 1.1rem;
-            background: var(--bg-input); padding: 0.65rem; border-radius: 50%; border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
-        }
-        .notification-bell:hover { border-color: var(--accent); }
-        .notification-bell svg { width: 18px; height: 18px; stroke: var(--text-main); stroke-width: 2; fill: none; }
-
-        .notification-badge {
-            position: absolute; top: -2px; right: -2px; background: var(--danger);
-            color: white; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 50%; font-weight: bold;
-        }
-
-        /* Menu Superior com Rolagem Horizontal e Setas */
-        .tools-nav-wrapper {
-            background: var(--bg-card); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; position: relative;
-        }
-
-        .scroll-arrow {
-            background: var(--bg-card); border: none; color: var(--text-main);
-            width: 40px; height: 100%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 10; font-size: 1.2rem; opacity: 0.7; transition: opacity 0.2s;
-        }
-        .scroll-arrow:hover { opacity: 1; color: var(--accent); }
-
-        .tools-nav-container {
-            padding: 1rem 0.5rem; overflow-x: auto; scrollbar-width: none; flex-grow: 1; scroll-behavior: smooth;
-        }
-        .tools-nav-container::-webkit-scrollbar { display: none; }
-
-        .tools-grid {
-            display: flex; gap: 0.75rem; max-width: 1500px; margin: 0 auto; min-width: max-content; padding: 0 0.5rem;
-        }
-
-        .tool-card {
-            background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui);
-            padding: 0.65rem 1.1rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;
-            transition: all var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .tool-card:hover {
-            border-color: var(--accent); transform: translateY(-1px); background: var(--accent-glow);
-        }
-
-        .tool-card.active {
-            background: var(--accent);
-            border-color: var(--accent); color: white; box-shadow: 0 4px 14px var(--accent-glow);
-        }
-
-        .tool-card.active .tool-label { color: white; }
-        .tool-card.active svg { stroke: white; }
-        .tool-icon svg { width: var(--icon-size, 18px); height: var(--icon-size, 18px); stroke: var(--text-main); stroke-width: 2; fill: none; }
-        .tool-card.active .tool-icon svg { stroke: white; }
-        .tool-label { font-size: 0.9rem; font-weight: 500; color: var(--text-main); }
-
-        .content-area {
-            flex-grow: 1; padding: var(--spacing-ui); background: var(--bg-main); max-width: 1500px; width: 100%; margin: 0 auto;
-        }
-
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn var(--anim-speed) ease-in-out; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Hero Banner Tela Cheia */
-        .hero-fullscreen {
-            position: fixed; top: 80px; left: 0; width: 100vw; height: calc(100vh - 80px);
-            background: var(--bg-main); z-index: 90;
-            display: flex; align-items: center; justify-content: center; padding: 2rem;
-        }
-        .hero-fullscreen.hidden { display: none !important; }
-
-        .hero-banner {
-            background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: 1.5rem; padding: 5rem 3rem;
-            text-align: center; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
-            position: relative; overflow: hidden; width: 100%; max-width: 900px;
-        }
-
-        .hero-banner h2 {
-            font-size: 3rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.03em;
-            color: var(--text-main);
-        }
-
-        .hero-datetime {
-            font-size: 1.15rem; color: var(--accent); font-weight: 600; margin-bottom: 3rem;
-            text-transform: uppercase; letter-spacing: 0.08em; display: flex; flex-direction: column; gap: 0.4rem; align-items: center;
-        }
-
-        .btn-hero {
-            padding: 1.1rem 3rem; font-size: 1.15rem; font-weight: 600;
-            background: var(--accent); color: white; border-radius: var(--radius-ui);
-            box-shadow: 0 8px 25px var(--accent-glow); border: none; cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 12px 30px var(--accent-glow); background: var(--accent-hover); }
-
-        /* Cards e Grids */
-        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-ui); margin-bottom: var(--spacing-ui); }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-ui); margin-bottom: var(--spacing-ui); }
-
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 1.25rem;
-            padding: 2rem; box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.03); margin-bottom: var(--spacing-ui);
-        }
-
-        .card h3 {
-            margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 600; color: var(--text-main);
-            border-bottom: 1px solid var(--border); padding-bottom: 1rem;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        /* Listas Minimalistas */
-        .item-list { list-style: none; margin-top: 1rem; }
-        .item-list li {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.1rem 1.25rem; background: var(--bg-input); border: 1px solid var(--border);
-            border-radius: var(--radius-ui); margin-bottom: 0.85rem; gap: 1rem; flex-wrap: wrap;
-        }
-
-        /* Notificações Dropdown */
-        #notification-dropdown {
-            position: absolute; top: 80px; right: var(--spacing-ui); width: 380px;
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 1.25rem;
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3); z-index: 200; padding: 1.5rem;
-        }
-        #notification-dropdown h3 { font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
-        #notification-dropdown ul { list-style: none; max-height: 300px; overflow-y: auto; }
-        #notification-dropdown li { padding: 0.85rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-muted); }
-
-        /* Calendário Clean */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.85rem; text-align: center; }
-        .calendar-day-header { font-weight: 600; color: var(--text-muted); padding: 0.75rem; font-size: 0.85rem; }
-        .calendar-day {
-            background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui);
-            min-height: 110px; padding: 0.85rem; font-size: 0.9rem; display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .calendar-day.today { border-color: var(--accent); background: var(--accent-glow); }
-
-        /* Tópicos 00 em diante */
-        .topicos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
-        .topico-box {
-            background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui); padding: 1.25rem;
-            display: flex; flex-direction: column; gap: 0.75rem;
-        }
-
-        /* Acordeão de Matérias e Barra de Pesquisa */
-        .materia-accordion-header {
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 0.5rem 0;
-        }
-        .materia-content-body { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
-
-        /* Toast Coach */
-        #coach-toast {
-            position: fixed; bottom: 24px; right: 24px; background: var(--bg-card);
-            border: 1px solid var(--accent); border-radius: var(--radius-ui); padding: 1rem 1.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; gap: 0.85rem;
-            max-width: 380px; animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        @media (max-width: 900px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            header { padding: 0 1rem; }
-            .content-area { padding: 1rem; }
-            .nav-back-btn { display: inline-flex; }
-            .hero-banner h2 { font-size: 2rem; }
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
 
-    <!-- AUTENTICAÇÃO -->
-    <div id="auth-container">
-        <div id="login-view" class="auth-card">
-            <h2>Plataforma de Estudos</h2>
-            <p class="auth-subtitle">Ambiente de Alta Performance e Organização</p>
-            <form id="form-login">
-                <div class="form-group">
-                    <label for="login-user">E-mail ou CPF</label>
-                    <input type="text" id="login-user" class="form-control" placeholder="seu.email@exemplo.com ou 000.000.000-00" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-senha">Senha</label>
-                    <input type="password" id="login-senha" class="form-control" placeholder="••••••••" required>
-                </div>
-                <label class="checkbox-group">
-                    <input type="checkbox" id="lembrar-usuario"> Manter conectado
-                </label>
-                <button type="submit" class="btn btn-primary">Acessar Plataforma</button>
-            </form>
-            <div class="auth-links">
-                <a onclick="mudarAuthView('esqueci')">Esqueci minha senha</a>
-                <p>Não tem uma conta? <a onclick="mudarAuthView('register')">Cadastre-se</a></p>
-            </div>
+    <!-- TELA DE BOAS-VINDAS / INTRODUÇÃO (FULLSCREEN + RELÓGIO) -->
+    <div id="welcomeScreen" class="fixed inset-0 z-40 bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+        <div class="absolute top-6 right-6 text-slate-400 font-mono text-lg bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl backdrop-blur-md">
+            <i class="fa-regular fa-clock mr-2 text-brand-500"></i><span id="realtimeClock">00:00:00</span>
         </div>
 
-        <div id="register-view" class="auth-card hidden">
-            <h2>Criar Conta</h2>
-            <p class="auth-subtitle">Inicie sua jornada rumo à aprovação</p>
-            <form id="form-register">
-                <div class="form-group">
-                    <label for="reg-nome">Nome Completo</label>
-                    <input type="text" id="reg-nome" class="form-control" placeholder="Seu nome" required>
-                </div>
-                <div class="form-group">
-                    <label for="reg-user">E-mail ou CPF</label>
-                    <input type="text" id="reg-user" class="form-control" placeholder="seu.email@exemplo.com ou 000.000.000-00" required>
-                </div>
-                <div class="form-group">
-                    <label for="reg-senha">Criar Senha</label>
-                    <input type="password" id="reg-senha" class="form-control" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Cadastrar e Entrar</button>
-            </form>
-            <div class="auth-links">
-                <p>Já tem uma conta? <a onclick="mudarAuthView('login')">Faça login</a></p>
+        <div class="max-w-2xl w-full mx-auto space-y-6 animate-fade-in">
+            <div class="w-20 h-20 bg-brand-600/20 text-brand-500 border border-brand-500/30 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-brand-500/10">
+                <i class="fa-solid fa-rocket text-3xl"></i>
             </div>
-        </div>
+            
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+                Pronto para focar nos estudos?
+            </h1>
+            <p class="text-slate-400 text-base md:text-lg max-w-lg mx-auto">
+                Organize seus tópicos, acompanhe suas metas diárias e avance rumo à sua aprovação.
+            </p>
 
-        <div id="esqueci-view" class="auth-card hidden">
-            <h2>Recuperar Senha</h2>
-            <p class="auth-subtitle">Digite seu e-mail ou CPF cadastrado</p>
-            <form id="form-esqueci">
-                <div class="form-group">
-                    <label for="esq-user">E-mail ou CPF</label>
-                    <input type="text" id="esq-user" class="form-control" placeholder="Digite seu e-mail ou CPF" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Enviar Instruções</button>
-            </form>
-            <div class="auth-links">
-                <p><a onclick="mudarAuthView('login')">Voltar ao Login</a></p>
+            <div class="pt-4">
+                <button onclick="enterDashboard()" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold text-lg px-8 py-4 rounded-2xl shadow-xl shadow-brand-600/30 transition-all transform hover:-translate-y-0.5 inline-flex items-center space-x-3">
+                    <i class="fa-solid fa-play text-sm"></i>
+                    <span>Iniciar Estudos</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- APLICAÇÃO PRINCIPAL -->
-    <div id="app-container" class="hidden">
-        <header>
-            <div class="flex items-center gap-2">
-                <button id="nav-back-button" onclick="voltarHistorico()" class="nav-back-btn hidden">← Voltar</button>
-                <div class="header-brand" onclick="mudarView('metas')">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                    <div class="header-title">
-                        <h1>Plataforma de Estudos</h1>
+    <!-- DASHBOARD PRINCIPAL -->
+    <div id="dashboardContainer" class="hidden flex-1 flex flex-col">
+        <!-- HEADER -->
+        <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur-md sticky top-0 z-30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-600/20 border border-brand-500/30 flex items-center justify-center text-brand-500">
+                        <i class="fa-solid fa-graduation-cap"></i>
                     </div>
+                    <span class="font-bold text-lg tracking-tight text-white hidden sm:inline">Painel de Estudos</span>
                 </div>
-            </div>
-            <div class="header-actions">
-                <div class="notification-bell" onclick="toggleNotificacoes()" title="Notificações">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <span id="notif-badge" class="notification-badge hidden">0</span>
+
+                <div class="flex items-center space-x-3">
+                    <button onclick="openBackupModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-xl transition-colors border border-slate-700/50 flex items-center space-x-2">
+                        <i class="fa-solid fa-database text-brand-500"></i>
+                        <span class="hidden sm:inline">Backup / Dados</span>
+                    </button>
                 </div>
-                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Sair</button>
             </div>
         </header>
 
-        <!-- MENU SUPERIOR COM ROLAGEM HORIZONTAL E SETAS -->
-        <nav class="tools-nav-wrapper">
-            <button class="scroll-arrow" onclick="rolarMenu('esq')">‹</button>
-            <div class="tools-nav-container" id="tools-nav-scroll">
-                <div class="tools-grid">
-                    <div class="tool-card active" onclick="mudarView('metas')" id="nav-metas">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
-                        <span class="tool-label">Metas de Hoje</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('dashboard')" id="nav-dashboard">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-                        <span class="tool-label">Início</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('materias')" id="nav-materias">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0-5H20"/></svg></span>
-                        <span class="tool-label">Matérias</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('plano')" id="nav-plano">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
-                        <span class="tool-label">Plano de Estudos</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('metas-estudo')" id="nav-metas-estudo">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>
-                        <span class="tool-label">Metas de Estudo</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('revisoes')" id="nav-revisoes">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.68-5.68"/></svg></span>
-                        <span class="tool-label">Ver Revisões</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('progresso')" id="nav-progresso">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></span>
-                        <span class="tool-label">Progresso</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('calendario')" id="nav-calendario">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
-                        <span class="tool-label">Calendário</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('perfil')" id="nav-perfil">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-                        <span class="tool-label">Perfil</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('configuracoes')" id="nav-configuracoes">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83l2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-                        <span class="tool-label">Configurações</span>
-                    </div>
-                </div>
-            </div>
-            <button class="scroll-arrow" onclick="rolarMenu('dir')">›</button>
-        </nav>
-
-        <div id="notification-dropdown" class="hidden">
-            <h3>Notificações & Avisos</h3>
-            <ul id="lista-notificacoes"></ul>
-        </div>
-
-        <!-- TELA INICIAL EM TELA CHEIA -->
-        <div id="hero-fullscreen-view" class="hero-fullscreen">
-            <div class="hero-banner">
-                <h2>🚀 Foco, Disciplina e Execução</h2>
-                <div id="current-datetime-hero" class="hero-datetime">
-                    <span id="hero-date-text"></span>
-                    <span id="hero-time-text" style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);"></span>
-                </div>
-                <button onclick="iniciarEstudosFlow()" class="btn-hero">Iniciar Estudos</button>
-            </div>
-        </div>
-
         <!-- CONTEÚDO PRINCIPAL -->
-        <main class="content-area">
-
-            <!-- 1. METAS DE HOJE (Exibido primeiro ao clicar em Iniciar Estudos) -->
-            <section id="view-metas" class="view-section active">
-                <div class="card">
-                    <h3>Metas de Hoje (Sincronizadas Automaticamente)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe e conclua as metas programadas para hoje.</p>
-                    <div id="lista-metas-diarias-automaticas" class="item-list"></div>
-                </div>
-            </section>
-
-            <!-- 2. INÍCIO -->
-            <section id="view-dashboard" class="view-section">
-                <div class="card">
-                    <h3>Resumo das Metas de Hoje</h3>
-                    <div id="dash-resumo-metas-hoje" class="item-list"></div>
-                </div>
-            </section>
-
-            <!-- 3. MATÉRIAS -->
-            <section id="view-materias" class="view-section">
-                <div class="card">
-                    <h3>Cadastrar Nova Matéria e Tópico</h3>
-                    <form id="form-cadastrar-materia" class="flex gap-4 items-center" style="flex-wrap: wrap;">
-                        <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria (Ex: Direito Administrativo)" required>
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            
+            <!-- PAINEL: METAS DE HOJE -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <div class="flex items-center space-x-2 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-bullseye"></i>
+                            <span>Progresso Diário</span>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: auto;">Cadastrar Matéria</button>
-                    </form>
+                        <h2 class="text-xl font-bold text-white">Metas de Hoje</h2>
+                    </div>
+                    <div id="todayMetaStats" class="text-sm text-slate-400 font-medium">
+                        Carregando metas...
+                    </div>
                 </div>
-                
-                <div class="card">
-                    <div class="flex justify-between items-center" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
-                        <h3 style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Matérias Cadastradas e Tópicos</h3>
-                        <div style="width: 260px;">
-                            <input type="text" id="input-busca-materias" class="form-control" placeholder="🔍 Pesquisar matéria..." oninput="filtrarMaterias(this.value)" style="padding: 0.5rem 0.9rem; font-size: 0.9rem;">
+
+                <div id="todayMetaList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Preenchido dinamicamente via JS -->
+                </div>
+            </section>
+
+            <!-- SEÇÃO: PLANO SEMANAL -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2 text-brand-400 text-xs font-semibold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-calendar-week"></i>
+                            <span>Organização da Semana</span>
                         </div>
-                    </div>
-                    <div id="container-materias-gerenciador"></div>
-                </div>
-            </section>
-
-            <!-- 4. PLANO DE ESTUDOS -->
-            <section id="view-plano" class="view-section">
-                <div class="card">
-                    <h3>Planejamento Semanal (Salvamento Automático)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana. As alterações são salvas instantaneamente.</p>
-                    <div id="container-plano-semanal" class="grid-2"></div>
-                </div>
-            </section>
-
-            <!-- 5. METAS DE ESTUDO -->
-            <section id="view-metas-estudo" class="view-section">
-                <div class="card" style="max-width: 800px; margin: 0 auto;">
-                    <h3>Metas de Estudo (Configuração Diária)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina a quantidade exata de matérias e quantos tópicos por matéria devem ser exibidos diariamente nas Metas de Hoje.</p>
-                    
-                    <div class="form-group">
-                        <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
-                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2" oninput="salvarConfigMetasEstudoAutomatico()">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-metas-topicos">Quantidade de Tópicos por Matéria</label>
-                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3" oninput="salvarConfigMetasEstudoAutomatico()">
+                        <h2 class="text-xl font-bold text-white">Plano Semanal</h2>
                     </div>
                 </div>
-            </section>
-
-            <!-- 6. VER REVISÕES -->
-            <section id="view-revisoes" class="view-section">
-                <div class="card">
-                    <h3>Agenda de Revisões Automáticas</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Itens gerados automaticamente pelo sistema de repetição interna.</p>
-                    <div id="lista-revisoes-completa" class="item-list"></div>
+                <div class="grid grid-cols-1 md:grid-cols-7 gap-4" id="weeklyPlanContainer">
+                    <!-- Gerado dinamicamente -->
+                </div>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="saveWeeklyPlan()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors shadow-lg shadow-emerald-600/20 flex items-center space-x-2">
+                        <i class="fa-solid fa-floppy-disk text-xs"></i>
+                        <span>Salvar</span>
+                    </button>
                 </div>
             </section>
 
-            <!-- 7. PROGRESSO -->
-            <section id="view-progresso" class="view-section">
-                <div class="card">
-                    <h3>Pendências e Concluídos</h3>
-                    <div id="container-progresso-pendencias" class="item-list"></div>
-                </div>
-            </section>
+            <!-- SEÇÃO: GERENCIAMENTO DE MATÉRIAS E TÓPICOS -->
+            <section class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Matérias e Tópicos</h2>
+                        <p class="text-sm text-slate-400">Gerencie seu conteúdo programático por matéria</p>
+                    </div>
 
-            <!-- 8. CALENDÁRIO -->
-            <section id="view-calendario" class="view-section">
-                <div class="card">
-                    <h3>Calendário Sincronizado</h3>
-                    <div id="calendario-container" class="calendar-grid" style="margin-top: 1.5rem;"></div>
-                </div>
-            </section>
-
-            <!-- 9. PERFIL -->
-            <section id="view-perfil" class="view-section">
-                <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h3>Perfil do Aluno (Salvamento Automático)</h3>
-                    <form id="form-perfil">
-                        <div class="form-group">
-                            <label for="perfil-nome">Nome Completo</label>
-                            <input type="text" id="perfil-nome" class="form-control" required oninput="salvarPerfilAutomatico()">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 pointer-events-none">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" id="searchInput" oninput="filterSubjects()" placeholder="Pesquisar matéria..." class="bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-brand-500 w-full sm:w-64 transition-colors">
                         </div>
-                        <div class="form-group">
-                            <label for="perfil-idade">Idade</label>
-                            <input type="number" id="perfil-idade" class="form-control" required oninput="salvarPerfilAutomatico()">
-                        </div>
-                        <div class="form-group">
-                            <label for="perfil-objetivo">Objetivo / Concurso</label>
-                            <input type="text" id="perfil-objetivo" class="form-control" placeholder="Ex: Analista Judiciário" required oninput="salvarPerfilAutomatico()">
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- 10. CONFIGURAÇÕES -->
-            <section id="view-configuracoes" class="view-section">
-                <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h3>Configurações, Integração Firebase e Gestão de Dados</h3>
-                    
-                    <div class="form-group">
-                        <label for="select-tema">Tema Visual</label>
-                        <select id="select-tema" class="form-control" onchange="atualizarConfig('tema', this.value)">
-                            <option value="dark">Modo Escuro (Dark)</option>
-                            <option value="light">Modo Claro (Light)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-cor-primaria">Cor Principal de Destaque</label>
-                        <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;" onchange="atualizarConfig('corPrimaria', this.value)">
-                    </div>
-
-                    <div class="form-group" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui);">
-                        <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent);">Integração Firebase (Pronta p/ Conexão)</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Estrutura preparada para sincronização em nuvem Firestore / Auth (compatível com SDK modular v9+).</p>
-                        <button onclick="mostrarCoach('Estrutura Firebase pronta para conectar SDK.')" class="btn btn-secondary w-full" style="font-size: 0.85rem;">Configurar Credenciais Firebase</button>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                        <button onclick="fazerBackup()" class="btn btn-secondary w-full">Fazer Backup</button>
-                        <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar / Importar Dados</button>
+                        <button onclick="openAddSubjectModal()" class="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors shadow-lg shadow-brand-600/20 flex items-center space-x-2 whitespace-nowrap">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>Nova Matéria</span>
+                        </button>
                     </div>
                 </div>
-            </section>
 
+                <!-- LISTA DE MATÉRIAS (ACORDEÃO) -->
+                <div id="subjectsContainer" class="space-y-4">
+                    <!-- Renderizado dinamicamente -->
+                </div>
+            </section>
         </main>
     </div>
 
-    <!-- TOAST COACH -->
-    <div id="coach-toast" class="hidden">
-        <span id="coach-msg" style="font-size: 0.95rem; font-weight: 500;"></span>
+    <!-- MODAL: ADICIONAR / EDITAR TÓPICO -->
+    <div id="topicModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <h3 id="topicModalTitle" class="text-lg font-bold text-white mb-4">Adicionar Tópico</h3>
+            <form id="topicForm" onsubmit="saveTopic(event)" class="space-y-4">
+                <input type="hidden" id="topicSubjectId">
+                <input type="hidden" id="topicIndex" value="">
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Número / Código (ex: 01, 02)</label>
+                    <input type="text" id="topicCode" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Descrição do Tópico</label>
+                    <textarea id="topicDesc" required rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Link da Lei / Material (Opcional)</label>
+                    <input type="url" id="topicLink" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Questões Feitas</label>
+                        <input type="number" id="topicQuestionsDone" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Acertos</label>
+                        <input type="number" id="topicQuestionsCorrect" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeTopicModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium px-4 py-2.5 rounded-xl transition-colors">Cancelar</button>
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20">Salvar Tópico</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- SCRIPT DE EXECUÇÃO -->
+    <!-- MODAL: NOVA MATÉRIA -->
+    <div id="subjectModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <h3 class="text-lg font-bold text-white mb-4">Adicionar Nova Matéria</h3>
+            <form onsubmit="saveNewSubject(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nome da Matéria</label>
+                    <input type="text" id="newSubjectName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" placeholder="Ex: Informática">
+                </div>
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeAddSubjectModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium px-4 py-2.5 rounded-xl transition-colors">Cancelar</button>
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors shadow-lg shadow-brand-600/20">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BACKUP E DADOS -->
+    <div id="backupModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <h3 class="text-lg font-bold text-white mb-4">Gerenciamento de Dados / Backup</h3>
+            <p class="text-sm text-slate-400 mb-6">Exporte seus dados para um arquivo JSON ou importe um backup salvo anteriormente.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <button onclick="exportData()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-3 px-4 rounded-xl transition-colors border border-slate-700 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download text-brand-500"></i>
+                        <span>Exportar Dados (Backup)</span>
+                    </button>
+                </div>
+                <div>
+                    <label class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-3 px-4 rounded-xl transition-colors border border-slate-700 flex items-center justify-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-upload text-brand-500"></i>
+                        <span>Importar Dados (Restaurar)</span>
+                        <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end pt-6">
+                <button onclick="closeBackupModal()" class="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LÓGICA / JAVASCRIPT -->
     <script>
-        let appData = {
-            usuarioLogado: null,
-            usuarios: [],
-            materias: [], 
-            planoSemanal: { Segunda: [], Terça: [], Quarta: [], Quinta: [], Sexta: [], Sábado: [], Domingo: [] },
-            configMetas: { qtdMaterias: 2, qtdTopicos: 3 },
-            revisoes: [],
-            perfil: { nome: 'Arlan Souza de ramos', idade: 27, objetivo: 'Concurso Público' },
-            estatisticas: { horas: 0, questoesFeitas: 0, acertos: 0, erros: 0 }
+        // Dados Padrão (5 Matérias Obrigatórias com tópicos exatos)
+        const defaultSubjects = [
+            {
+                id: "mat_1",
+                name: "Língua Portuguesa",
+                topics: [
+                    { code: "00", desc: "Compreensão e interpretação de textos de gêneros variados.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "01", desc: "Reconhecimento de tipos e gêneros textuais.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "02", desc: "Domínio da ortografia oficial.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "03", desc: "Domínio dos mecanismos de coesão textual (emprego de elementos de referenciação, substituição e repetição, de conectores e de outros elementos de sequenciação textual).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "04", desc: "Emprego de tempos e modos verbais.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "05", desc: "Domínio da estrutura morfossintática do período (funções sintáticas, regência, concordância nominal e verbal, colocação pronominal).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "06", desc: "Emprego do sinal craseado.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "07", desc: "Pontuação.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "08", desc: "Reescrita de frases e parágrafos do texto (substituição de palavras ou de trechos, retextualização).", link: "", done: false, qDone: 0, qCorrect: 0 }
+                ]
+            },
+            {
+                id: "mat_2",
+                name: "Direito Administrativo",
+                topics: [
+                    { code: "00", desc: "Estado, governo e administração pública (conceitos, elementos, poderes e organização).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "01", desc: "Agentes públicos (cargo, emprego e função pública, provimento, vacância, estabilidade, regime disciplinar - Leis pertinentes).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "02", desc: "Poderes administrativos (vinculado, discricionário, hierárquico, disciplinar, regulamentar e de polícia).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "03", desc: "Princípios expressos e implícitos da administração pública (LIMPE).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "04", desc: "Controle da administração pública (administrativo, legislative e judicial).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "05", desc: "Responsabilidade civil do Estado.", link: "", done: false, qDone: 0, qCorrect: 0 }
+                ]
+            },
+            {
+                id: "mat_3",
+                name: "Direito Constitucional",
+                topics: [
+                    { code: "00", desc: "Constituição da República Federativa do Brasil de 1988 (Dos Princípios Fundamentais).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "01", desc: "Dos Direitos e Garantias Fundamentais (direitos e deveres individuais e coletivos, nacionalidade, direitos políticos).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "02", desc: "Da Organização do Estado (competências da União, Estados, Distrito Federal e Municípios).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "03", desc: "Da Administração Pública (disposições gerais e servidores públicos).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "04", desc: "Do Poder Executivo e do Poder Legislativo.", link: "", done: false, qDone: 0, qCorrect: 0 }
+                ]
+            },
+            {
+                id: "mat_4",
+                name: "Direito Penal",
+                topics: [
+                    { code: "00", desc: "Princípios básicos do direito penal.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "01", desc: "A lei penal no tempo e no espaço. Territorialidade e extraterritorialidade.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "02", desc: "Infração penal: elementos, espécies, sujeito ativo e passivo.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "03", desc: "Tipicidade, ilicitude (antijuridicidade) e culpabilidade.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "04", desc: "Crimes contra a pessoa e crimes contra o patrimônio.", link: "", done: false, qDone: 0, qCorrect: 0 }
+                ]
+            },
+            {
+                id: "mat_5",
+                name: "Direito Processual Penal",
+                topics: [
+                    { code: "00", desc: "Disposições preliminares do processo penal. Aplicação da lei processual no tempo e no espaço.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "01", desc: "Inquérito policial (histórico, natureza, características, valor probatório, inícios e prazos).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "02", desc: "Ação penal (espécies, condições, prazos e titulares).", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "03", desc: "Jurisdição e competência.", link: "", done: false, qDone: 0, qCorrect: 0 },
+                    { code: "04", desc: "Provas no processo penal (exame de corpo de delito, testemunhas, confissão, documentos).", link: "", done: false, qDone: 0, qCorrect: 0 }
+                ]
+            }
+        ];
+
+        let subjects = JSON.parse(localStorage.getItem('study_subjects')) || defaultSubjects;
+        let weeklyPlan = JSON.parse(localStorage.getItem('study_weekly_plan')) || {
+            "Segunda": "Língua Portuguesa",
+            "Terça": "Direito Administrativo",
+            "Quarta": "Direito Constitucional",
+            "Quinta": "Direito Penal",
+            "Sexta": "Direito Processual Penal",
+            "Sábado": "Revisão Geral",
+            "Domingo": "Simulado / Descanso"
         };
+        let openAccordions = {};
 
-        let configGeral = {
-            tema: 'dark',
-            corPrimaria: '#3b82f6',
-            fonte: "'Inter', sans-serif",
-            tamanhoFonte: '1rem',
-            tamanhoIcone: '18px',
-            espacamento: '1.5rem',
-            botoes: '0.75rem',
-            animacao: '0.2s',
-            notificacoes: 'ativadas',
-            paginaInicial: 'metas'
-        };
-
-        // Estado para controlar quais matérias estão abertas/fechadas (accordion)
-        let materiasAbertas = {};
-        let termoPesquisaMatérias = "";
-
-        let historicoNavegacao = ['metas'];
-
-        document.addEventListener("DOMContentLoaded", () => {
-            carregarDadosUsuario();
-            inicializarMatériasIniciaisObrigatorias();
-            inicializarEventos();
-            verificarSessaoAtiva();
-            iniciarRelogioTempoReal();
-            aplicarConfiguracoesVisuais();
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', () => {
+            startClock();
         });
 
-        function inicializarMatériasIniciaisObrigatorias() {
-            const topicosPortuguesa = [
-                "00 - Análise sintática da oração e do período",
-                "01 - Pontuação",
-                "02 - Concordância verbal e nominal",
-                "03 - Regência verbal e nominal",
-                "04 - Emprego do sinal crase",
-                "05 - Significação de palavras",
-                "06 - Emprego de classes de palavras",
-                "07 - Colocação pronominal",
-                "08 - Reescrita de frases e parágrafos do texto",
-                "09 - Correção gramatical e textual",
-                "10 - Tipologia textual",
-                "11 - Coesão e coerência textual",
-                "12 - Compreensão e interpretação de textos",
-                "13 - Ortografia oficial",
-                "14 - Acentuação gráfica",
-                "15 - Emprego das letras"
-            ];
+        // Relógio em tempo real
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR');
+                const clockEl = document.getElementById('realtimeClock');
+                if (clockEl) clockEl.innerText = timeStr;
+            }, 1000);
+        }
 
-            const topicosAdmin = [
-                "00 - Estado, governo e administração pública",
-                "01 - Conceitos e princípios da administração pública",
-                "02 - Agentes públicos",
-                "03 - Poderes administrativos",
-                "04 - Controle da administração pública",
-                "05 - Responsabilidade civil do Estado",
-                "06 - Lei nº 8.112/1990 e suas alterações",
-                "07 - Lei de Improbidade Administrativa (Lei nº 8.429/1992)",
-                "08 - Processo Administrativo Federal (Lei nº 9.784/1999)",
-                "09 - Licitações e Contratos Administrativos",
-                "10 - Serviços públicos",
-                "11 - Organização administrativa",
-                "12 - Bens públicos",
-                "13 - Intervenção do Estado na propriedade",
-                "14 - Desapropriação",
-                "15 - Atos administrativos"
-            ];
+        function enterDashboard() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('dashboardContainer').classList.remove('hidden');
+            renderDashboard();
+        }
 
-            const topicosConstitucional = [
-                "00 - Constituição: conceitos, classificação e aplicabilidade das normas constitucionais",
-                "01 - Direitos e garantias fundamentais",
-                "02 - Direitos e deveres individuais e coletivos",
-                "03 - Direitos sociais",
-                "04 - Nacionalidade e Cidadania",
-                "05 - Direitos políticos",
-                "06 - Partidos políticos",
-                "07 - Organização político-administrativa da República Federativa do Brasil",
-                "08 - União, Estados Federados, Distrito Federal e Municípios",
-                "09 - Poder Legislativo",
-                "10 - Poder Executivo",
-                "11 - Poder Judiciário",
-                "12 - Funções essenciais à justiça",
-                "13 - Ordem econômica e financeira",
-                "14 - Ordem social",
-                "15 - Controle de constitucionalidade"
-            ];
+        // Salvamento de dados
+        function saveData() {
+            localStorage.setItem('study_subjects', JSON.stringify(subjects));
+            renderDashboard();
+        }
 
-            const topicosPenal = [
-                "00 - Princípios básicos do Direito Penal",
-                "01 - A lei penal no tempo e no espaço",
-                "02 - A lei penal em relação às pessoas",
-                "03 - Interpretação da lei penal",
-                "04 - Teoria do crime",
-                "05 - Fato típico e seus elementos",
-                "06 - Ilicitude e causas de exclusão",
-                "07 - Culpabilidade e causas de exclusão",
-                "08 - Concurso de pessoas",
-                "09 - Das penas",
-                "10 - Medidas de segurança",
-                "11 - Ação penal",
-                "12 - Extinção da punibilidade",
-                "13 - Crimes contra a pessoa",
-                "14 - Crimes contra o patrimônio",
-                "15 - Crimes contra a administração pública"
-            ];
-
-            const topicosProcessualPenal = [
-                "00 - Sistemas processuais penais",
-                "01 - Princípios gerais e aplicação da lei processual penal",
-                "02 - Inquérito policial",
-                "03 - Ação penal",
-                "04 - Competência",
-                "05 - Prova",
-                "06 - Prisão, medidas cautelares e liberdade provisória",
-                "07 - Citações e intimações",
-                "08 - Sentença",
-                "09 - Recursos em geral"
-            ];
-
-            const nomesObrigatorios = [
-                { nome: "Língua Portuguesa", lista: topicosPortuguesa },
-                { nome: "Direito Administrativo", lista: topicosAdmin },
-                { nome: "Direito Constitucional", lista: topicosConstitucional },
-                { nome: "Direito Penal", lista: topicosPenal },
-                { nome: "Direito Processual Penal", lista: topicosProcessualPenal }
-            ];
-
-            let precisaAtualizar = false;
-            if (!appData.materias || appData.materias.length !== 5) {
-                precisaAtualizar = true;
-            } else {
-                for (let i = 0; i < nomesObrigatorios.length; i++) {
-                    if (appData.materias[i].nome !== nomesObrigatorios[i].nome || appData.materias[i].topicos.length !== nomesObrigatorios[i].lista.length) {
-                        precisaAtualizar = true;
-                        break;
-                    }
+        function saveWeeklyPlan() {
+            const days = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+            days.forEach(day => {
+                const input = document.getElementById(`plan_${day}`);
+                if (input) {
+                    weeklyPlan[day] = input.value;
                 }
-            }
+            });
+            localStorage.setItem('study_weekly_plan', JSON.stringify(weeklyPlan));
+            alert('Plano Semanal salvo e Metas de Hoje atualizadas com sucesso!');
+            renderDashboard();
+        }
 
-            if (precisaAtualizar) {
-                appData.materias = nomesObrigatorios.map((item, mIdx) => {
-                    let topicos = item.lista.map((textoTopico, tIdx) => {
-                        let numStr = tIdx < 10 ? '0' + tIdx : '' + tIdx;
-                        return {
-                            numero: numStr,
-                            nome: textoTopico,
-                            linkLei: '',
-                            estudoFeito: false,
-                            questoesFeitas: 0,
-                            acertos: 0,
-                            erros: 0
-                        };
+        // Renderização Geral
+        function renderDashboard() {
+            renderTodayMetas();
+            renderWeeklyPlan();
+            renderSubjects();
+        }
+
+        // Renderizar Plano Semanal
+        function renderWeeklyPlan() {
+            const container = document.getElementById('weeklyPlanContainer');
+            container.innerHTML = '';
+            const days = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+
+            days.forEach(day => {
+                const val = weeklyPlan[day] || '';
+                container.innerHTML += `
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 flex flex-col space-y-2">
+                        <span class="text-xs font-bold text-brand-500 uppercase tracking-wider">${day}</span>
+                        <input type="text" id="plan_${day}" value="${val}" placeholder="Ex: Matéria X" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                `;
+            });
+        }
+
+        // Renderizar Metas de Hoje sincronizadas com o dia da semana atual do Plano Semanal
+        function renderTodayMetas() {
+            const container = document.getElementById('todayMetaList');
+            const statsContainer = document.getElementById('todayMetaStats');
+            container.innerHTML = '';
+
+            const dayNamesMap = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+            const todayName = dayNamesMap[new Date().getDay()];
+            const plannedSubjectStr = weeklyPlan[todayName] || "";
+
+            // Separar por vírgula ou barra caso o usuário coloque mais de uma matéria no mesmo dia (ex: "Direitos Humanos, Língua Portuguesa")
+            const targetSubjectNames = plannedSubjectStr.split(/,|\//).map(s => s.trim().toLowerCase()).filter(Boolean);
+
+            let matchingTopics = [];
+            subjects.forEach(sub => {
+                const isMatch = targetSubjectNames.some(target => sub.name.toLowerCase().includes(target) || target.includes(sub.name.toLowerCase()));
+                if (isMatch) {
+                    sub.topics.forEach((t, idx) => {
+                        matchingTopics.push({ subName: sub.name, topic: t, subId: sub.id, topicIdx: idx });
                     });
-                    return {
-                        id: 'mat_obrigatoria_' + mIdx,
-                        nome: item.nome,
-                        topicos: topicos
-                    };
-                });
-                salvarDados();
-            }
-        }
-
-        function iniciarRelogioTempoReal() {
-            const atualizarHora = () => {
-                const dataEl = document.getElementById('hero-date-text');
-                const horaEl = document.getElementById('hero-time-text');
-                if (dataEl && horaEl) {
-                    const agora = new Date();
-                    const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                    let dataStr = agora.toLocaleDateString('pt-BR', opcoesData);
-                    dataStr = dataStr.charAt(0).toUpperCase() + dataStr.slice(1);
-                    dataEl.textContent = dataStr;
-                    
-                    const horas = String(agora.getHours()).padStart(2, '0');
-                    const minutos = String(agora.getMinutes()).padStart(2, '0');
-                    const segundos = String(agora.getSeconds()).padStart(2, '0');
-                    horaEl.textContent = `${horas}:${minutos}:${segundos}`;
                 }
-            };
-            atualizarHora();
-            setInterval(atualizarHora, 1000);
-        }
+            });
 
-        function salvarDados() {
-            try {
-                localStorage.setItem("plataforma_estudos_data", JSON.stringify(appData));
-                localStorage.setItem("plataforma_estudos_config", JSON.stringify(configGeral));
-            } catch (e) { console.error(e); }
-        }
-
-        function carregarDadosUsuario() {
-            try {
-                const d = localStorage.getItem("plataforma_estudos_data");
-                if (d) {
-                    const parsed = JSON.parse(d);
-                    appData = { ...appData, ...parsed };
-                    Object.keys(appData.planoSemanal).forEach(dia => {
-                        if (!Array.isArray(appData.planoSemanal[dia])) {
-                            const val = appData.planoSemanal[dia];
-                            appData.planoSemanal[dia] = val ? [val] : [];
+            // Se não encontrar nenhuma matéria específica mapeada ou se o campo estiver vazio, fallback para tópicos pendentes gerais
+            let displayTopics = matchingTopics;
+            if (displayTopics.length === 0) {
+                subjects.forEach(sub => {
+                    sub.topics.forEach((t, idx) => {
+                        if (!t.done && displayTopics.length < 3) {
+                            displayTopics.push({ subName: sub.name, topic: t, subId: sub.id, topicIdx: idx });
                         }
                     });
-                }
-                const c = localStorage.getItem("plataforma_estudos_config");
-                if (c) configGeral = { ...configGeral, ...JSON.parse(c) };
-
-                const sessaoSalva = localStorage.getItem("plataforma_sessao_ativa");
-                if (sessaoSalva && !appData.usuarioLogado) {
-                    appData.usuarioLogado = sessaoSalva;
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function mudarAuthView(view) {
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('register-view').classList.add('hidden');
-            document.getElementById('esqueci-view').classList.add('hidden');
-            if (view === 'login') document.getElementById('login-view').classList.remove('hidden');
-            if (view === 'register') document.getElementById('register-view').classList.remove('hidden');
-            if (view === 'esqueci') document.getElementById('esqueci-view').classList.remove('hidden');
-        }
-
-        function verificarSessaoAtiva() {
-            if (appData.usuarioLogado) {
-                document.getElementById('auth-container').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                document.getElementById('hero-fullscreen-view').classList.remove('hidden');
-                mudarView('metas', false);
-                atualizarInterfaceCompleta();
-            } else {
-                document.getElementById('auth-container').classList.remove('hidden');
-                document.getElementById('app-container').classList.add('hidden');
-                document.getElementById('hero-fullscreen-view').classList.add('hidden');
-            }
-        }
-
-        function iniciarEstudosFlow() {
-            document.getElementById('hero-fullscreen-view').classList.add('hidden');
-            mudarView('metas');
-        }
-
-        function logout() {
-            appData.usuarioLogado = null;
-            localStorage.removeItem("plataforma_sessao_ativa");
-            salvarDados();
-            verificarSessaoAtiva();
-        }
-
-        function mudarView(viewId, pushHistory = true) {
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tool-card').forEach(card => card.classList.remove('active'));
-
-            const targetView = document.getElementById(`view-${viewId}`);
-            const targetNav = document.getElementById(`nav-${viewId}`);
-
-            if (targetView) targetView.classList.add('active');
-            if (targetNav) targetNav.classList.add('active');
-
-            if (pushHistory && historicoNavegacao[historicoNavegacao.length - 1] !== viewId) {
-                historicoNavegacao.push(viewId);
-            }
-
-            const backBtn = document.getElementById('nav-back-button');
-            if (historicoNavegacao.length > 1) {
-                backBtn.classList.remove('hidden');
-            } else {
-                backBtn.classList.add('hidden');
-            }
-        }
-
-        function voltarHistorico() {
-            if (historicoNavegacao.length > 1) {
-                historicoNavegacao.pop();
-                const anterior = historicoNavegacao[historicoNavegacao.length - 1];
-                mudarView(anterior, false);
-            }
-        }
-
-        function rolarMenu(direcao) {
-            const container = document.getElementById('tools-nav-scroll');
-            if (container) {
-                container.scrollBy({ left: direcao === 'esq' ? -200 : 200, behavior: 'smooth' });
-            }
-        }
-
-        function mostrarCoach(msg) {
-            const toast = document.getElementById('coach-toast');
-            const txt = document.getElementById('coach-msg');
-            if (toast && txt) {
-                txt.textContent = msg;
-                toast.classList.remove('hidden');
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 3000);
-            }
-        }
-
-        function inicializarEventos() {
-            document.getElementById('form-login').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const userInput = document.getElementById('login-user').value.trim();
-                const senha = document.getElementById('login-senha').value;
-                const lembrar = document.getElementById('lembrar-usuario').checked;
-
-                const usuario = appData.usuarios.find(u => u.user === userInput && u.senha === senha);
-                if (usuario || (userInput === "estudante@estudos.com" && senha === "123456")) {
-                    appData.usuarioLogado = userInput;
-                    if (lembrar) {
-                        localStorage.setItem("plataforma_sessao_ativa", userInput);
-                    }
-                    salvarDados();
-                    verificarSessaoAtiva();
-                    mostrarCoach("Login realizado com sucesso!");
-                } else { alert("E-mail/CPF ou senha incorretos."); }
-            });
-
-            document.getElementById('form-register').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const nome = document.getElementById('reg-nome').value.trim();
-                const userInput = document.getElementById('reg-user').value.trim();
-                const senha = document.getElementById('reg-senha').value;
-
-                if (appData.usuarios.some(u => u.user === userInput)) { alert("Este e-mail ou CPF já está cadastrado."); return; }
-                appData.usuarios.push({ nome, user: userInput, senha });
-                appData.usuarioLogado = userInput;
-                appData.perfil.nome = nome;
-                localStorage.setItem("plataforma_sessao_ativa", userInput);
-                salvarDados();
-                verificarSessaoAtiva();
-                mostrarCoach("Conta criada com sucesso!");
-            });
-
-            document.getElementById('form-esqueci').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const userInput = document.getElementById('esq-user').value.trim();
-                alert(`Instruções de recuperação enviadas para: ${userInput}`);
-                mudarAuthView('login');
-            });
-
-            document.getElementById('form-cadastrar-materia').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const input = document.getElementById('nova-materia-nome');
-                const nome = input.value.trim();
-                if (!nome) return;
-
-                let topicosIniciais = [{
-                    numero: '00',
-                    nome: 'Conteúdo Inicial',
-                    linkLei: '',
-                    estudoFeito: false,
-                    questoesFeitas: 0,
-                    acertos: 0,
-                    erros: 0
-                }];
-
-                const novoId = 'mat_' + Date.now();
-                appData.materias.push({
-                    id: novoId,
-                    nome: nome,
-                    topicos: topicosIniciais
                 });
-                materiasAbertas[novoId] = true; // Abre automaticamente a nova matéria
-                salvarDados();
-                input.value = '';
-                atualizarInterfaceCompleta();
-                mostrarCoach("Matéria cadastrada com sucesso!");
+            }
+
+            let totalTopics = 0;
+            let completedTopics = 0;
+            displayTopics.forEach(item => {
+                totalTopics++;
+                if (item.topic.done) completedTopics++;
+            });
+
+            const percent = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+            statsContainer.innerText = `Hoje (${todayName}): ${completedTopics} de ${totalTopics} tópicos concluídos (${percent}%)`;
+
+            if (displayTopics.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-6 text-slate-400">
+                        <i class="fa-solid fa-calendar-day text-brand-400 text-3xl mb-2"></i>
+                        <p>Nenhuma matéria definida para hoje (${todayName}) no Plano Semanal.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            displayTopics.forEach(item => {
+                container.innerHTML += `
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                        <div>
+                            <span class="text-xs font-semibold text-brand-500 uppercase tracking-wider">${item.subName}</span>
+                            <p class="text-sm text-slate-200 font-medium mt-1">Tópico ${item.topic.code}: ${item.topic.desc}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
+                            <span class="text-xs text-slate-400"><i class="fa-solid fa-circle-question mr-1 text-slate-500"></i> ${item.topic.qDone} questões</span>
+                            <button onclick="toggleTopicDone('${item.subId}', ${item.topicIdx})" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5">
+                                <i class="fa-solid fa-check"></i>
+                                <span>${item.topic.done ? 'Concluído' : 'Concluir'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        function salvarPerfilAutomatico() {
-            appData.perfil.nome = document.getElementById('perfil-nome').value;
-            appData.perfil.idade = parseInt(document.getElementById('perfil-idade').value) || 27;
-            appData.perfil.objetivo = document.getElementById('perfil-objetivo').value;
-            salvarDados();
-        }
+        // Renderizar Matérias com Acordeão e Pesquisa
+        function renderSubjects(filterQuery = '') {
+            const container = document.getElementById('subjectsContainer');
+            container.innerHTML = '';
 
-        function salvarConfigMetasEstudoAutomatico() {
-            const qtdMatInput = document.getElementById('input-metas-materias');
-            const qtdTopInput = document.getElementById('input-metas-topicos');
-            if (qtdMatInput && qtdTopInput) {
-                appData.configMetas.qtdMaterias = parseInt(qtdMatInput.value) || 2;
-                appData.configMetas.qtdTopicos = parseInt(qtdTopInput.value) || 3;
-                salvarDados();
+            const filtered = subjects.filter(sub => sub.name.toLowerCase().includes(filterQuery.toLowerCase()));
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400">Nenhuma matéria encontrada.</div>`;
+                return;
             }
-        }
 
-        function toggleAcordeonMateria(materiaId) {
-            materiasAbertas[materiaId] = !materiasAbertas[materiaId];
-            atualizarInterfaceCompleta();
-        }
+            filtered.forEach(sub => {
+                const isOpen = openAccordions[sub.id] || false;
+                let doneCount = sub.topics.filter(t => t.done).length;
+                let totalCount = sub.topics.length;
+                let pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
 
-        function filtrarMaterias(termo) {
-            termoPesquisaMatérias = termo.toLowerCase().trim();
-            atualizarInterfaceCompleta();
-        }
-
-        function adicionarTopico(materiaId) {
-            const materia = appData.materias.find(m => m.id === materiaId);
-            if (materia) {
-                const proximoNum = materia.topicos.length < 10 ? '0' + materia.topicos.length : '' + materia.topicos.length;
-                materia.topicos.push({
-                    numero: proximoNum,
-                    nome: 'Novo Conteúdo',
-                    linkLei: '',
-                    estudoFeito: false,
-                    questoesFeitas: 0,
-                    acertos: 0,
-                    erros: 0
-                });
-                materiasAbertas[materiaId] = true; // Garante que a matéria continue aberta
-                salvarDados();
-                atualizarInterfaceCompleta();
-                mostrarCoach("Tópico adicionado com sucesso!");
-            }
-        }
-
-        function excluirTopico(materiaId, indexTopico) {
-            const materia = appData.materias.find(m => m.id === materiaId);
-            if (materia && materia.topicos[indexTopico]) {
-                materia.topicos.splice(indexTopico, 1);
-                materiasAbertas[materiaId] = true;
-                salvarDados();
-                atualizarInterfaceCompleta();
-                mostrarCoach("Tópico excluído com sucesso!");
-            }
-        }
-
-        function excluirMateria(materiaId) {
-            appData.materias = appData.materias.filter(x => x.id !== materiaId);
-            delete materiasAbertas[materiaId];
-            salvarDados();
-            atualizarInterfaceCompleta();
-            mostrarCoach("Matéria excluída com sucesso!");
-        }
-
-        function atualizarTopicoDetalhe(materiaId, indexTopico, campo, valor) {
-            const materia = appData.materias.find(m => m.id === materiaId);
-            if(materia && materia.topicos[indexTopico]) {
-                materia.topicos[indexTopico][campo] = valor;
-                salvarDados();
-            }
-        }
-
-        function concluirEstudoTopico(materiaId, indexTopico) {
-            const materia = appData.materias.find(m => m.id === materiaId);
-            if(materia && materia.topicos[indexTopico]) {
-                const topico = materia.topicos[indexTopico];
-                topico.estudoFeito = !topico.estudoFeito;
-                if(topico.estudoFeito) {
-                    if(topico.questoesFeitas === 0) topico.questoesFeitas = 50;
-                    if(topico.acertos === 0) { topico.acertos = 42; topico.erros = 8; }
-                    
-                    [1, 7, 15, 30].forEach(dias => {
-                        appData.revisoes.push({
-                            id: 'rev_' + Date.now() + Math.random(),
-                            titulo: `${materia.nome} - Tópico ${topico.numero}`,
-                            data: new Date(Date.now() + dias*24*60*60*1000).toLocaleDateString(),
-                            concluida: false
-                        });
-                    });
-                    appData.estatisticas.horas += 2;
-                    appData.estatisticas.questoesFeitas += topico.questoesFeitas;
-                    appData.estatisticas.acertos += topico.acertos;
-                    appData.estatisticas.erros += topico.erros;
-                }
-                salvarDados();
-                atualizarInterfaceCompleta();
-            }
-        }
-
-        function adicionarMateriaPlano(dia) {
-            if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
-            appData.planoSemanal[dia].push('');
-            salvarDados();
-            renderizarPlanoSemanal();
-        }
-
-        function removerMateriaPlano(dia, index) {
-            if (appData.planoSemanal[dia]) {
-                appData.planoSemanal[dia].splice(index, 1);
-                salvarDados();
-                renderizarPlanoSemanal();
-            }
-        }
-
-        function atualizarMateriaPlanoSelect(dia, index, valor) {
-            if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
-            appData.planoSemanal[dia][index] = valor;
-            salvarDados();
-        }
-
-        function renderizarPlanoSemanal() {
-            const containerPlano = document.getElementById('container-plano-semanal');
-            if(containerPlano) {
-                const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-                containerPlano.innerHTML = dias.map(dia => {
-                    const materiasSelecionadas = appData.planoSemanal[dia] || [];
-                    return `
-                        <div class="card" style="margin-bottom: 0;">
-                            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
-                                <h4 style="font-size: 1.1rem;">${dia}-feira</h4>
-                                <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Adicionar Matéria</button>
-                            </div>
-                            <div id="container-selects-${dia}" class="flex flex-col gap-2">
-                                ${materiasSelecionadas.length === 0 ? '<p style="color: var::text-muted; font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
-                                ${materiasSelecionadas.map((matSelecionada, idx) => `
-                                    <div class="flex gap-2 items-center">
-                                        <select class="form-control select-plano-${dia}" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
-                                            <option value="">Nenhuma Matéria</option>
-                                            ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
-                                        </select>
-                                        <button onclick="removerMateriaPlano('${dia}', ${idx})" class="btn btn-danger" style="padding: 0.6rem; font-size: 0.8rem;">✕</button>
+                let topicsHTML = '';
+                sub.topics.forEach((t, tIdx) => {
+                    topicsHTML += `
+                        <div class="p-4 bg-slate-950/40 border border-slate-800/80 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-colors">
+                            <div class="flex items-start space-x-3">
+                                <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTopicDone('${sub.id}', ${tIdx})" class="mt-1 w-4 h-4 rounded bg-slate-900 border-slate-700 text-brand-600 focus:ring-brand-500 cursor-pointer">
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs font-bold text-brand-500 font-mono">#${t.code}</span>
+                                        ${t.link ? `<a href="${t.link}" target="_blank" class="text-xs text-brand-400 hover:underline"><i class="fa-solid fa-link mr-1"></i>Material</a>` : ''}
                                     </div>
-                                `).join('')}
+                                    <p class="text-sm text-slate-200 mt-1 ${t.done ? 'line-through text-slate-500' : ''}">${t.desc}</p>
+                                    <div class="text-xs text-slate-400 mt-2 flex items-center space-x-3">
+                                        <span><i class="fa-solid fa-pen-to-square mr-1 text-slate-500"></i> ${t.qDone} questões feitas</span>
+                                        <span><i class="fa-solid fa-bullseye mr-1 text-emerald-500"></i> ${t.qCorrect} acertos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 self-end sm:self-center">
+                                <button onclick="openEditTopicModal('${sub.id}', ${tIdx})" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors text-xs" title="Editar Tópico">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteTopic('${sub.id}', ${tIdx})" class="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors text-xs" title="Excluir Tópico">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     `;
-                }).join('');
-            }
-        }
+                });
 
-        function atualizarConfig(chave, valor) {
-            configGeral[chave] = valor;
-            salvarDados();
-            aplicarConfiguracoesVisuais();
-        }
-
-        function aplicarConfiguracoesVisuais() {
-            const root = document.documentElement;
-            root.setAttribute('data-theme', configGeral.tema || 'dark');
-            root.style.setProperty('--primary-color', configGeral.corPrimaria || '#3b82f6');
-            root.style.setProperty('--primary-hover', configGeral.corPrimaria === '#3b82f6' ? '#2563eb' : configGeral.corPrimaria);
-            root.style.setProperty('--font-family', configGeral.fonte || "'Inter', sans-serif");
-            root.style.setProperty('--font-scale', configGeral.tamanhoFonte || '1rem');
-            root.style.setProperty('--icon-size', configGeral.tamanhoIcone || '18px');
-            root.style.setProperty('--spacing-ui', configGeral.espacamento || '1.5rem');
-            root.style.setProperty('--radius-ui', configGeral.botoes || '0.75rem');
-            root.style.setProperty('--anim-speed', configGeral.animacao || '0.2s');
-
-            if(document.getElementById('select-tema')) document.getElementById('select-tema').value = configGeral.tema;
-            if(document.getElementById('input-cor-primaria')) document.getElementById('input-cor-primaria').value = configGeral.corPrimaria;
-        }
-
-        function fazerBackup() {
-            const dadosExport = { appData, configGeral };
-            const blob = new Blob([JSON.stringify(dadosExport, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `backup_estudos_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            mostrarCoach("Backup exportado com sucesso!");
-        }
-
-        function restaurarBackupPrompt() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = e => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = event => {
-                    try {
-                        const parsed = JSON.parse(event.target.result);
-                        if(parsed.appData) appData = parsed.appData;
-                        if(parsed.configGeral) configGeral = parsed.configGeral;
-                        salvarDados();
-                        aplicarConfiguracoesVisuais();
-                        atualizarInterfaceCompleta();
-                        mostrarCoach("Dados importados e restaurados com sucesso!");
-                    } catch(err) { alert("Arquivo de backup inválido."); }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
-        function toggleNotificacoes() {
-            const dropdown = document.getElementById('notification-dropdown');
-            dropdown.classList.toggle('hidden');
-        }
-
-        function atualizarInterfaceCompleta() {
-            if(document.getElementById('perfil-nome')) document.getElementById('perfil-nome').value = appData.perfil.nome || '';
-            if(document.getElementById('perfil-idade')) document.getElementById('perfil-idade').value = appData.perfil.idade || 27;
-            if(document.getElementById('perfil-objetivo')) document.getElementById('perfil-objetivo').value = appData.perfil.objetivo || '';
-
-            if(document.getElementById('input-metas-materias')) document.getElementById('input-metas-materias').value = appData.configMetas.qtdMaterias;
-            if(document.getElementById('input-metas-topicos')) document.getElementById('input-metas-topicos').value = appData.configMetas.qtdTopicos;
-
-            const containerMat = document.getElementById('container-materias-gerenciador');
-            if(containerMat) {
-                const materiasFiltradas = appData.materias.filter(m => m.nome.toLowerCase().includes(termoPesquisaMatérias));
-                
-                containerMat.innerHTML = materiasFiltradas.length === 0 ? '<p style="color: var(--text-muted); text-align: center; padding: 1rem;">Nenhuma matéria encontrada.</p>' :
-                    materiasFiltradas.map(m => {
-                        const isOpen = !!materiasAbertas[m.id];
-                        return `
-                            <div class="card" style="margin-top: 1rem; margin-bottom: 1rem;">
-                                <div class="materia-accordion-header" onclick="toggleAcordeonMateria('${m.id}')">
-                                    <div class="flex items-center gap-2">
-                                        <span style="font-size: 1.1rem; color: var(--accent); transition: transform 0.2s; transform: rotate(${isOpen ? '90deg' : '0deg'});">▶</span>
-                                        <h4 style="color: var(--text-main); font-size: 1.15Font; font-weight: 600; margin: 0;">${m.nome}</h4>
-                                    </div>
-                                    <div class="flex gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">+ Adicionar Tópico</button>
-                                        <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir Matéria</button>
-                                    </div>
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all">
+                        <div onclick="toggleAccordion('${sub.id}')" class="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-colors">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-brand-600/10 border border-brand-500/20 text-brand-500 flex items-center justify-center font-bold">
+                                    ${sub.name.charAt(0)}
                                 </div>
-                                <div class="materia-content-body ${isOpen ? '' : 'hidden'}">
-                                    <div class="topicos-grid">
-                                        ${m.topicos.map((t, idx) => {
-                                            const totalQ = t.questoesFeitas || 0;
-                                            const ac = t.acertos || 0;
-                                            const perc = totalQ > 0 ? Math.round((ac / totalQ) * 100) : 0;
-                                            return `
-                                                <div class="topico-box">
-                                                    <div class="flex justify-between items-center">
-                                                        <strong style="font-size: 0.95rem;">Tópico ${t.numero}</strong>
-                                                        <div class="flex gap-2">
-                                                            <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
-                                                            <button onclick="excluirTopico('${m.id}', ${idx})" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Excluir Tópico">✕</button>
-                                                        </div>
-                                                    </div>
-                                                    <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
-                                                    <div class="flex gap-2">
-                                                        <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" placeholder="Link da Lei" value="${t.linkLei}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'linkLei', this.value)">
-                                                        ${t.linkLei ? `<a href="${t.linkLei}" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Ler</a>` : ''}
-                                                    </div>
-                                                    <div class="flex gap-2" style="font-size: 0.8rem; color: var(--text-muted); align-items: center; justify-content: space-between; margin-top: 0.25rem;">
-                                                        <span>Q: <input type="number" style="width: 45px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.questoesFeitas}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'questoesFeitas', parseInt(this.value)||0)"></span>
-                                                        <span>Acertos: <input type="number" style="width: 40px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; padding: 2px;" value="${t.acertos}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'acertos', parseInt(this.value)||0)"></span>
-                                                        <span style="color: var(--accent); font-weight: 600;">${perc}%</span>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                    </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-base">${sub.name}</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">${doneCount} de ${totalCount} tópicos concluídos (${pct}%)</p>
                                 </div>
                             </div>
-                        `;
-                    }).join('');
-            }
+                            <div class="flex items-center space-x-4">
+                                <div class="hidden sm:flex items-center space-x-2 w-32 bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                                    <div class="bg-brand-500 h-full transition-all duration-300" style="width: ${pct}%"></div>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}"></i>
+                            </div>
+                        </div>
 
-            renderizarPlanoSemanal();
-
-            const listaMetas = document.getElementById('lista-metas-diarias-automaticas');
-            const dashMetas = document.getElementById('dash-resumo-metas-hoje');
-            
-            const hojeNome = new Date().toLocaleDateString('pt-BR', { weekday: 'long' });
-            let diaAtualKey = 'Segunda';
-            if(hojeNome.includes('Terça')) diaAtualKey = 'Terça';
-            if(hojeNome.includes('Quarta')) diaAtualKey = 'Quarta';
-            if(hojeNome.includes('Quinta')) diaAtualKey = 'Quinta';
-            if(hojeNome.includes('Sexta')) diaAtualKey = 'Sexta';
-            if(hojeNome.includes('Sábado')) diaAtualKey = 'Sábado';
-            if(hojeNome.includes('Domingo')) diaAtualKey = 'Domingo';
-
-            const materiasDia = appData.planoSemanal[diaAtualKey] || [];
-            let htmlMetas = '';
-            const maxMaterias = appData.configMetas.qtdMaterias || 2;
-            const maxTopicos = appData.configMetas.qtdTopicos || 3;
-
-            if(materiasDia.length > 0) {
-                let countMat = 0;
-                materiasDia.forEach(matNome => {
-                    if (countMat >= maxMaterias) return;
-                    const matObj = appData.materias.find(m => m.nome === matNome);
-                    if(matObj && matObj.topicos.length > 0) {
-                        countMat++;
-                        let countTop = 0;
-                        matObj.topicos.forEach((t, idx) => {
-                            if (countTop >= maxTopicos) return;
-                            countTop++;
-                            htmlMetas += `
-                                <li>
-                                    <span>🎯 <strong>${matObj.nome}</strong> — Tópico ${t.numero}: ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
-                                    <button onclick="concluirEstudoTopico('${matObj.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
-                                </li>
-                            `;
-                        });
-                    }
-                });
-                if(!htmlMetas) htmlMetas = `<li>Matérias de hoje sem tópicos cadastrados.</li>`;
-            } else {
-                htmlMetas = `<li>Nenhuma matéria programada para hoje (${diaAtualKey}-feira). Configure no Plano de Estudos.</li>`;
-            }
-
-            if(listaMetas) listaMetas.innerHTML = htmlMetas;
-            if(dashMetas) dashMetas.innerHTML = htmlMetas;
-
-            const listaRevisoes = document.getElementById('lista-revisoes-completa');
-            if(listaRevisoes) {
-                listaRevisoes.innerHTML = appData.revisoes.length === 0 ? '<li>Nenhuma revisão gerada. Conclua tópicos para gerar revisões automáticas.</li>' :
-                    appData.revisoes.map((r, rIdx) => `
-                        <li>
-                            <span style="${r.concluida ? 'text-decoration: line-through; opacity: 0.6;' : ''}">🔄 ${r.titulo} — Data: <strong>${r.data}</strong></span>
-                            <button onclick="appData.revisoes[${rIdx}].concluida = !appData.revisoes[${rIdx}].concluida; salvarDados(); atualizarInterfaceCompleta();" class="btn ${r.concluida ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${r.concluida ? 'Concluída' : 'Marcar Feita'}</button>
-                        </li>
-                    `).join('');
-            }
-
-            const containerProgresso = document.getElementById('container-progresso-pendencias');
-            if(containerProgresso) {
-                let itensPendentes = [];
-                let itensConcluidos = [];
-                appData.materias.forEach(m => {
-                    m.topicos.forEach(t => {
-                        const txt = `${m.nome} - Tópico ${t.numero}: ${t.nome}`;
-                        if(t.estudoFeito) itensConcluidos.push(txt);
-                        else itensPendentes.push(txt);
-                    });
-                });
-
-                containerProgresso.innerHTML = `
-                    <div style="width: 100%;">
-                        <h4 style="color: var(--accent); margin-bottom: 0.75rem;">Pendências (${itensPendentes.length})</h4>
-                        <ul style="list-style: none; margin-bottom: 1.5rem;">
-                            ${itensPendentes.length === 0 ? '<li style="color: var(--text-muted);">Nenhuma pendência. Tudo em dia!</li>' : itensPendentes.map(p => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">⏳ ${p}</li>`).join('')}
-                        </ul>
-                        <h4 style="color: var(--success); margin-bottom: 0.75rem;">Concluídos (${itensConcluidos.length})</h4>
-                        <ul style="list-style: none;">
-                            ${itensConcluidos.length === 0 ? '<li style="color: var(--text-muted);">Nenhum tópico concluído ainda.</li>' : itensConcluidos.map(c => `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-decoration: line-through; opacity: 0.7;">✅ ${c}</li>`).join('')}
-                        </ul>
+                        <div id="acc_${sub.id}" class="${isOpen ? 'block' : 'hidden'} border-t border-slate-800 p-5 bg-slate-950/20 space-y-3">
+                            <div class="flex items-center justify-between pb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Conteúdo Programático</span>
+                                <button onclick="openAddTopicModal('${sub.id}')" class="bg-brand-600/20 hover:bg-brand-600/30 text-brand-400 border border-brand-500/30 text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                    <span>Adicionar Tópico</span>
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                ${topicsHTML || '<p class="text-sm text-slate-500 text-center py-4">Nenhum tópico cadastrado nesta matéria.</p>'}
+                            </div>
+                        </div>
                     </div>
                 `;
-            }
+            });
+        }
 
-            const calContainer = document.getElementById('calendario-container');
-            if (calContainer) {
-                calContainer.innerHTML = '';
-                ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].forEach(d => {
-                    calContainer.innerHTML += `<div class="calendar-day-header">${d}</div>`;
-                });
-                for (let i = 1; i <= 31; i++) {
-                    const isToday = i === 14 ? 'today' : '';
-                    calContainer.innerHTML += `<div class="calendar-day ${isToday}"><span>${i}</span></div>`;
+        function toggleAccordion(id) {
+            openAccordions[id] = !openAccordions[id];
+            renderSubjects(document.getElementById('searchInput').value);
+        }
+
+        function filterSubjects() {
+            const query = document.getElementById('searchInput').value;
+            renderSubjects(query);
+        }
+
+        function toggleTopicDone(subId, topicIdx) {
+            const sub = subjects.find(s => s.id === subId);
+            if (sub && sub.topics[topicIdx]) {
+                sub.topics[topicIdx].done = !sub.topics[topicIdx].done;
+                saveData();
+            }
+        }
+
+        // Modais de Tópico
+        function openAddTopicModal(subId) {
+            document.getElementById('topicSubjectId').value = subId;
+            document.getElementById('topicIndex').value = '';
+            document.getElementById('topicModalTitle').innerText = 'Adicionar Tópico';
+            document.getElementById('topicCode').value = '';
+            document.getElementById('topicDesc').value = '';
+            document.getElementById('topicLink').value = '';
+            document.getElementById('topicQuestionsDone').value = '0';
+            document.getElementById('topicQuestionsCorrect').value = '0';
+            document.getElementById('topicModal').classList.remove('hidden');
+        }
+
+        function openEditTopicModal(subId, topicIdx) {
+            const sub = subjects.find(s => s.id === subId);
+            const t = sub.topics[topicIdx];
+            document.getElementById('topicSubjectId').value = subId;
+            document.getElementById('topicIndex').value = topicIdx;
+            document.getElementById('topicModalTitle').innerText = 'Editar Tópico';
+            document.getElementById('topicCode').value = t.code;
+            document.getElementById('topicDesc').value = t.desc;
+            document.getElementById('topicLink').value = t.link || '';
+            document.getElementById('topicQuestionsDone').value = t.qDone;
+            document.getElementById('topicQuestionsCorrect').value = t.qCorrect;
+            document.getElementById('topicModal').classList.remove('hidden');
+        }
+
+        function closeTopicModal() {
+            document.getElementById('topicModal').classList.add('hidden');
+        }
+
+        function saveTopic(e) {
+            e.preventDefault();
+            const subId = document.getElementById('topicSubjectId').value;
+            const topicIdx = document.getElementById('topicIndex').value;
+            const code = document.getElementById('topicCode').value;
+            const desc = document.getElementById('topicDesc').value;
+            const link = document.getElementById('topicLink').value;
+            const qDone = parseInt(document.getElementById('topicQuestionsDone').value) || 0;
+            const qCorrect = parseInt(document.getElementById('topicQuestionsCorrect').value) || 0;
+
+            const sub = subjects.find(s => s.id === subId);
+            if (sub) {
+                if (topicIdx === '') {
+                    sub.topics.push({ code, desc, link, done: false, qDone, qCorrect });
+                } else {
+                    sub.topics[topicIdx].code = code;
+                    sub.topics[topicIdx].desc = desc;
+                    sub.topics[topicIdx].link = link;
+                    sub.topics[topicIdx].qDone = qDone;
+                    sub.topics[topicIdx].qCorrect = qCorrect;
+                }
+                saveData();
+                closeTopicModal();
+            }
+        }
+
+        function deleteTopic(subId, topicIdx) {
+            if (confirm('Deseja realmente excluir este tópico?')) {
+                const sub = subjects.find(s => s.id === subId);
+                if (sub) {
+                    sub.topics.splice(topicIdx, 1);
+                    saveData();
                 }
             }
+        }
 
-            const revPendentes = appData.revisoes.filter(r => !r.concluida).length;
-            const badge = document.getElementById('notif-badge');
-            const listaNotif = document.getElementById('lista-notificacoes');
-            if(revPendentes > 0) {
-                badge.textContent = revPendentes;
-                badge.classList.remove('hidden');
-                listaNotif.innerHTML = `<li>Você possui ${revPendentes} revisão(ões) pendente(s).</li>`;
-            } else {
-                badge.classList.add('hidden');
-                listaNotif.innerHTML = `<li>Nenhuma pendência no momento. Excelente ritmo!</li>`;
+        // Modais de Matéria
+        function openAddSubjectModal() {
+            document.getElementById('newSubjectName').value = '';
+            document.getElementById('subjectModal').classList.remove('hidden');
+        }
+
+        function closeAddSubjectModal() {
+            document.getElementById('subjectModal').classList.add('hidden');
+        }
+
+        function saveNewSubject(e) {
+            e.preventDefault();
+            const name = document.getElementById('newSubjectName').value;
+            const id = 'mat_' + Date.now();
+            subjects.push({ id, name, topics: [] });
+            openAccordions[id] = true;
+            saveData();
+            closeAddSubjectModal();
+        }
+
+        // Backup e Restauração
+        function openBackupModal() {
+            document.getElementById('backupModal').classList.remove('hidden');
+        }
+
+        function closeBackupModal() {
+            document.getElementById('backupModal').classList.add('hidden');
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(subjects, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "backup_estudos_arlan.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(e) {
+            const fileReader = new FileReader();
+            if (e.target.files[0]) {
+                fileReader.readAsText(e.target.files[0], "UTF-8");
+                fileReader.onload = event => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if (Array.isArray(parsed)) {
+                            subjects = parsed;
+                            saveData();
+                            closeBackupModal();
+                            alert('Dados importados com sucesso!');
+                        } else {
+                            alert('Arquivo de backup inválido.');
+                        }
+                    } catch (err) {
+                        alert('Erro ao ler o arquivo JSON.');
+                    }
+                };
             }
         }
     </script>
