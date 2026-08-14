@@ -61,7 +61,6 @@
         .gap-4 { gap: 1rem; }
         .w-full { width: 100%; }
 
-        /* Autenticação Minimalista (Mantido oculto/inativo por padrão conforme solicitação) */
         #auth-container {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -104,11 +103,6 @@
             outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow);
         }
 
-        .checkbox-group {
-            display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;
-        }
-        .checkbox-group input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
-
         .btn {
             display: inline-flex; justify-content: center; align-items: center;
             padding: 0.9rem 1.75rem; border-radius: var(--radius-ui); font-weight: 500;
@@ -123,11 +117,6 @@
         .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-ui); }
         .btn-danger:hover { opacity: 0.9; }
 
-        .auth-links { margin-top: 2rem; text-align: center; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .auth-links a { color: var(--accent); text-decoration: none; cursor: pointer; font-weight: 500; }
-        .auth-links a:hover { text-decoration: underline; }
-
-        /* Layout Principal Clean & Moderno */
         #app-container {
             display: flex; flex-direction: column; width: 100vw; min-height: 100vh;
         }
@@ -164,7 +153,6 @@
             color: white; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 50%; font-weight: bold;
         }
 
-        /* Menu Superior com Rolagem Horizontal e Setas */
         .tools-nav-wrapper {
             background: var(--bg-card); border-bottom: 1px solid var(--border);
             display: flex; align-items: center; position: relative;
@@ -219,7 +207,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Hero Banner Tela Cheia */
         .hero-fullscreen {
             position: fixed; top: 80px; left: 0; width: 100vw; height: calc(100vh - 80px);
             background: var(--bg-main); z-index: 90;
@@ -253,9 +240,7 @@
 
         .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 12px 30px var(--accent-glow); background: var(--accent-hover); }
 
-        /* Cards e Grids */
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-ui); margin-bottom: var(--spacing-ui); }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-ui); margin-bottom: var(--spacing-ui); }
 
         .card {
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 1.25rem;
@@ -268,7 +253,6 @@
             display: flex; align-items: center; justify-content: space-between;
         }
 
-        /* Listas Minimalistas */
         .item-list { list-style: none; margin-top: 1rem; }
         .item-list li {
             display: flex; justify-content: space-between; align-items: center;
@@ -276,7 +260,6 @@
             border-radius: var(--radius-ui); margin-bottom: 0.85rem; gap: 1rem; flex-wrap: wrap;
         }
 
-        /* Notificações Dropdown */
         #notification-dropdown {
             position: absolute; top: 80px; right: var(--spacing-ui); width: 380px;
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 1.25rem;
@@ -286,7 +269,6 @@
         #notification-dropdown ul { list-style: none; max-height: 300px; overflow-y: auto; }
         #notification-dropdown li { padding: 0.85rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-muted); }
 
-        /* Calendário Clean */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.85rem; text-align: center; }
         .calendar-day-header { font-weight: 600; color: var(--text-muted); padding: 0.75rem; font-size: 0.85rem; }
         .calendar-day {
@@ -295,20 +277,17 @@
         }
         .calendar-day.today { border-color: var(--accent); background: var(--accent-glow); }
 
-        /* Tópicos 00 em diante */
         .topicos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .topico-box {
             background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui); padding: 1.25rem;
             display: flex; flex-direction: column; gap: 0.75rem;
         }
 
-        /* Acordeão de Matérias e Barra de Pesquisa */
         .materia-accordion-header {
             display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 0.5rem 0;
         }
         .materia-content-body { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
 
-        /* Toast Coach */
         #coach-toast {
             position: fixed; bottom: 24px; right: 24px; background: var(--bg-card);
             border: 1px solid var(--accent); border-radius: var(--radius-ui); padding: 1rem 1.5rem;
@@ -318,7 +297,7 @@
         @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         @media (max-width: 900px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
             header { padding: 0 1rem; }
             .content-area { padding: 1rem; }
             .nav-back-btn { display: inline-flex; }
@@ -328,10 +307,8 @@
 </head>
 <body>
 
-    <!-- AUTENTICAÇÃO (Oculto permanentemente para abrir diretamente na tela inicial) -->
     <div id="auth-container" class="hidden"></div>
 
-    <!-- APLICAÇÃO PRINCIPAL -->
     <div id="app-container">
         <header>
             <div class="flex items-center gap-2">
@@ -351,7 +328,6 @@
             </div>
         </header>
 
-        <!-- MENU SUPERIOR COM ROLAGEM HORIZONTAL E SETAS -->
         <nav class="tools-nav-wrapper">
             <button class="scroll-arrow" onclick="rolarMenu('esq')">‹</button>
             <div class="tools-nav-container" id="tools-nav-scroll">
@@ -406,7 +382,6 @@
             <ul id="lista-notificacoes"></ul>
         </div>
 
-        <!-- TELA INICIAL EM TELA CHEIA -->
         <div id="hero-fullscreen-view" class="hero-fullscreen">
             <div class="hero-banner">
                 <h2>Foco, disciplina e execução</h2>
@@ -418,14 +393,13 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="content-area">
 
             <!-- 1. METAS DE HOJE -->
             <section id="view-metas" class="view-section">
                 <div class="card">
-                    <h3>Metas de Hoje (Sincronizadas Automaticamente)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe e conclua as metas programadas para hoje.</p>
+                    <h3>Metas de Hoje (Sincronização em Tempo Real)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe os próximos tópicos pendentes com avanço automático por matéria.</p>
                     <div id="lista-metas-diarias-automaticas" class="item-list"></div>
                 </div>
             </section>
@@ -461,23 +435,20 @@
                 </div>
             </section>
 
-            <!-- 4. PLANO DE ESTUDOS (Com botão único Salvar) -->
+            <!-- 4. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana. Clique em Salvar para atualizar as Metas de Hoje.</p>
+                    <h3>Planejamento Semanal (Sincronização Automática)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias serão estudadas em cada dia da semana. As Metas de Hoje são recalculadas instantaneamente ao alterar qualquer campo.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
-                    <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
-                        <button onclick="salvarPlanoSemanalManual()" class="btn btn-primary" style="width: auto; padding: 1rem 2.5rem;">Salvar</button>
-                    </div>
                 </div>
             </section>
 
             <!-- 5. METAS DE ESTUDO -->
             <section id="view-metas-estudo" class="view-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
-                    <h3>Metas de Estudo (Configuração Diária)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina a quantidade exata de matérias e quantos tópicos por matéria devem ser exibidos diariamente nas Metas de Hoje.</p>
+                    <h3>Metas de Estudo (Configuração Diária Instantânea)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Defina a quantidade exata de matérias e quantos tópicos por matéria devem ser exibidos diariamente. As alterações atualizam as Metas de Hoje na hora.</p>
                     
                     <div class="form-group">
                         <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
@@ -565,16 +536,22 @@
         </main>
     </div>
 
-    <!-- TOAST COACH -->
     <div id="coach-toast" class="hidden">
         <span id="coach-msg" style="font-size: 0.95rem; font-weight: 500;"></span>
     </div>
 
-    <!-- SCRIPT DE EXECUÇÃO -->
     <script>
         let appData = {
             materias: [], 
-            planoSemanal: { Segunda: [], Terça: [], Quarta: [], Quinta: [], Sexta: [], Sábado: [], Domingo: [] },
+            planoSemanal: { 
+                Segunda: ["Língua Portuguesa", "Direito Administrativo"], 
+                Terça: ["Direito Constitucional", "Direito Penal"], 
+                Quarta: ["Direito Processual Penal", "Língua Portuguesa"], 
+                Quinta: ["Direito Administrativo", "Direito Constitucional"], 
+                Sexta: ["Direito Penal", "Direito Processual Penal"], 
+                Sábado: ["Língua Portuguesa", "Direito Administrativo"], 
+                Domingo: ["Direito Constitucional", "Direito Penal"] 
+            },
             configMetas: { qtdMaterias: 2, qtdTopicos: 3 },
             revisoes: [],
             perfil: { nome: 'Arlan Souza de ramos', idade: 27, objetivo: 'Concurso Público' },
@@ -604,7 +581,6 @@
             iniciarRelogioTempoReal();
             aplicarConfiguracoesVisuais();
             
-            // Garantir que abre direto na tela inicial original
             document.getElementById('hero-fullscreen-view').classList.remove('hidden');
             mudarView('metas', false);
             atualizarInterfaceCompleta();
@@ -980,65 +956,23 @@
         function adicionarMateriaPlano(dia) {
             if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
             appData.planoSemanal[dia].push('');
-            renderizarPlanoSemanal();
+            salvarDados();
+            atualizarInterfaceCompleta();
         }
 
         function removerMateriaPlano(dia, index) {
             if (appData.planoSemanal[dia]) {
                 appData.planoSemanal[dia].splice(index, 1);
-                renderizarPlanoSemanal();
+                salvarDados();
+                atualizarInterfaceCompleta();
             }
         }
 
         function atualizarMateriaPlanoSelect(dia, index, valor) {
             if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
             appData.planoSemanal[dia][index] = valor;
-        }
-
-        // Único botão Salvar para o Plano Semanal que sincroniza com as Metas de Hoje
-        function salvarPlanoSemanalManual() {
-            const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-            dias.forEach(dia => {
-                const selects = document.querySelectorAll(`.select-plano-${dia}`);
-                let arr = [];
-                selects.forEach(sel => {
-                    if (sel.value) arr.push(sel.value);
-                });
-                appData.planoSemanal[dia] = arr;
-            });
             salvarDados();
             atualizarInterfaceCompleta();
-            mostrarCoach("Plano Semanal salvo e sincronizado com sucesso!");
-        }
-
-        function renderizarPlanoSemanal() {
-            const containerPlano = document.getElementById('container-plano-semanal');
-            if(containerPlano) {
-                const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-                containerPlano.innerHTML = dias.map(dia => {
-                    const materiasSelecionadas = appData.planoSemanal[dia] || [];
-                    return `
-                        <div class="card" style="margin-bottom: 0;">
-                            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
-                                <h4 style="font-size: 1.1rem;">${dia}-feira</h4>
-                                <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Adicionar Matéria</button>
-                            </div>
-                            <div id="container-selects-${dia}" class="flex flex-col gap-2">
-                                ${materiasSelecionadas.length === 0 ? '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
-                                ${materiasSelecionadas.map((matSelecionada, idx) => `
-                                    <div class="flex gap-2 items-center">
-                                        <select class="form-control select-plano-${dia}" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
-                                            <option value="">Nenhuma Matéria</option>
-                                            ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
-                                        </select>
-                                        <button onclick="removerMateriaPlano('${dia}', ${idx})" class="btn btn-danger" style="padding: 0.6rem; font-size: 0.8rem;">✕</button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
         }
 
         function atualizarConfig(chave, valor) {
@@ -1164,7 +1098,33 @@
                     }).join('');
             }
 
-            renderizarPlanoSemanal();
+            const containerPlano = document.getElementById('container-plano-semanal');
+            if(containerPlano) {
+                const dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+                containerPlano.innerHTML = dias.map(dia => {
+                    const materiasSelecionadas = appData.planoSemanal[dia] || [];
+                    return `
+                        <div class="card" style="margin-bottom: 0;">
+                            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+                                <h4 style="font-size: 1.1rem;">${dia}-feira</h4>
+                                <button onclick="adicionarMateriaPlano('${dia}')" class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Adicionar Matéria</button>
+                            </div>
+                            <div id="container-selects-${dia}" class="flex flex-col gap-2">
+                                ${materiasSelecionadas.length === 0 ? '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma matéria programada.</p>' : ''}
+                                ${materiasSelecionadas.map((matSelecionada, idx) => `
+                                    <div class="flex gap-2 items-center">
+                                        <select class="form-control select-plano-${dia}" onchange="atualizarMateriaPlanoSelect('${dia}', ${idx}, this.value)" style="font-size: 0.9rem; padding: 0.6rem;">
+                                            <option value="">Nenhuma Matéria</option>
+                                            ${appData.materias.map(m => `<option value="${m.nome}" ${matSelecionada === m.nome ? 'selected' : ''}>${m.nome}</option>`).join('')}
+                                        </select>
+                                        <button onclick="removerMateriaPlano('${dia}', ${idx})" class="btn btn-danger" style="padding: 0.6rem; font-size: 0.8rem;">✕</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
 
             const listaMetas = document.getElementById('lista-metas-diarias-automaticas');
             const dashMetas = document.getElementById('dash-resumo-metas-hoje');
@@ -1190,14 +1150,24 @@
                     const matObj = appData.materias.find(m => m.nome === matNome);
                     if(matObj && matObj.topicos.length > 0) {
                         countMat++;
-                        let countTop = 0;
-                        matObj.topicos.forEach((t, idx) => {
-                            if (countTop >= maxTopicos) return;
-                            countTop++;
+                        
+                        // Avanço automático: encontra o primeiro tópico não concluído ou o último estudado
+                        let topicosParaExibir = [];
+                        let pendentes = matObj.topicos.filter(t => !t.estudoFeito);
+                        
+                        if (pendentes.length > 0) {
+                            topicosParaExibir = pendentes.slice(0, maxTopicos);
+                        } else {
+                            // Se todos estiverem concluídos, mostra os últimos da lista
+                            topicosParaExibir = matObj.topicos.slice(-maxTopicos);
+                        }
+
+                        topicosParaExibir.forEach(t => {
+                            const originalIdx = matObj.topicos.findIndex(item => item.numero === t.numero && item.nome === t.nome);
                             htmlMetas += `
                                 <li>
                                     <span>🎯 <strong>${matObj.nome}</strong> — Tópico ${t.numero}: ${t.nome} (${t.estudoFeito ? 'Concluído' : 'Pendente'})</span>
-                                    <button onclick="concluirEstudoTopico('${matObj.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
+                                    <button onclick="concluirEstudoTopico('${matObj.id}', ${originalIdx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">${t.estudoFeito ? 'Feito' : 'Concluir'}</button>
                                 </li>
                             `;
                         });
