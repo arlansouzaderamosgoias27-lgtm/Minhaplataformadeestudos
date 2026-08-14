@@ -104,6 +104,11 @@
             outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow);
         }
 
+        .checkbox-group {
+            display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;
+        }
+        .checkbox-group input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
         .btn {
             display: inline-flex; justify-content: center; align-items: center;
             padding: 0.9rem 1.75rem; border-radius: var(--radius-ui); font-weight: 500;
@@ -118,7 +123,7 @@
         .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-ui); }
         .btn-danger:hover { opacity: 0.9; }
 
-        .auth-links { margin-top: 2rem; text-align: center; font-size: 0.9rem; }
+        .auth-links { margin-top: 2rem; text-align: center; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem; }
         .auth-links a { color: var(--accent); text-decoration: none; cursor: pointer; font-weight: 500; }
         .auth-links a:hover { text-decoration: underline; }
 
@@ -234,9 +239,9 @@
             color: var(--text-main);
         }
 
-        .hero-date {
-            font-size: 1.1rem; color: var(--accent); font-weight: 600; margin-bottom: 3rem;
-            text-transform: uppercase; letter-spacing: 0.08em;
+        .hero-datetime {
+            font-size: 1.15rem; color: var(--accent); font-weight: 600; margin-bottom: 3rem;
+            text-transform: uppercase; letter-spacing: 0.08em; display: flex; flex-direction: column; gap: 0.4rem; align-items: center;
         }
 
         .btn-hero {
@@ -324,16 +329,20 @@
             <p class="auth-subtitle">Ambiente de Alta Performance e Organização</p>
             <form id="form-login">
                 <div class="form-group">
-                    <label for="login-email">E-mail</label>
-                    <input type="email" id="login-email" class="form-control" placeholder="seu.email@exemplo.com" required>
+                    <label for="login-user">E-mail ou CPF</label>
+                    <input type="text" id="login-user" class="form-control" placeholder="seu.email@exemplo.com ou 000.000.000-00" required>
                 </div>
                 <div class="form-group">
                     <label for="login-senha">Senha</label>
                     <input type="password" id="login-senha" class="form-control" placeholder="••••••••" required>
                 </div>
+                <label class="checkbox-group">
+                    <input type="checkbox" id="lembrar-usuario"> Manter conectado
+                </label>
                 <button type="submit" class="btn btn-primary">Acessar Plataforma</button>
             </form>
             <div class="auth-links">
+                <a onclick="mudarAuthView('esqueci')">Esqueci minha senha</a>
                 <p>Não tem uma conta? <a onclick="mudarAuthView('register')">Cadastre-se</a></p>
             </div>
         </div>
@@ -347,17 +356,32 @@
                     <input type="text" id="reg-nome" class="form-control" placeholder="Seu nome" required>
                 </div>
                 <div class="form-group">
-                    <label for="reg-email">E-mail</label>
-                    <input type="email" id="reg-email" class="form-control" placeholder="seu.email@exemplo.com" required>
+                    <label for="reg-user">E-mail ou CPF</label>
+                    <input type="text" id="reg-user" class="form-control" placeholder="seu.email@exemplo.com ou 000.000.000-00" required>
                 </div>
                 <div class="form-group">
-                    <label for="reg-senha">Senha</label>
+                    <label for="reg-senha">Criar Senha</label>
                     <input type="password" id="reg-senha" class="form-control" placeholder="••••••••" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Cadastrar e Entrar</button>
             </form>
             <div class="auth-links">
                 <p>Já tem uma conta? <a onclick="mudarAuthView('login')">Faça login</a></p>
+            </div>
+        </div>
+
+        <div id="esqueci-view" class="auth-card hidden">
+            <h2>Recuperar Senha</h2>
+            <p class="auth-subtitle">Digite seu e-mail ou CPF cadastrado</p>
+            <form id="form-esqueci">
+                <div class="form-group">
+                    <label for="esq-user">E-mail ou CPF</label>
+                    <input type="text" id="esq-user" class="form-control" placeholder="Digite seu e-mail ou CPF" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Instruções</button>
+            </form>
+            <div class="auth-links">
+                <p><a onclick="mudarAuthView('login')">Voltar ao Login</a></p>
             </div>
         </div>
     </div>
@@ -367,7 +391,7 @@
         <header>
             <div class="flex items-center gap-2">
                 <button id="nav-back-button" onclick="voltarHistorico()" class="nav-back-btn hidden">← Voltar</button>
-                <div class="header-brand" onclick="mudarView('dashboard')">
+                <div class="header-brand" onclick="mudarView('metas')">
                     <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                     <div class="header-title">
                         <h1>Plataforma de Estudos</h1>
@@ -388,7 +412,11 @@
             <button class="scroll-arrow" onclick="rolarMenu('esq')">‹</button>
             <div class="tools-nav-container" id="tools-nav-scroll">
                 <div class="tools-grid">
-                    <div class="tool-card active" onclick="mudarView('dashboard')" id="nav-dashboard">
+                    <div class="tool-card active" onclick="mudarView('metas')" id="nav-metas">
+                        <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+                        <span class="tool-label">Metas de Hoje</span>
+                    </div>
+                    <div class="tool-card" onclick="mudarView('dashboard')" id="nav-dashboard">
                         <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
                         <span class="tool-label">Início</span>
                     </div>
@@ -403,10 +431,6 @@
                     <div class="tool-card" onclick="mudarView('metas-estudo')" id="nav-metas-estudo">
                         <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>
                         <span class="tool-label">Metas de Estudo</span>
-                    </div>
-                    <div class="tool-card" onclick="mudarView('metas')" id="nav-metas">
-                        <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
-                        <span class="tool-label">Metas de Hoje</span>
                     </div>
                     <div class="tool-card" onclick="mudarView('revisoes')" id="nav-revisoes">
                         <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.68-5.68"/></svg></span>
@@ -441,27 +465,39 @@
         <!-- TELA INICIAL EM TELA CHEIA -->
         <div id="hero-fullscreen-view" class="hero-fullscreen">
             <div class="hero-banner">
-                <h2>Foco, Disciplina e Execução</h2>
-                <div id="current-date-hero" class="hero-date"></div>
-                <button onclick="fecharHeroFullscreen()" class="btn-hero">Iniciar Estudos</button>
+                <h2>🚀 Foco, Disciplina e Execução</h2>
+                <div id="current-datetime-hero" class="hero-datetime">
+                    <span id="hero-date-text"></span>
+                    <span id="hero-time-text" style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);"></span>
+                </div>
+                <button onclick="iniciarEstudosFlow()" class="btn-hero">Iniciar Estudos</button>
             </div>
         </div>
 
         <!-- CONTEÚDO PRINCIPAL -->
         <main class="content-area">
 
-            <!-- 1. INÍCIO -->
-            <section id="view-dashboard" class="view-section active">
+            <!-- 1. METAS DE HOJE (Exibido primeiro ao clicar em Iniciar Estudos) -->
+            <section id="view-metas" class="view-section active">
+                <div class="card">
+                    <h3>Metas de Hoje (Sincronizadas Automaticamente)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe e conclua as metas programadas para hoje.</p>
+                    <div id="lista-metas-diarias-automaticas" class="item-list"></div>
+                </div>
+            </section>
+
+            <!-- 2. INÍCIO -->
+            <section id="view-dashboard" class="view-section">
                 <div class="card">
                     <h3>Resumo das Metas de Hoje</h3>
                     <div id="dash-resumo-metas-hoje" class="item-list"></div>
                 </div>
             </section>
 
-            <!-- 2. MATÉRIAS -->
+            <!-- 3. MATÉRIAS -->
             <section id="view-materias" class="view-section">
                 <div class="card">
-                    <h3>Cadastrar Nova Matéria</h3>
+                    <h3>Cadastrar Nova Matéria e Tópico</h3>
                     <form id="form-cadastrar-materia" class="flex gap-4 items-center" style="flex-wrap: wrap;">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
                             <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria (Ex: Direito Constitucional)" required>
@@ -475,7 +511,7 @@
                 </div>
             </section>
 
-            <!-- 3. PLANO DE ESTUDOS -->
+            <!-- 4. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
                     <h3>Planejamento Semanal (Salvamento Automático)</h3>
@@ -484,7 +520,7 @@
                 </div>
             </section>
 
-            <!-- 4. METAS DE ESTUDO -->
+            <!-- 5. METAS DE ESTUDO -->
             <section id="view-metas-estudo" class="view-section">
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
                     <h3>Metas de Estudo (Configuração Diária)</h3>
@@ -499,15 +535,6 @@
                         <label for="input-metas-topicos">Quantidade de Tópicos por Matéria</label>
                         <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3" oninput="salvarConfigMetasEstudoAutomatico()">
                     </div>
-                </div>
-            </section>
-
-            <!-- 5. METAS DE HOJE -->
-            <section id="view-metas" class="view-section">
-                <div class="card">
-                    <h3>Metas de Hoje (Sincronizadas Automaticamente)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Acompanhe e conclua as metas programadas para hoje.</p>
-                    <div id="lista-metas-diarias-automaticas" class="item-list"></div>
                 </div>
             </section>
 
@@ -560,7 +587,7 @@
             <!-- 10. CONFIGURAÇÕES -->
             <section id="view-configuracoes" class="view-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
-                    <h3>Configurações e Gestão de Dados</h3>
+                    <h3>Configurações, Integração Firebase e Gestão de Dados</h3>
                     
                     <div class="form-group">
                         <label for="select-tema">Tema Visual</label>
@@ -573,6 +600,12 @@
                     <div class="form-group">
                         <label for="input-cor-primaria">Cor Principal de Destaque</label>
                         <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;" onchange="atualizarConfig('corPrimaria', this.value)">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-ui);">
+                        <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent);">Integração Firebase (Pronta p/ Conexão)</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Estrutura preparada para sincronização em nuvem Firestore / Auth.</p>
+                        <button onclick="mostrarCoach('Estrutura Firebase pronta para conectar SDK.')" class="btn btn-secondary w-full" style="font-size: 0.85rem;">Configurar Credenciais Firebase</button>
                     </div>
 
                     <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
@@ -613,26 +646,85 @@
             botoes: '0.75rem',
             animacao: '0.2s',
             notificacoes: 'ativadas',
-            paginaInicial: 'dashboard'
+            paginaInicial: 'metas'
         };
 
-        let historicoNavegacao = ['dashboard'];
+        let historicoNavegacao = ['metas'];
 
         document.addEventListener("DOMContentLoaded", () => {
             carregarDadosUsuario();
+            inicializarMatériasIniciaisObrigatorias();
             inicializarEventos();
             verificarSessaoAtiva();
-            atualizarDataHero();
+            iniciarRelogioTempoReal();
             aplicarConfiguracoesVisuais();
         });
 
-        function atualizarDataHero() {
-            const dataEl = document.getElementById('current-date-hero');
-            if (dataEl) {
-                const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const hoje = new Date().toLocaleDateString('pt-BR', opcoes);
-                dataEl.textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
+        function inicializarMatériasIniciaisObrigatorias() {
+            const nomesObrigatorios = [
+                { nome: "Língua Portuguesa", max: 15 },
+                { nome: "Direito Administrativo", max: 15 },
+                { nome: "Direito Constitucional", max: 15 },
+                { nome: "Direito Penal", max: 15 },
+                { nome: "Direito Processual Penal", max: 9 }
+            ];
+
+            let precisaAtualizar = false;
+            if (!appData.materias || appData.materias.length !== 5) {
+                precisaAtualizar = true;
+            } else {
+                for (let i = 0; i < nomesObrigatorios.length; i++) {
+                    if (appData.materias[i].nome !== nomesObrigatorios[i].nome || appData.materias[i].topicos.length !== (nomesObrigatorios[i].max + 1)) {
+                        precisaAtualizar = true;
+                        break;
+                    }
+                }
             }
+
+            if (precisaAtualizar) {
+                appData.materias = nomesObrigatorios.map((item, mIdx) => {
+                    let topicos = [];
+                    for (let t = 0; t <= item.max; t++) {
+                        let numStr = t < 10 ? '0' + t : '' + t;
+                        topicos.push({
+                            numero: numStr,
+                            nome: `Tópico ${numStr} - ${item.nome}`,
+                            linkLei: '',
+                            estudoFeito: false,
+                            questoesFeitas: 0,
+                            acertos: 0,
+                            erros: 0
+                        });
+                    }
+                    return {
+                        id: 'mat_obrigatoria_' + mIdx,
+                        nome: item.nome,
+                        topicos: topicos
+                    };
+                });
+                salvarDados();
+            }
+        }
+
+        function iniciarRelogioTempoReal() {
+            const atualizarHora = () => {
+                const dataEl = document.getElementById('hero-date-text');
+                const horaEl = document.getElementById('hero-time-text');
+                if (dataEl && horaEl) {
+                    const agora = new Date();
+                    const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                    let dataStr = agora.toLocaleDateString('pt-BR', opcoesData);
+                    dataStr = dataStr.charAt(0).toUpperCase() + dataStr.slice(1);
+                    dataEl.textContent = dataStr;
+                    
+                    const horas = String(agora.getHours()).padStart(2, '0');
+                    const minutos = String(agora.getMinutes()).padStart(2, '0');
+                    const segundos = String(agora.getSeconds()).padStart(2, '0');
+                    horaEl.textContent = `${horas}:${minutos}:${segundos}`;
+                }
+            };
+            atualizarHora();
+            setInterval(atualizarHora, 1000);
         }
 
         function salvarDados() {
@@ -657,14 +749,22 @@
                 }
                 const c = localStorage.getItem("plataforma_estudos_config");
                 if (c) configGeral = { ...configGeral, ...JSON.parse(c) };
+
+                // Verificar se há sessão salva por token/localStorage
+                const sessaoSalva = localStorage.getItem("plataforma_sessao_ativa");
+                if (sessaoSalva && !appData.usuarioLogado) {
+                    appData.usuarioLogado = sessaoSalva;
+                }
             } catch (e) { console.error(e); }
         }
 
         function mudarAuthView(view) {
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('register-view').classList.add('hidden');
+            document.getElementById('esqueci-view').classList.add('hidden');
             if (view === 'login') document.getElementById('login-view').classList.remove('hidden');
             if (view === 'register') document.getElementById('register-view').classList.remove('hidden');
+            if (view === 'esqueci') document.getElementById('esqueci-view').classList.remove('hidden');
         }
 
         function verificarSessaoAtiva() {
@@ -672,7 +772,7 @@
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
                 document.getElementById('hero-fullscreen-view').classList.remove('hidden');
-                mudarView('dashboard', false);
+                mudarView('metas', false);
                 atualizarInterfaceCompleta();
             } else {
                 document.getElementById('auth-container').classList.remove('hidden');
@@ -681,12 +781,14 @@
             }
         }
 
-        function fecharHeroFullscreen() {
+        function iniciarEstudosFlow() {
             document.getElementById('hero-fullscreen-view').classList.add('hidden');
+            mudarView('metas');
         }
 
         function logout() {
             appData.usuarioLogado = null;
+            localStorage.removeItem("plataforma_sessao_ativa");
             salvarDados();
             verificarSessaoAtiva();
         }
@@ -743,27 +845,43 @@
         function inicializarEventos() {
             document.getElementById('form-login').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const email = document.getElementById('login-email').value;
+                const userInput = document.getElementById('login-user').value.trim();
                 const senha = document.getElementById('login-senha').value;
-                const usuario = appData.usuarios.find(u => u.email === email && u.senha === senha);
-                if (usuario || (email === "estudante@estudos.com" && senha === "123456")) {
-                    appData.usuarioLogado = email;
+                const lembrar = document.getElementById('lembrar-usuario').checked;
+
+                const usuario = appData.usuarios.find(u => u.user === userInput && u.senha === senha);
+                if (usuario || (userInput === "estudante@estudos.com" && senha === "123456")) {
+                    appData.usuarioLogado = userInput;
+                    if (lembrar) {
+                        localStorage.setItem("plataforma_sessao_ativa", userInput);
+                    }
                     salvarDados();
                     verificarSessaoAtiva();
-                } else { alert("E-mail ou senha incorretos."); }
+                    mostrarCoach("Login realizado com sucesso!");
+                } else { alert("E-mail/CPF ou senha incorretos."); }
             });
 
             document.getElementById('form-register').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const nome = document.getElementById('reg-nome').value;
-                const email = document.getElementById('reg-email').value;
+                const nome = document.getElementById('reg-nome').value.trim();
+                const userInput = document.getElementById('reg-user').value.trim();
                 const senha = document.getElementById('reg-senha').value;
-                if (appData.usuarios.some(u => u.email === email)) { alert("E-mail já cadastrado."); return; }
-                appData.usuarios.push({ nome, email, senha });
-                appData.usuarioLogado = email;
+
+                if (appData.usuarios.some(u => u.user === userInput)) { alert("Este e-mail ou CPF já está cadastrado."); return; }
+                appData.usuarios.push({ nome, user: userInput, senha });
+                appData.usuarioLogado = userInput;
                 appData.perfil.nome = nome;
+                localStorage.setItem("plataforma_sessao_ativa", userInput);
                 salvarDados();
                 verificarSessaoAtiva();
+                mostrarCoach("Conta criada com sucesso!");
+            });
+
+            document.getElementById('form-esqueci').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const userInput = document.getElementById('esq-user').value.trim();
+                alert(`Instruções de recuperação enviadas para: ${userInput}`);
+                mudarAuthView('login');
             });
 
             document.getElementById('form-cadastrar-materia').addEventListener('submit', (e) => {
@@ -790,6 +908,7 @@
                 salvarDados();
                 input.value = '';
                 atualizarInterfaceCompleta();
+                mostrarCoach("Matéria cadastrada com sucesso!");
             });
         }
 
@@ -825,6 +944,17 @@
                 });
                 salvarDados();
                 atualizarInterfaceCompleta();
+                mostrarCoach("Tópico cadastrado automaticamente!");
+            }
+        }
+
+        function excluirTopico(materiaId, indexTopico) {
+            const materia = appData.materias.find(m => m.id === materiaId);
+            if (materia && materia.topicos[indexTopico]) {
+                materia.topicos.splice(indexTopico, 1);
+                salvarDados();
+                atualizarInterfaceCompleta();
+                mostrarCoach("Tópico excluído com sucesso!");
             }
         }
 
@@ -832,6 +962,7 @@
             appData.materias = appData.materias.filter(x => x.id !== materiaId);
             salvarDados();
             atualizarInterfaceCompleta();
+            mostrarCoach("Matéria excluída com sucesso!");
         }
 
         function atualizarTopicoDetalhe(materiaId, indexTopico, campo, valor) {
@@ -997,8 +1128,8 @@
                             <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
                                 <h4 style="color: var(--accent); font-size: 1.15rem; font-weight: 600;">${m.nome}</h4>
                                 <div class="flex gap-2">
-                                    <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Adicionar Tópico</button>
-                                    <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir</button>
+                                    <button onclick="adicionarTopico('${m.id}')" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Cadastrar Tópico</button>
+                                    <button onclick="excluirMateria('${m.id}')" class="btn btn-danger">Excluir Matéria</button>
                                 </div>
                             </div>
                             <div class="topicos-grid">
@@ -1010,7 +1141,10 @@
                                         <div class="topico-box">
                                             <div class="flex justify-between items-center">
                                                 <strong style="font-size: 0.95rem;">Tópico ${t.numero}</strong>
-                                                <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
+                                                <div class="flex gap-2">
+                                                    <button onclick="concluirEstudoTopico('${m.id}', ${idx})" class="btn ${t.estudoFeito ? 'btn-secondary' : 'btn-primary'}" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">${t.estudoFeito ? 'Concluído' : 'Estudar'}</button>
+                                                    <button onclick="excluirTopico('${m.id}', ${idx})" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Excluir Tópico">✕</button>
+                                                </div>
                                             </div>
                                             <input type="text" class="form-control" style="font-size: 0.85rem; padding: 0.5rem;" value="${t.nome}" oninput="atualizarTopicoDetalhe('${m.id}', ${idx}, 'nome', this.value)">
                                             <div class="flex gap-2">
@@ -1121,7 +1255,7 @@
                     calContainer.innerHTML += `<div class="calendar-day-header">${d}</div>`;
                 });
                 for (let i = 1; i <= 31; i++) {
-                    const isToday = i === 12 ? 'today' : '';
+                    const isToday = i === 14 ? 'today' : '';
                     calContainer.innerHTML += `<div class="calendar-day ${isToday}"><span>${i}</span></div>`;
                 }
             }
