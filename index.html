@@ -401,6 +401,9 @@
                         </div>
                     </div>
                     <div id="container-materias-gerenciador"></div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button onclick="salvarAlteracoesMateriasManualmente()" class="btn btn-primary">💾 Salvar Alterações</button>
+                    </div>
                 </div>
             </section>
 
@@ -410,6 +413,9 @@
                     <h3>Planejamento Semanal (Centro de Sincronização)</h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. As Metas de Hoje se recalculam instantaneamente ao alterar qualquer campo.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button onclick="salvarAlteracoesPlanoManualmente()" class="btn btn-primary">💾 Salvar Plano de Estudos</button>
+                    </div>
                 </div>
             </section>
 
@@ -421,12 +427,16 @@
                     
                     <div class="form-group">
                         <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
-                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2" oninput="salvarConfigMetasEstudoAutomatico()">
+                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2">
                     </div>
 
                     <div class="form-group">
                         <label for="input-metas-topicos">Quantidade de Tópicos por Matéria</label>
-                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3" oninput="salvarConfigMetasEstudoAutomatico()">
+                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3">
+                    </div>
+
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button onclick="salvarConfigMetasEstudoManualmente()" class="btn btn-primary">💾 Salvar Metas de Estudo</button>
                     </div>
                 </div>
             </section>
@@ -460,18 +470,21 @@
             <section id="view-perfil" class="view-section">
                 <div class="card" style="max-width: 650px; margin: 0 auto;">
                     <h3>Perfil do Aluno</h3>
-                    <form id="form-perfil">
+                    <form id="form-perfil" onsubmit="event.preventDefault(); salvarPerfilManualmente();">
                         <div class="form-group">
                             <label for="perfil-nome">Nome Completo</label>
-                            <input type="text" id="perfil-nome" class="form-control" required oninput="salvarPerfilAutomatico()">
+                            <input type="text" id="perfil-nome" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="perfil-idade">Idade</label>
-                            <input type="number" id="perfil-idade" class="form-control" required oninput="salvarPerfilAutomatico()">
+                            <input type="number" id="perfil-idade" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="perfil-objetivo">Objetivo / Concurso</label>
-                            <input type="text" id="perfil-objetivo" class="form-control" required oninput="salvarPerfilAutomatico()">
+                            <input type="text" id="perfil-objetivo" class="form-control" required>
+                        </div>
+                        <div style="margin-top: 1.5rem; text-align: right;">
+                            <button type="submit" class="btn btn-primary">💾 Salvar Perfil</button>
                         </div>
                     </form>
                 </div>
@@ -483,16 +496,17 @@
                     <h3>Configurações e Gestão de Dados</h3>
                     <div class="form-group">
                         <label for="select-tema">Tema Visual</label>
-                        <select id="select-tema" class="form-control" onchange="atualizarConfig('tema', this.value)">
+                        <select id="select-tema" class="form-control">
                             <option value="dark">Modo Escuro (Dark)</option>
                             <option value="light">Modo Claro (Light)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="input-cor-primaria">Cor Principal de Destaque</label>
-                        <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;" onchange="atualizarConfig('corPrimaria', this.value)">
+                        <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;">
                     </div>
                     <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <button onclick="salvarConfiguracoesManualmente()" class="btn btn-primary w-full">💾 Salvar Configurações</button>
                         <button onclick="fazerBackup()" class="btn btn-secondary w-full">Fazer Backup</button>
                         <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar / Importar Dados</button>
                     </div>
@@ -765,14 +779,15 @@
             });
         }
 
-        function salvarPerfilAutomatico() {
+        function salvarPerfilManualmente() {
             appData.perfil.nome = document.getElementById('perfil-nome').value;
             appData.perfil.idade = parseInt(document.getElementById('perfil-idade').value) || 27;
             appData.perfil.objetivo = document.getElementById('perfil-objetivo').value;
             salvarDados();
+            mostrarCoach("Perfil salvo com sucesso!");
         }
 
-        function salvarConfigMetasEstudoAutomatico() {
+        function salvarConfigMetasEstudoManualmente() {
             const qtdMatInput = document.getElementById('input-metas-materias');
             const qtdTopInput = document.getElementById('input-metas-topicos');
             if (qtdMatInput && qtdTopInput) {
@@ -780,7 +795,28 @@
                 appData.configMetas.qtdTopicos = parseInt(qtdTopInput.value) || 3;
                 salvarDados();
                 atualizarInterfaceCompleta();
+                mostrarCoach("Metas de estudo salvas com sucesso!");
             }
+        }
+
+        function salvarAlteracoesMateriasManualmente() {
+            salvarDados();
+            atualizarInterfaceCompleta();
+            mostrarCoach("Matérias e tópicos salvos com sucesso!");
+        }
+
+        function salvarAlteracoesPlanoManualmente() {
+            salvarDados();
+            atualizarInterfaceCompleta();
+            mostrarCoach("Plano de estudos salvo com sucesso!");
+        }
+
+        function salvarConfiguracoesManualmente() {
+            configGeral.tema = document.getElementById('select-tema').value;
+            configGeral.corPrimaria = document.getElementById('input-cor-primaria').value;
+            salvarDados();
+            aplicarConfiguracoesVisuais();
+            mostrarCoach("Configurações salvas com sucesso!");
         }
 
         function toggleAcordeonMateria(materiaId) {
@@ -883,12 +919,6 @@
             appData.planoSemanal[dia][index] = valor;
             salvarDados();
             atualizarInterfaceCompleta();
-        }
-
-        function atualizarConfig(chave, valor) {
-            configGeral[chave] = valor;
-            salvarDados();
-            aplicarConfiguracoesVisuais();
         }
 
         function aplicarConfiguracoesVisuais() {
@@ -1045,9 +1075,10 @@
                 let countMat = 0;
                 materiasDia.forEach(matNome => {
                     if (countMat >= maxMaterias) return;
+                    countMat++;
                     const matObj = appData.materias.find(m => m.nome === matNome);
-                    if(matObj && matObj.topicos.length > 0) {
-                        countMat++;
+                    
+                    if(matObj && matObj.topicos && matObj.topicos.length > 0) {
                         let pendentes = matObj.topicos.filter(t => !t.estudoFeito);
                         let topicosParaExibir = pendentes.length > 0 ? pendentes.slice(0, maxTopicos) : matObj.topicos.slice(-maxTopicos);
 
@@ -1060,9 +1091,16 @@
                                 </li>
                             `;
                         });
+                    } else {
+                        htmlMetas += `
+                            <li>
+                                <span>🎯 <strong>${matNome}</strong> — Programada para hoje (Nenhum tópico cadastrado)</span>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Adicione tópicos na aba Matérias</span>
+                            </li>
+                        `;
                     }
                 });
-                if(!htmlMetas) htmlMetas = `<li>Matérias de hoje sem tópicos cadastrados.</li>`;
+                if(!htmlMetas) htmlMetas = `<li>Nenhuma matéria listada para hoje.</li>`;
             } else {
                 htmlMetas = `<li>Nenhuma matéria programada para hoje (${diaAtualKey}-feira). Configure no Plano de Estudos.</li>`;
             }
@@ -1113,7 +1151,7 @@
                     calContainer.innerHTML += `<div class="calendar-day-header">${d}</div>`;
                 });
                 for (let i = 1; i <= 31; i++) {
-                    calContainer.innerHTML += `<div class="calendar-day ${i === 14 ? 'today' : ''}"><span>${i}</span></div>`;
+                    calContainer.innerHTML += `<div class="calendar-day ${i === 18 ? 'today' : ''}"><span>${i}</span></div>`;
                 }
             }
 
