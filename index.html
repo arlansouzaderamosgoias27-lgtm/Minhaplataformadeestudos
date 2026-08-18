@@ -387,7 +387,7 @@
                     <h3>Cadastrar Nova Matéria</h3>
                     <form id="form-cadastrar-materia" class="flex gap-4 items-center" style="flex-wrap: wrap;">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria (Ex: Direito Administrativo)" required>
+                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria" required>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: auto;">Cadastrar Matéria</button>
                     </form>
@@ -554,32 +554,40 @@
 
         function inicializarMatériasIniciaisObrigatorias() {
             const topicosPortuguesa = [
-                "00 - Análise sintática da oração e do período", "01 - Pontuação", "02 - Concordância verbal e nominal",
-                "03 - Regência verbal e nominal", "04 - Emprego do sinal crase", "05 - Significação de palavras",
-                "06 - Emprego de classes de palavras", "07 - Colocação pronominal", "08 - Reescrita de frases e parágrafos do texto",
-                "09 - Correção gramatical e textual", "10 - Tipologia textual", "11 - Coesão e coerência textual",
-                "12 - Compreensão e interpretação de textos", "13 - Ortografia oficial", "14 - Acentuação gráfica", "15 - Emprego das letras"
+                "Noções de ortografia", "Classes variáveis e invariáveis", "Preposições", "Pronomes", 
+                "Emprego de tempos e modos verbais", "Correlação dos tempos verbais", "Processo de formação de palavras", 
+                "Noções iniciais de sintaxe", "Coordenação e subordinação", "Noções de pontuação", 
+                "Noções iniciais de concordância", "Noções iniciais de regência", "Campo sintático", 
+                "Considerações iniciais de tipologia textual", "Comunicação oficial", "Resumo de tudo que foi estudado anteriormente"
             ];
             const topicosAdmin = [
-                "00 - Estado, governo e administração pública", "01 - Conceitos e princípios da administração pública", "02 - Agentes públicos",
-                "03 - Poderes administrativos", "04 - Controle da administração pública", "05 - Responsabilidade civil do Estado",
-                "06 - Lei nº 8.112/1990", "07 - Lei de Improbidade Administrativa (Lei nº 8.429/1992)", "08 - Processo Administrativo Federal (Lei nº 9.784/1999)",
-                "09 - Licitações e Contratos", "10 - Serviços públicos", "11 - Organização administrativa", "12 - Bens públicos", "13 - Intervenção", "14 - Desapropriação", "15 - Atos administrativos"
+                "Regime jurídico-administrativo", "Organização administrativa", "Empresas públicas e sociedades de economia mista", 
+                "Deveres e poderes administrativos", "Atos administrativos", "Licitações públicas", "Contratação direta", 
+                "Conceito de contratos", "Serviços públicos", "Controle da Administração Pública", "Responsabilidade civil do Estado", 
+                "Bens públicos", "Agentes públicos", "Processo administrativo", "Improbidade administrativa", "Lei Geral de Acesso à Informação"
             ];
             const topicosConstitucional = [
-                "00 - Constituição: conceitos e classificação", "01 - Direitos e garantias fundamentais", "02 - Direitos individuais e coletivos",
-                "03 - Direitos sociais", "04 - Nacionalidade e Cidadania", "05 - Direitos políticos", "06 - Partidos políticos",
-                "07 - Organização político-administrativa", "08 - União, Estados, DF e Municípios", "09 - Poder Legislativo", "10 - Poder Executivo",
-                "11 - Poder Judiciário", "12 - Funções essenciais à justiça", "13 - Ordem econômica", "14 - Ordem social", "15 - Controle de constitucionalidade"
+                "Natureza, conceito, objeto e conteúdo do Direito Constitucional", "Princípios fundamentais", 
+                "Direitos e deveres individuais e coletivos (parte I)", "Direitos e deveres individuais e coletivos (parte II)", 
+                "Direitos sociais", "Nacionalidade", "Direitos políticos", "Partidos políticos", 
+                "Teoria Geral do Estado e organização político-administrativa", "Administração Pública", 
+                "Poder Legislativo: funções, estrutura, reuniões e comissões", "Processo Legislativo Constitucional", 
+                "Poder Executivo: normas gerais", "Órgãos do Poder Judiciário", "Funções essenciais à Justiça", 
+                "Sistema Constitucional de crise e Estado de exceção"
             ];
             const topicosPenal = [
-                "00 - Princípios básicos", "01 - Lei penal no tempo e espaço", "02 - Lei penal em relação às pessoas", "03 - Interpretação",
-                "04 - Teoria do crime", "05 - Fato típico", "06 - Ilicitude", "07 - Culpabilidade", "08 - Concurso de pessoas", "09 - Das penas",
-                "10 - Medidas de segurança", "11 - Ação penal", "12 - Extinção da punibilidade", "13 - Crimes contra a pessoa", "14 - Crimes contra o patrimônio", "15 - Crimes contra adm pública"
+                "Princípios constitucionais de Direito Penal", "Teoria da norma penal", "Conceito de crime", 
+                "Culpabilidade", "Concurso de pessoas", "Teoria geral da pena", "Aplicação das penas privativas de liberdade", 
+                "Crimes contra a vida", "Furto", "Crimes contra a paz pública", "Crimes contra a liberdade sexual", 
+                "Moeda falsa", "Crimes praticados por funcionário público contra a Administração em geral", 
+                "Crimes praticados por particular contra a Administração em geral", "Crimes em licitações e contratos administrativos", 
+                "Crimes contra o Estado Democrático de Direito"
             ];
             const topicosProcessualPenal = [
-                "00 - Sistemas processuais penais", "01 - Princípios gerais", "02 - Inquérito policial", "03 - Ação penal", "04 - Competência",
-                "05 - Prova", "06 - Prisão e medidas cautelares", "07 - Citações e intimações", "08 - Sentença", "09 - Recursos em geral"
+                "Conceito, finalidades, características e fontes do Direito Processual Penal", "Inquérito policial", 
+                "Processo, procedimento e relação jurídica processual", "Jurisdição", "Introdução às medidas cautelares", 
+                "Fiança e liberdade provisória", "Teoria geral da prova no processo penal", 
+                "Exame de corpo de delito, cadeia de custódia e perícias em geral", "Processo comum", "Juizados Especiais"
             ];
 
             const nomesObrigatorios = [
@@ -590,22 +598,23 @@
                 { nome: "Direito Processual Penal", lista: topicosProcessualPenal }
             ];
 
-            let precisaAtualizar = false;
-            if (!appData.materias || appData.materias.length !== 5) {
-                precisaAtualizar = true;
-            } else {
-                for (let i = 0; i < nomesObrigatorios.length; i++) {
-                    if (appData.materias[i].nome !== nomesObrigatorios[i].nome || appData.materias[i].topicos.length !== nomesObrigatorios[i].lista.length) {
-                        precisaAtualizar = true;
-                        break;
-                    }
-                }
-            }
-
-            if (precisaAtualizar) {
-                appData.materias = nomesObrigatorios.map((item, mIdx) => {
-                    let topicos = item.lista.map((textoTopico, tIdx) => {
-                        let numStr = tIdx < 10 ? '0' + tIdx : '' + tIdx;
+            // Reorganiza e sincroniza as matérias mantendo IDs e estados anteriores se existirem, ou atualiza/cadastra se necessário
+            let materiasAtualizadas = [];
+            nomesObrigatorios.forEach((itemObrigat, mIdx) => {
+                let materiaExistente = appData.materias.find(m => m.nome === itemObrigat.nome);
+                let idMateria = materiaExistente ? materiaExistente.id : 'mat_obrigatoria_' + mIdx;
+                
+                let topicosAtualizados = itemObrigat.lista.map((textoTopico, tIdx) => {
+                    let numStr = tIdx < 10 ? '0' + tIdx : '' + tIdx;
+                    // Verifica se o tópico já existe para preservar dados de estudo e anotações
+                    let topicoExistente = materiaExistente && materiaExistente.topicos.find(t => t.nome === textoTopico || t.numero === numStr);
+                    if (topicoExistente) {
+                        return {
+                            ...topicoExistente,
+                            numero: numStr,
+                            nome: textoTopico
+                        };
+                    } else {
                         return {
                             numero: numStr,
                             nome: textoTopico,
@@ -615,15 +624,25 @@
                             acertos: 0,
                             erros: 0
                         };
-                    });
-                    return {
-                        id: 'mat_obrigatoria_' + mIdx,
-                        nome: item.nome,
-                        topicos: topicos
-                    };
+                    }
                 });
-                salvarDados();
-            }
+
+                materiasAtualizadas.push({
+                    id: idMateria,
+                    nome: itemObrigat.nome,
+                    topicos: topicosAtualizados
+                });
+            });
+
+            // Adiciona outras matérias que o usuário possa ter criado por fora
+            appData.materias.forEach(m => {
+                if (!nomesObrigatorios.some(o => o.nome === m.nome)) {
+                    materiasAtualizadas.push(m);
+                }
+            });
+
+            appData.materias = materiasAtualizadas;
+            salvarDados();
         }
 
         function iniciarRelogioTempoReal() {
