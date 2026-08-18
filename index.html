@@ -598,7 +598,6 @@
                 { nome: "Direito Processual Penal", lista: topicosProcessualPenal }
             ];
 
-            // Reorganiza e sincroniza as matérias mantendo IDs e estados anteriores se existirem, ou atualiza/cadastra se necessário
             let materiasAtualizadas = [];
             nomesObrigatorios.forEach((itemObrigat, mIdx) => {
                 let materiaExistente = appData.materias.find(m => m.nome === itemObrigat.nome);
@@ -606,7 +605,6 @@
                 
                 let topicosAtualizados = itemObrigat.lista.map((textoTopico, tIdx) => {
                     let numStr = tIdx < 10 ? '0' + tIdx : '' + tIdx;
-                    // Verifica se o tópico já existe para preservar dados de estudo e anotações
                     let topicoExistente = materiaExistente && materiaExistente.topicos.find(t => t.nome === textoTopico || t.numero === numStr);
                     if (topicoExistente) {
                         return {
@@ -634,7 +632,6 @@
                 });
             });
 
-            // Adiciona outras matérias que o usuário possa ter criado por fora
             appData.materias.forEach(m => {
                 if (!nomesObrigatorios.some(o => o.nome === m.nome)) {
                     materiasAtualizadas.push(m);
