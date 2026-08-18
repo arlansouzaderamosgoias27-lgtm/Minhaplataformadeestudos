@@ -253,9 +253,11 @@
         }
         .btn:active { transform: scale(0.98); }
         .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 14px var(--accent-glow); }
-        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
         .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: var(--accent-glow); border-color: var(--accent); }
+        .btn-secondary:hover:not(:disabled) { background: var(--accent-glow); border-color: var(--accent); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-ui); }
         .btn-danger:hover { opacity: 0.9; }
 
@@ -367,8 +369,8 @@
             <!-- 1. METAS DE HOJE -->
             <section id="view-metas" class="view-section">
                 <div class="card">
-                    <h3>Metas de Hoje (Sincronização em Tempo Real)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Próximos tópicos pendentes com avanço automático por matéria de acordo com o plano diário.</p>
+                    <h3>Metas de Hoje (Sincronização em Tempo Real com o Plano Oficial)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">As matérias programadas no seu Plano de Estudos aparecem aqui instantaneamente, mesmo sem tópicos cadastrados.</p>
                     <div id="lista-metas-diarias-automaticas" class="item-list"></div>
                 </div>
             </section>
@@ -387,7 +389,7 @@
                     <h3>Cadastrar Nova Matéria</h3>
                     <form id="form-cadastrar-materia" class="flex gap-4 items-center" style="flex-wrap: wrap;">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria" required>
+                            <input type="text" id="nova-materia-nome" class="form-control" placeholder="Nome da Matéria" required oninput="marcarAlteracaoPendentes('materias')">
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: auto;">Cadastrar Matéria</button>
                     </form>
@@ -402,7 +404,7 @@
                     </div>
                     <div id="container-materias-gerenciador"></div>
                     <div style="margin-top: 1.5rem; text-align: right;">
-                        <button onclick="salvarAlteracoesMateriasManualmente()" class="btn btn-primary">💾 Salvar Alterações</button>
+                        <button id="btn-salvar-materias" onclick="salvarAlteracoesMateriasManualmente()" class="btn btn-primary" disabled>💾 Salvar Alterações</button>
                     </div>
                 </div>
             </section>
@@ -410,11 +412,11 @@
             <!-- 4. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal (Centro de Sincronização)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. As Metas de Hoje se recalculam instantaneamente ao alterar qualquer campo.</p>
+                    <h3>Planejamento Semanal (Fonte Oficial de Sincronização)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. Ao salvar, as Metas de Hoje, Dashboard, Calendário, Coach e Estatísticas são atualizados instantaneamente.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
                     <div style="margin-top: 1.5rem; text-align: right;">
-                        <button onclick="salvarAlteracoesPlanoManualmente()" class="btn btn-primary">💾 Salvar Plano de Estudos</button>
+                        <button id="btn-salvar-plano" onclick="salvarAlteracoesPlanoManualmente()" class="btn btn-primary" disabled>💾 Salvar Plano de Estudos</button>
                     </div>
                 </div>
             </section>
@@ -427,16 +429,16 @@
                     
                     <div class="form-group">
                         <label for="input-metas-materias">Quantidade de Matérias por Dia</label>
-                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2">
+                        <input type="number" id="input-metas-materias" class="form-control" min="1" max="10" value="2" oninput="marcarAlteracaoPendentes('metas-estudo')">
                     </div>
 
                     <div class="form-group">
                         <label for="input-metas-topicos">Quantidade de Tópicos por Matéria</label>
-                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3">
+                        <input type="number" id="input-metas-topicos" class="form-control" min="1" max="20" value="3" oninput="marcarAlteracaoPendentes('metas-estudo')">
                     </div>
 
                     <div style="margin-top: 1.5rem; text-align: right;">
-                        <button onclick="salvarConfigMetasEstudoManualmente()" class="btn btn-primary">💾 Salvar Metas de Estudo</button>
+                        <button id="btn-salvar-metas-estudo" onclick="salvarConfigMetasEstudoManualmente()" class="btn btn-primary" disabled>💾 Salvar Metas de Estudo</button>
                     </div>
                 </div>
             </section>
@@ -473,18 +475,18 @@
                     <form id="form-perfil" onsubmit="event.preventDefault(); salvarPerfilManualmente();">
                         <div class="form-group">
                             <label for="perfil-nome">Nome Completo</label>
-                            <input type="text" id="perfil-nome" class="form-control" required>
+                            <input type="text" id="perfil-nome" class="form-control" required oninput="marcarAlteracaoPendentes('perfil')">
                         </div>
                         <div class="form-group">
                             <label for="perfil-idade">Idade</label>
-                            <input type="number" id="perfil-idade" class="form-control" required>
+                            <input type="number" id="perfil-idade" class="form-control" required oninput="marcarAlteracaoPendentes('perfil')">
                         </div>
                         <div class="form-group">
                             <label for="perfil-objetivo">Objetivo / Concurso</label>
-                            <input type="text" id="perfil-objetivo" class="form-control" required>
+                            <input type="text" id="perfil-objetivo" class="form-control" required oninput="marcarAlteracaoPendentes('perfil')">
                         </div>
                         <div style="margin-top: 1.5rem; text-align: right;">
-                            <button type="submit" class="btn btn-primary">💾 Salvar Perfil</button>
+                            <button id="btn-salvar-perfil" type="submit" class="btn btn-primary" disabled>💾 Salvar Perfil</button>
                         </div>
                     </form>
                 </div>
@@ -496,17 +498,17 @@
                     <h3>Configurações e Gestão de Dados</h3>
                     <div class="form-group">
                         <label for="select-tema">Tema Visual</label>
-                        <select id="select-tema" class="form-control">
+                        <select id="select-tema" class="form-control" onchange="marcarAlteracaoPendentes('configuracoes')">
                             <option value="dark">Modo Escuro (Dark)</option>
                             <option value="light">Modo Claro (Light)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="input-cor-primaria">Cor Principal de Destaque</label>
-                        <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;">
+                        <input type="color" id="input-cor-primaria" class="form-control" style="height: 45px; padding: 0.25rem;" oninput="marcarAlteracaoPendentes('configuracoes')">
                     </div>
                     <div class="form-group" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                        <button onclick="salvarConfiguracoesManualmente()" class="btn btn-primary w-full">💾 Salvar Configurações</button>
+                        <button id="btn-salvar-configuracoes" onclick="salvarConfiguracoesManualmente()" class="btn btn-primary w-full" disabled>💾 Salvar Configurações</button>
                         <button onclick="fazerBackup()" class="btn btn-secondary w-full">Fazer Backup</button>
                         <button onclick="restaurarBackupPrompt()" class="btn btn-secondary w-full">Restaurar / Importar Dados</button>
                     </div>
@@ -553,6 +555,13 @@
         let materiasAbertas = {};
         let termoPesquisaMatérias = "";
         let historicoNavegacao = ['metas'];
+        let alteracoesPendentes = {
+            materias: false,
+            plano: false,
+            'metas-estudo': false,
+            perfil: false,
+            configuracoes: false
+        };
 
         document.addEventListener("DOMContentLoaded", () => {
             carregarDadosUsuario();
@@ -748,6 +757,25 @@
             }
         }
 
+        function marcarAlteracaoPendentes(secao) {
+            alteracoesPendentes[secao] = true;
+            atualizarEstadoBotoesSalvar();
+        }
+
+        function atualizarEstadoBotoesSalvar() {
+            const btnMat = document.getElementById('btn-salvar-materias');
+            const btnPlano = document.getElementById('btn-salvar-plano');
+            const btnMetasEstudo = document.getElementById('btn-salvar-metas-estudo');
+            const btnPerfil = document.getElementById('btn-salvar-perfil');
+            const btnConfig = document.getElementById('btn-salvar-configuracoes');
+
+            if (btnMat) btnMat.disabled = !alteracoesPendentes.materias;
+            if (btnPlano) btnPlano.disabled = !alteracoesPendentes.plano;
+            if (btnMetasEstudo) btnMetasEstudo.disabled = !alteracoesPendentes['metas-estudo'];
+            if (btnPerfil) btnPerfil.disabled = !alteracoesPendentes.perfil;
+            if (btnConfig) btnConfig.disabled = !alteracoesPendentes.configuracoes;
+        }
+
         function inicializarEventos() {
             document.getElementById('form-cadastrar-materia').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -774,8 +802,10 @@
                 materiasAbertas[novoId] = true;
                 salvarDados();
                 input.value = '';
+                alteracoesPendentes.materias = false;
+                atualizarEstadoBotoesSalvar();
                 atualizarInterfaceCompleta();
-                mostrarCoach("Matéria cadastrada com sucesso!");
+                mostrarCoach("Matéria cadastrada e sincronizada com sucesso!");
             });
         }
 
@@ -784,7 +814,10 @@
             appData.perfil.idade = parseInt(document.getElementById('perfil-idade').value) || 27;
             appData.perfil.objetivo = document.getElementById('perfil-objetivo').value;
             salvarDados();
-            mostrarCoach("Perfil salvo com sucesso!");
+            alteracoesPendentes.perfil = false;
+            atualizarEstadoBotoesSalvar();
+            atualizarInterfaceCompleta();
+            mostrarCoach("Perfil salvo e sincronizado com sucesso!");
         }
 
         function salvarConfigMetasEstudoManualmente() {
@@ -794,29 +827,38 @@
                 appData.configMetas.qtdMaterias = parseInt(qtdMatInput.value) || 2;
                 appData.configMetas.qtdTopicos = parseInt(qtdTopInput.value) || 3;
                 salvarDados();
+                alteracoesPendentes['metas-estudo'] = false;
+                atualizarEstadoBotoesSalvar();
                 atualizarInterfaceCompleta();
-                mostrarCoach("Metas de estudo salvas com sucesso!");
+                mostrarCoach("Metas de estudo salvas e sincronizadas com sucesso!");
             }
         }
 
         function salvarAlteracoesMateriasManualmente() {
             salvarDados();
+            alteracoesPendentes.materias = false;
+            atualizarEstadoBotoesSalvar();
             atualizarInterfaceCompleta();
-            mostrarCoach("Matérias e tópicos salvos com sucesso!");
+            mostrarCoach("Matérias e tópicos salvos e sincronizados com sucesso!");
         }
 
         function salvarAlteracoesPlanoManualmente() {
             salvarDados();
+            alteracoesPendentes.plano = false;
+            atualizarEstadoBotoesSalvar();
             atualizarInterfaceCompleta();
-            mostrarCoach("Plano de estudos salvo com sucesso!");
+            mostrarCoach("Plano de Estudos (Fonte Oficial) sincronizado com Metas de Hoje, Dashboard, Calendário, Coach e Estatísticas!");
         }
 
         function salvarConfiguracoesManualmente() {
             configGeral.tema = document.getElementById('select-tema').value;
             configGeral.corPrimaria = document.getElementById('input-cor-primaria').value;
             salvarDados();
+            alteracoesPendentes.configuracoes = false;
+            atualizarEstadoBotoesSalvar();
             aplicarConfiguracoesVisuais();
-            mostrarCoach("Configurações salvas com sucesso!");
+            atualizarInterfaceCompleta();
+            mostrarCoach("Configurações salvas e aplicadas com sucesso!");
         }
 
         function toggleAcordeonMateria(materiaId) {
@@ -843,9 +885,9 @@
                     erros: 0
                 });
                 materiasAbertas[materiaId] = true;
-                salvarDados();
+                marcarAlteracaoPendentes('materias');
                 atualizarInterfaceCompleta();
-                mostrarCoach("Tópico adicionado com sucesso!");
+                mostrarCoach("Tópico adicionado (clique em Salvar Alterações para persistir).");
             }
         }
 
@@ -854,25 +896,25 @@
             if (materia && materia.topicos[indexTopico]) {
                 materia.topicos.splice(indexTopico, 1);
                 materiasAbertas[materiaId] = true;
-                salvarDados();
+                marcarAlteracaoPendentes('materias');
                 atualizarInterfaceCompleta();
-                mostrarCoach("Tópico excluído!");
+                mostrarCoach("Tópico removido da lista.");
             }
         }
 
         function excluirMateria(materiaId) {
             appData.materias = appData.materias.filter(x => x.id !== materiaId);
             delete materiasAbertas[materiaId];
-            salvarDados();
+            marcarAlteracaoPendentes('materias');
             atualizarInterfaceCompleta();
-            mostrarCoach("Matéria excluída!");
+            mostrarCoach("Matéria excluída.");
         }
 
         function atualizarTopicoDetalhe(materiaId, indexTopico, campo, valor) {
             const materia = appData.materias.find(m => m.id === materiaId);
             if(materia && materia.topicos[indexTopico]) {
                 materia.topicos[indexTopico][campo] = valor;
-                salvarDados();
+                marcarAlteracaoPendentes('materias');
             }
         }
 
@@ -902,14 +944,14 @@
         function adicionarMateriaPlano(dia) {
             if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
             appData.planoSemanal[dia].push('');
-            salvarDados();
+            marcarAlteracaoPendentes('plano');
             atualizarInterfaceCompleta();
         }
 
         function removerMateriaPlano(dia, index) {
             if (appData.planoSemanal[dia]) {
                 appData.planoSemanal[dia].splice(index, 1);
-                salvarDados();
+                marcarAlteracaoPendentes('plano');
                 atualizarInterfaceCompleta();
             }
         }
@@ -917,8 +959,7 @@
         function atualizarMateriaPlanoSelect(dia, index, valor) {
             if (!appData.planoSemanal[dia]) appData.planoSemanal[dia] = [];
             appData.planoSemanal[dia][index] = valor;
-            salvarDados();
-            atualizarInterfaceCompleta();
+            marcarAlteracaoPendentes('plano');
         }
 
         function aplicarConfiguracoesVisuais() {
@@ -1074,6 +1115,7 @@
             if(materiasDia.length > 0) {
                 let countMat = 0;
                 materiasDia.forEach(matNome => {
+                    if(!matNome) return;
                     if (countMat >= maxMaterias) return;
                     countMat++;
                     const matObj = appData.materias.find(m => m.nome === matNome);
