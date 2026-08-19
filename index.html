@@ -306,7 +306,7 @@
                 <div class="tools-grid">
                     <div class="tool-card active" onclick="mudarView('metas')" id="nav-metas">
                         <span class="tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
-                        <span class="tool-label">Metas de Hoje</span>
+                        <span class="tool-label">Metas do Dia</span>
                     </div>
                     <div class="tool-card" onclick="mudarView('dashboard')" id="nav-dashboard">
                         <span class="tool-icon"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
@@ -367,10 +367,10 @@
 
         <main class="content-area">
 
-            <!-- 1. METAS DE HOJE -->
+            <!-- 1. METAS DO DIA -->
             <section id="view-metas" class="view-section">
                 <div class="card">
-                    <h3>Metas de Hoje</h3>
+                    <h3>Metas do Dia</h3>
                     <div id="lista-metas-diarias-automaticas" class="item-list"></div>
                 </div>
             </section>
@@ -378,7 +378,7 @@
             <!-- 2. INÍCIO -->
             <section id="view-dashboard" class="view-section">
                 <div class="card">
-                    <h3>Resumo das Metas de Hoje</h3>
+                    <h3>Resumo das Metas do Dia</h3>
                     <div id="dash-resumo-metas-hoje" class="item-list"></div>
                 </div>
             </section>
@@ -413,7 +413,7 @@
             <section id="view-plano" class="view-section">
                 <div class="card">
                     <h3>Planejamento Semanal (Fonte Única da Verdade)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. Ao salvar, as Metas de Hoje serão atualizadas imediatamente.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. Ao salvar, as Metas do Dia serão atualizadas imediatamente.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
                     <div style="margin-top: 1.5rem; text-align: right;">
                         <button id="btn-salvar-plano" onclick="salvarAlteracoesPlanoManualmente()" class="btn btn-primary" disabled>💾 Salvar Plano de Estudos</button>
@@ -739,7 +739,7 @@
             alteracoesPendentes.plano = false;
             atualizarEstadoBotoesSalvar();
             atualizarInterfaceCompleta();
-            mostrarCoach("Plano de Estudos salvo e Metas de Hoje atualizadas com sucesso!");
+            mostrarCoach("Plano de Estudos salvo e Metas do Dia atualizadas com sucesso!");
         }
 
         function salvarConfiguracoesManualmente() {
@@ -774,9 +774,11 @@
                     estudoFeito: false
                 });
                 materiasAbertas[materiaId] = true;
-                marcarAlteracaoPendentes('materias');
+                salvarDados();
+                alteracoesPendentes.materias = false;
+                atualizarEstadoBotoesSalvar();
                 atualizarInterfaceCompleta();
-                mostrarCoach("Tópico adicionado.");
+                mostrarCoach("Tópico adicionado e Metas do Dia atualizadas automaticamente.");
             }
         }
 
@@ -1019,7 +1021,10 @@
                         htmlMetas += `
                             <li>
                                 <span>🎯 <strong>${matNome}</strong> — Programada para hoje</span>
-                                <span style="font-size: 0.85rem; color: var(--text-muted);">Nenhum tópico cadastrado</span>
+                                <div class="flex items-center gap-2">
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Nenhum tópico cadastrado</span>
+                                    ${matObj ? `<button onclick="materiasAbertas['${matObj.id}'] = true; mudarView('materias');" class="btn btn-secondary" style="padding: 0.3rem 0.7rem; font-size: 0.8rem;">Adicionar tópico</button>` : ''}
+                                </div>
                             </li>
                         `;
                     }
