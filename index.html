@@ -412,8 +412,8 @@
             <!-- 4. PLANO DE ESTUDOS -->
             <section id="view-plano" class="view-section">
                 <div class="card">
-                    <h3>Planejamento Semanal (Fonte Oficial)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana.</p>
+                    <h3>Planejamento Semanal (Fonte Única da Verdade)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure quais matérias estudar em cada dia da semana. Ao salvar, as Metas de Hoje serão atualizadas imediatamente.</p>
                     <div id="container-plano-semanal" class="grid-2"></div>
                     <div style="margin-top: 1.5rem; text-align: right;">
                         <button id="btn-salvar-plano" onclick="salvarAlteracoesPlanoManualmente()" class="btn btn-primary" disabled>💾 Salvar Plano de Estudos</button>
@@ -525,8 +525,21 @@
 
     <script>
         let appData = {
-            materias: [], 
-            planoSemanal: { Segunda: [], Terça: [], Quarta: [], Quinta: [], Sexta: [], Sábado: [], Domingo: [] },
+            materias: [
+                { id: 'mat_penal', nome: 'Penal', topicos: [{ numero: '01', nome: 'Teoria do Crime', linkLei: '', estudoFeito: false }] },
+                { id: 'mat_proc_penal', nome: 'Processo Penal', topicos: [{ numero: '01', nome: 'Inquérito Policial', linkLei: '', estudoFeito: false }] },
+                { id: 'mat_const', nome: 'Constitucional', topicos: [{ numero: '01', nome: 'Direitos Fundamentais', linkLei: '', estudoFeito: false }] },
+                { id: 'mat_admin', nome: 'Administrativo', topicos: [{ numero: '01', nome: 'Atos Administrativos', linkLei: '', estudoFeito: false }] }
+            ], 
+            planoSemanal: { 
+                Segunda: ['Penal'], 
+                Terça: ['Penal', 'Processo Penal'], 
+                Quarta: ['Constitucional'], 
+                Quinta: ['Administrativo'], 
+                Sexta: ['Penal'], 
+                Sábado: [], 
+                Domingo: [] 
+            },
             configMetas: { qtdMaterias: 2, qtdTopicos: 3 },
             revisoes: [],
             perfil: { nome: 'Arlan Souza de ramos', idade: 27, objetivo: 'Concurso Público' }
@@ -726,7 +739,7 @@
             alteracoesPendentes.plano = false;
             atualizarEstadoBotoesSalvar();
             atualizarInterfaceCompleta();
-            mostrarCoach("Plano de Estudos atualizado e sincronizado imediatamente!");
+            mostrarCoach("Plano de Estudos salvo e Metas de Hoje atualizadas com sucesso!");
         }
 
         function salvarConfiguracoesManualmente() {
